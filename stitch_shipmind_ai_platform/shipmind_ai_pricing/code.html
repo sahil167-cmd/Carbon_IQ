@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pricing | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#000000",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2f",
+                    "on-primary-fixed": "#141b2b",
+                    "on-surface": "#191c1d",
+                    "primary-container": "#141b2b",
+                    "primary-fixed": "#dce2f7",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary-fixed-variant": "#005321",
+                    "surface-tint": "#575e70",
+                    "surface-container": "#edeeef",
+                    "outline-variant": "#c6c6cd",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#002109",
+                    "on-surface-variant": "#45464c",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#c0c6db",
+                    "on-primary-container": "#7d8497",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-container": "#7d8492",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed": "#6bff8f",
+                    "on-background": "#191c1d",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-primary": "#c0c6db",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#dce2f3",
+                    "on-secondary-container": "#007432",
+                    "on-tertiary-fixed": "#151c27",
+                    "secondary-container": "#6bff8f",
+                    "inverse-surface": "#2e3132"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pricing-toggle-active {
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-secondary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container-low/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-on-primary-fixed">
+                ShipMind AI
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Platform</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Solutions</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Network</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Company</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-6 py-2 rounded-xl text-body-md font-medium text-on-surface-variant hover:opacity-80 transition-all active:scale-95">Login</button>
+<button class="px-6 py-2 rounded-xl bg-primary text-white font-body-md text-body-md font-semibold hover:opacity-80 transition-all active:scale-95">Get Started</button>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-section-gap">
+<!-- Hero Section -->
+<section class="max-w-container-max mx-auto px-margin-desktop text-center mb-16">
+<h1 class="font-display-xl text-display-xl mb-6 tracking-tight">Predictive Serenity in Pricing</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
+                Choose the plan that fits your supply chain complexity. Transparent, scalable, and built for modern logistics excellence.
+            </p>
+<!-- Billing Toggle -->
+<div class="flex items-center justify-center gap-4 mb-16">
+<span class="font-label-sm text-label-sm text-on-surface-variant" id="label-monthly">Monthly</span>
+<div class="w-14 h-7 bg-surface-container-high rounded-full p-1 cursor-pointer relative" onclick="toggleBilling()">
+<div class="w-5 h-5 bg-primary rounded-full transition-transform duration-300" id="toggle-knob"></div>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold" id="label-annual">Annual (Save 20%)</span>
+</div>
+</section>
+<!-- Pricing Cards -->
+<section class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-3 gap-gutter mb-24">
+<!-- Starter -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-[24px] p-10 flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md mb-2">Starter</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">For small fleets and regional operations.</p>
+</div>
+<div class="mb-8">
+<span class="text-4xl font-bold font-headline-lg">$</span>
+<span class="text-5xl font-bold font-headline-lg billing-price" data-annual="249" data-monthly="299">249</span>
+<span class="text-on-surface-variant font-body-md">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Up to 10 active shipments
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Real-time tracking
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Basic route optimization
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Email support
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-outline text-primary font-semibold hover:bg-surface-container-high transition-all active:scale-95">
+                    Start with Starter
+                </button>
+</div>
+<!-- Professional -->
+<div class="relative bg-surface-container-lowest border-2 border-primary rounded-[24px] p-10 flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.08)] transform scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 rounded-full text-label-sm font-bold tracking-wider uppercase">
+                    Most Popular
+                </div>
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md mb-2">Professional</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Comprehensive AI intelligence for growing businesses.</p>
+</div>
+<div class="mb-8">
+<span class="text-4xl font-bold font-headline-lg">$</span>
+<span class="text-5xl font-bold font-headline-lg billing-price" data-annual="749" data-monthly="899">749</span>
+<span class="text-on-surface-variant font-body-md">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-body-md font-medium">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Unlimited shipments
+                    </li>
+<li class="flex items-center gap-3 text-body-md font-medium">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Predictive delay warnings
+                    </li>
+<li class="flex items-center gap-3 text-body-md font-medium">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Advanced AI route engine
+                    </li>
+<li class="flex items-center gap-3 text-body-md font-medium">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Priority 24/7 support
+                    </li>
+<li class="flex items-center gap-3 text-body-md font-medium">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Custom document automation
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-primary text-white font-semibold hover:opacity-90 transition-all active:scale-95">
+                    Go Professional
+                </button>
+</div>
+<!-- Enterprise -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-[24px] p-10 flex flex-col hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all">
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md mb-2">Enterprise</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Full-scale logistics ecosystem for global enterprises.</p>
+</div>
+<div class="mb-8">
+<span class="text-5xl font-bold font-headline-lg">Custom</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Everything in Professional
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Custom API integrations
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        Dedicated fleet intelligence
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                        White-label client portal
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-outline text-primary font-semibold hover:bg-surface-container-high transition-all active:scale-95">
+                    Contact Sales
+                </button>
+</div>
+</section>
+<!-- Comparison Table -->
+<section class="max-w-container-max mx-auto px-margin-desktop overflow-hidden">
+<h2 class="font-headline-lg text-headline-lg mb-12 text-center">Feature Breakdown</h2>
+<div class="bg-surface-container-lowest rounded-[24px] border border-outline-variant/30 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container">
+<th class="p-6 font-semibold text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant/20">Features</th>
+<th class="p-6 font-semibold text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant/20">Starter</th>
+<th class="p-6 font-semibold text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant/20 bg-primary/5">Professional</th>
+<th class="p-6 font-semibold text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant/20">Enterprise</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Group 1: Core -->
+<tr>
+<td class="p-6 font-medium text-body-md">Shipment Limit</td>
+<td class="p-6 text-body-md">10 Active</td>
+<td class="p-6 text-body-md bg-primary/5">Unlimited</td>
+<td class="p-6 text-body-md">Unlimited</td>
+</tr>
+<tr>
+<td class="p-6 font-medium text-body-md">Fleet Intelligence</td>
+<td class="p-6 text-body-md text-on-surface-variant">Basic</td>
+<td class="p-6 text-body-md bg-primary/5 font-semibold">Predictive</td>
+<td class="p-6 text-body-md">Custom AI Models</td>
+</tr>
+<!-- Group 2: AI Capabilities -->
+<tr>
+<td class="p-6 font-medium text-body-md">Route Optimization</td>
+<td class="p-6"><span class="material-symbols-outlined text-secondary">check</span></td>
+<td class="p-6 bg-primary/5"><span class="material-symbols-outlined text-secondary">check</span></td>
+<td class="p-6"><span class="material-symbols-outlined text-secondary">check</span></td>
+</tr>
+<tr>
+<td class="p-6 font-medium text-body-md">ML-driven Weather Routing</td>
+<td class="p-6 text-on-surface-variant/40">—</td>
+<td class="p-6 bg-primary/5"><span class="material-symbols-outlined text-secondary">check</span></td>
+<td class="p-6"><span class="material-symbols-outlined text-secondary">check</span></td>
+</tr>
+<tr>
+<td class="p-6 font-medium text-body-md">Document OCR</td>
+<td class="p-6 text-on-surface-variant/40">—</td>
+<td class="p-6 bg-primary/5"><span class="material-symbols-outlined text-secondary">check</span></td>
+<td class="p-6"><span class="material-symbols-outlined text-secondary">check</span></td>
+</tr>
+<!-- Group 3: Support -->
+<tr>
+<td class="p-6 font-medium text-body-md">Support SLA</td>
+<td class="p-6 text-body-md">48 Hours</td>
+<td class="p-6 text-body-md bg-primary/5 font-semibold">Priority 2h</td>
+<td class="p-6 text-body-md">Dedicated Rep</td>
+</tr>
+<tr>
+<td class="p-6 font-medium text-body-md">API Access</td>
+<td class="p-6 text-on-surface-variant/40">—</td>
+<td class="p-6 bg-primary/5 text-on-surface-variant/40">—</td>
+<td class="p-6"><span class="material-symbols-outlined text-secondary">check</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant/30">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-4">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">ShipMind AI</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</div>
+</div>
+<div class="flex gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Security</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Status</a>
+</div>
+</div>
+</footer>
+<script>
+        let isAnnual = true;
+
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const knob = document.getElementById('toggle-knob');
+            const labelMonthly = document.getElementById('label-monthly');
+            const labelAnnual = document.getElementById('label-annual');
+            const prices = document.querySelectorAll('.billing-price');
+
+            if (isAnnual) {
+                knob.classList.add('translate-x-7');
+                labelAnnual.classList.add('font-semibold', 'text-on-surface');
+                labelAnnual.classList.remove('text-on-surface-variant');
+                labelMonthly.classList.remove('font-semibold', 'text-on-surface');
+                labelMonthly.classList.add('text-on-surface-variant');
+            } else {
+                knob.classList.remove('translate-x-7');
+                labelMonthly.classList.add('font-semibold', 'text-on-surface');
+                labelMonthly.classList.remove('text-on-surface-variant');
+                labelAnnual.classList.remove('font-semibold', 'text-on-surface');
+                labelAnnual.classList.add('text-on-surface-variant');
+            }
+
+            prices.forEach(price => {
+                const target = isAnnual ? price.getAttribute('data-annual') : price.getAttribute('data-monthly');
+                if (target) {
+                    animateValue(price, parseInt(price.innerText), parseInt(target), 400);
+                }
+            });
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize knob position
+        document.getElementById('toggle-knob').classList.add('translate-x-7');
+    </script>
+</body></html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Library | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#000000",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2f",
+                    "on-primary-fixed": "#141b2b",
+                    "on-surface": "#191c1d",
+                    "primary-container": "#141b2b",
+                    "primary-fixed": "#dce2f7",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary-fixed-variant": "#005321",
+                    "surface-tint": "#575e70",
+                    "surface-container": "#edeeef",
+                    "outline-variant": "#c6c6cd",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#002109",
+                    "on-surface-variant": "#45464c",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#c0c6db",
+                    "on-primary-container": "#7d8497",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-container": "#7d8492",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed": "#6bff8f",
+                    "on-background": "#191c1d",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-primary": "#c0c6db",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#dce2f3",
+                    "on-secondary-container": "#007432",
+                    "on-tertiary-fixed": "#151c27",
+                    "secondary-container": "#6bff8f",
+                    "inverse-surface": "#2e3132"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .glass { backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.8); }
+        .ambient-shadow { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-40 hidden md:flex">
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<button class="mt-4 mx-3 bg-primary text-white py-3 px-4 rounded-xl font-label-sm text-label-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+            New Shipment
+        </button>
+<nav class="mt-6 flex flex-col gap-1">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 pt-4 border-t border-outline-variant/20">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen pb-section-gap">
+<!-- Header / Top Bar -->
+<header class="sticky top-0 z-30 glass border-b border-outline-variant/30 px-margin-mobile md:px-margin-desktop py-6">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Document Library</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Automated classification and data extraction from 4,284 files.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative flex-grow md:w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface border border-outline-variant rounded-xl py-2.5 pl-10 pr-4 font-body-md text-body-md focus:ring-2 focus:ring-primary/5 focus:border-primary outline-none transition-all" placeholder="Search invoices, BOLs, receipts..." type="text"/>
+</div>
+<button class="bg-surface border border-outline-variant p-2.5 rounded-xl text-on-surface hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined">tune</span>
+</button>
+<button class="bg-primary text-white py-2.5 px-6 rounded-xl font-label-sm text-label-sm font-bold hover:opacity-90 transition-all active:scale-95 hidden lg:block">
+                        Upload Documents
+                    </button>
+</div>
+</div>
+</header>
+<!-- Stats Overview (Asymmetric Bento) -->
+<section class="px-margin-mobile md:px-margin-desktop mt-gutter max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-white border border-outline-variant p-8 rounded-[20px] ambient-shadow flex flex-col justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Global Confidence</span>
+<div class="mt-4 flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">98.2%</span>
+<span class="text-secondary text-label-sm font-bold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> 0.4%
+                        </span>
+</div>
+<div class="mt-6 w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[98.2%]"></div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-8 rounded-[20px] ambient-shadow flex flex-col justify-between">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">Awaiting Review</span>
+<div class="mt-4">
+<span class="font-headline-lg text-headline-lg text-primary">124</span>
+</div>
+<p class="mt-2 text-label-sm font-label-sm text-on-surface-variant">42 urgent flagged items</p>
+</div>
+<div class="md:col-span-2 bg-primary-container p-8 rounded-[20px] ambient-shadow relative overflow-hidden group">
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div class="flex justify-between items-start">
+<span class="text-label-sm font-label-sm text-on-primary-container uppercase tracking-widest">AI Extraction Engine</span>
+<div class="flex items-center gap-1.5 bg-secondary-container/20 px-3 py-1 rounded-full border border-secondary-fixed/30">
+<span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+<span class="text-[11px] font-bold text-secondary uppercase">Live Processing</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-white">Optimize your workflow with Predictive Serenity.</h3>
+<button class="mt-4 text-white font-label-sm text-label-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                                Launch Automation Studio <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Subtle background decoration -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-secondary/10 blur-[80px] rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- Document Library Content -->
+<section class="px-margin-mobile md:px-margin-desktop mt-10 max-w-container-max mx-auto">
+<!-- Filters & Bulk Actions -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<div class="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2 md:pb-0">
+<button class="bg-white border border-outline-variant px-4 py-2 rounded-full font-label-sm text-label-sm text-primary flex items-center gap-2 whitespace-nowrap">
+                        Status: All <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="bg-white border border-outline-variant px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2 whitespace-nowrap">
+                        Date: Last 30 days <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="bg-white border border-outline-variant px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2 whitespace-nowrap">
+                        Source: ERP Connect <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="bg-white border border-outline-variant px-4 py-2 rounded-full font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2 whitespace-nowrap">
+                        Confidence: High <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="w-px h-6 bg-outline-variant/30 mx-2"></div>
+<button class="text-on-surface-variant font-label-sm text-label-sm hover:text-primary transition-colors whitespace-nowrap">Clear all</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-label-sm font-label-sm text-on-surface-variant">0 items selected</span>
+<button class="bg-white border border-outline-variant px-4 py-2 rounded-xl font-label-sm text-label-sm text-on-surface-variant opacity-50 cursor-not-allowed">
+                        Bulk Actions
+                    </button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-white border border-outline-variant rounded-[20px] ambient-shadow overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="py-4 pl-8 pr-4 w-12">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</th>
+<th class="py-4 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Document</th>
+<th class="py-4 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Status</th>
+<th class="py-4 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Confidence</th>
+<th class="py-4 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Date Processed</th>
+<th class="py-4 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Source</th>
+<th class="py-4 pl-4 pr-8 text-right font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1: High Confidence -->
+<tr class="hover:bg-surface transition-colors group">
+<td class="py-5 pl-8 pr-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-12 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="A clean, minimalist thumbnail of a digital commercial invoice with abstract lines representing text and tables, styled in high-key white and soft grey tones." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1w2zh5scrji172hzo_zuKdFuzk3iyhV3IGUNjmXzBHjI0vFw84jsWxZLW6CDfOgZ6aOYhG2y5-gBDwNRp5lJs921-SjRsusFnowzFDKnFHXAZNXvLvYl9336PI2MwgS7abacggRn7EodZ9AbeP8MJz909x4VKwF5vSUtIsB6w16bgo02r8rzl_L_v7nkPw2cq20Zc4wbYwrb46QUq40_2u3dStvmneQwp1IxCO5C0K_SNTB02ndg')"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">INV-2024-0892.pdf</div>
+<div class="text-[12px] text-on-surface-variant">Commercial Invoice • 1.2 MB</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4">
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container/10 text-secondary text-[12px] font-bold">
+                                        Verified
+                                    </div>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm text-primary font-bold">99.8%</span>
+</div>
+</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Oct 14, 2024</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">SAP ERP</td>
+<td class="py-5 pl-4 pr-8 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Medium Confidence -->
+<tr class="hover:bg-surface transition-colors group">
+<td class="py-5 pl-8 pr-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-12 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="A macro-style thumbnail image of a printed bill of lading, featuring blurred text and a prominent blue seal. The aesthetic is professional and modern with clean studio lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAnLuSERUFf37cumorHA-7s3LZFLYr4hpxlsuOAiffS1VkckemXC5fj6i0GlrhPMBVAPZkuRhm1dJfFMnhimyA0WNJCJtR4bY3GGXflTrhPZ1tMy0iBSi-cDeOE41pOqW5hn_idDuqEGJ50FpOH2EqZZ7WfYrlCA_Nn1SO5XDm62m3iWXzIRnyF_dLGRKIsGWZO5rzhgQK7kbmaN9dzHk5w6Kapwg0fdTbykFyme1EMT10eFtYZBog')"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">BOL-HK-4410.pdf</div>
+<div class="text-[12px] text-on-surface-variant">Bill of Lading • 840 KB</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4">
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[12px] font-bold">
+                                        Review Required
+                                    </div>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+<span class="font-label-sm text-label-sm text-primary font-bold">76.4%</span>
+</div>
+</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Oct 14, 2024</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Mail Drop</td>
+<td class="py-5 pl-4 pr-8 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Low Confidence -->
+<tr class="hover:bg-surface transition-colors group">
+<td class="py-5 pl-8 pr-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-12 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="A minimalist digital capture of a cargo manifest document, with a clean layout and sharp typography. Soft shadows and a cool-toned lighting suggest a high-end corporate environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB15wMWju9gV73JXLNDE6RbAkkqIG19hgMNdglatbSk3dbxWIPjk9wa80TAa-2loExglzuyba51loNdNXY-gqyfSQGx3lxFfc4sclpiPD-LBD-E-wIK2JPK-i_J8ONhmgFLiXtMCA7tUXO-akjbLdhxZ5Qs93bBx_0JGxi2kcE-UWy2NJ9bbaK46XHPra4mENVRHetz2_4KwG4JadgtSShPA4h2ZIoSAgd9wbQ9QqovhIch46M_bbI')"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">MANIFEST_LAX_12.jpg</div>
+<div class="text-[12px] text-on-surface-variant">Cargo Manifest • 2.4 MB</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4">
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 text-[12px] font-bold">
+                                        Flagged
+                                    </div>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-red-600"></div>
+<span class="font-label-sm text-label-sm text-primary font-bold">42.1%</span>
+</div>
+</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Oct 13, 2024</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Mobile Scan</td>
+<td class="py-5 pl-4 pr-8 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Processing -->
+<tr class="hover:bg-surface transition-colors group">
+<td class="py-5 pl-8 pr-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-12 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+<div class="absolute inset-0 bg-primary/5 animate-pulse"></div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-30">pending</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">RECEIPT_SHG_01.pdf</div>
+<div class="text-[12px] text-on-surface-variant">Terminal Receipt • 45 KB</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4">
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[12px] font-bold italic">
+                                        Processing...
+                                    </div>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary/20 animate-progress w-[65%]"></div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Just now</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">API Upload</td>
+<td class="py-5 pl-4 pr-8 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Additional Rows -->
+<tr class="hover:bg-surface transition-colors group">
+<td class="py-5 pl-8 pr-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-12 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover bg-center" data-alt="A clean, flat-lay document photography of a packing list with checkmarks and grid patterns. High-contrast lighting focuses on the paper's texture and modern typeface, adhering to a minimalist design aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHNbhskPg4XDI6NWD1RtANnJ3zjCHsjNA5KdkRZOsIYcSIO8y6LGbmrizO4nYZCjOE8IhlmfUqxSRctpUs0v1jzysZ6PMIq4HMtHPcyLn3Kr9FPRC8MlkH-gH7DbwGC86lRcNsA0ZhRISeH7w4kPtPwJ6C3R9hsL9dLVY8VyRIQzp4tLsioAEeX3tw8zbEnz1zkloyYCfmEDUxTqY_cy2V8Pn42Dd_N-3UBa3HQFY7Z2c-N0wWluA')"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md text-primary font-semibold">PL_6772_EU.pdf</div>
+<div class="text-[12px] text-on-surface-variant">Packing List • 2.1 MB</div>
+</div>
+</div>
+</td>
+<td class="py-5 px-4">
+<div class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-secondary-container/10 text-secondary text-[12px] font-bold">
+                                        Verified
+                                    </div>
+</td>
+<td class="py-5 px-4">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm text-primary font-bold">94.2%</span>
+</div>
+</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">Oct 12, 2024</td>
+<td class="py-5 px-4 font-body-md text-body-md text-on-surface-variant">SAP ERP</td>
+<td class="py-5 pl-4 pr-8 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-8 py-6 flex items-center justify-between border-t border-outline-variant/30">
+<div class="text-label-sm font-label-sm text-on-surface-variant">
+                        Showing <span class="font-bold text-primary">1-5</span> of 4,284 documents
+                    </div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-label-sm text-label-sm font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-label-sm font-bold">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-label-sm font-bold">3</button>
+<span class="text-on-surface-variant px-1">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-label-sm font-bold">857</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-section-gap">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div>
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight">ShipMind AI</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex flex-wrap gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Security</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all" href="#">Status</a>
+</div>
+</div>
+</footer>
+<!-- Mobile Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 flex justify-between items-center md:hidden z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-[10px] font-bold">Fleet</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="text-[10px] font-bold">Docs</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[10px] font-bold">Stats</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-bold">You</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                    // Action for selecting or opening document detail
+                    console.log('Open Document Details');
+                }
+            });
+        });
+
+        // Toggle animations or UI state logic could go here
+    </script>
+</body></html>

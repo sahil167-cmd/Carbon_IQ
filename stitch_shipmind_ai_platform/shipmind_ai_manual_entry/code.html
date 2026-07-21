@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manual Shipment Entry | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#000000",
+                        "on-error": "#ffffff",
+                        "secondary": "#006e2f",
+                        "on-primary-fixed": "#141b2b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#141b2b",
+                        "primary-fixed": "#dce2f7",
+                        "outline": "#76777d",
+                        "secondary-fixed-dim": "#4ae176",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#c0c7d6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-container": "#151c27",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#005321",
+                        "surface-tint": "#575e70",
+                        "surface-container": "#edeeef",
+                        "outline-variant": "#c6c6cd",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#002109",
+                        "on-surface-variant": "#45464c",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c0c6db",
+                        "on-primary-container": "#7d8497",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary-container": "#7d8492",
+                        "on-tertiary-fixed-variant": "#404754",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f8f9fa",
+                        "secondary-fixed": "#6bff8f",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "inverse-primary": "#c0c6db",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "primary": "#000000",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#404758",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#dce2f3",
+                        "on-secondary-container": "#007432",
+                        "on-tertiary-fixed": "#151c27",
+                        "secondary-container": "#6bff8f",
+                        "inverse-surface": "#2e3132"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "margin-mobile": "20px",
+                        "element-gap": "16px",
+                        "section-gap": "120px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .form-focus-glow:focus-within {
+            box-shadow: 0 0 0 2px rgba(0, 110, 47, 0.15);
+            border-color: #006e2f;
+        }
+        .ambient-shadow {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #006e2f !important;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e1e3e4; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar Anchor -->
+<nav class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-50">
+<div class="flex items-center gap-3 px-3 mb-4">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">satellite</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-1 pt-4 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<div class="flex items-center gap-3 p-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a logistics manager in a bright, modern office setting. The lighting is soft and natural, with a palette of whites and cool grays. The individual has a focused yet friendly expression, reflecting the predictive serenity of the ShipMind AI brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWHOpbDQCETTzGn9RElbeg2rEWMZq23MogMuwK1BP7_H1M9PnrVmhbEf2SmL90ylwECpqi2AO3sXgtkZqK_xayCetFUHG4pNeGRPqe619iWhvj2N9dQ3tumItSbXeJKjcdIDB3sTNpiH2RU295lLQAEA7LC0PrDZQ82urIgRImxqMec4SO0S8O2FvO4eEfjV5Eqj2ino5kTWK-70Pr8td2oug4UUlpNKdodJ3pK7TiyWlbRatJTtc"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">Alex Chen</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Account</span>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen pb-24">
+<!-- Top Header Anchor -->
+<header class="sticky top-0 z-40 glass-panel border-b border-outline-variant/30 px-margin-desktop py-6">
+<div class="max-w-container-max mx-auto flex justify-between items-center">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Shipments</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="text-primary font-label-sm text-label-sm font-semibold">Manual Entry</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary">New Shipment</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Auto-saving...</span>
+</div>
+<button class="px-6 py-2.5 bg-surface-container-lowest border border-outline-variant text-on-surface font-label-sm text-label-sm rounded-[12px] hover:bg-surface-container-high transition-all">
+                        Cancel
+                    </button>
+<button class="px-8 py-2.5 bg-tertiary text-white font-label-sm text-label-sm rounded-[12px] hover:opacity-90 transition-all active:scale-95 shadow-sm">
+                        Create Shipment
+                    </button>
+</div>
+</div>
+</header>
+<!-- Form Grid Container -->
+<div class="max-w-container-max mx-auto px-margin-desktop mt-element-gap">
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Section 1: Route Detail (Origin & Destination) -->
+<section class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<div class="bg-surface-container-lowest rounded-[20px] p-8 border border-outline-variant/30 ambient-shadow">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">route</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Route Details</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Define the shipping corridor and schedule.</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<!-- Origin -->
+<div class="space-y-4">
+<label class="font-label-sm text-label-sm text-on-surface-variant block ml-1 uppercase tracking-wider">Origin</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">location_on</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow transition-all" placeholder="Search City, Port, or Warehouse" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">calendar_today</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow transition-all" placeholder="Pickup Date" type="text"/>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">schedule</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow transition-all" placeholder="Time Window" type="text"/>
+</div>
+</div>
+</div>
+<!-- Destination -->
+<div class="space-y-4">
+<label class="font-label-sm text-label-sm text-on-surface-variant block ml-1 uppercase tracking-wider">Destination</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">flag</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow transition-all" placeholder="Search Recipient Address" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">event_available</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow transition-all" placeholder="Delivery Date" type="text"/>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-secondary transition-colors">bolt</span>
+<select class="w-full pl-12 pr-4 py-4 bg-surface border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow appearance-none transition-all">
+<option>Standard Priority</option>
+<option>High Priority</option>
+<option>Expedited AI-Route</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Cargo Details -->
+<div class="bg-surface-container-lowest rounded-[20px] p-8 border border-outline-variant/30 ambient-shadow">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary-container/20 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Cargo Specifications</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Describe the physical goods and packaging.</p>
+</div>
+</div>
+<button class="flex items-center gap-2 text-secondary font-label-sm text-label-sm font-semibold hover:bg-secondary-container/10 px-3 py-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                                Add Item
+                            </button>
+</div>
+<div class="space-y-4">
+<!-- Item Row 1 -->
+<div class="grid grid-cols-12 gap-4 items-end bg-surface p-4 rounded-xl border border-outline-variant/20">
+<div class="col-span-4 space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Item Description</label>
+<input class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow" type="text" value="Precision Components x48"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Weight (kg)</label>
+<input class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow" type="number" value="1240"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Type</label>
+<select class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/50 rounded-[12px] font-body-md text-body-md form-focus-glow appearance-none">
+<option>Pallet</option>
+<option>Crate</option>
+<option>Loose</option>
+</select>
+</div>
+<div class="col-span-3 space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Hazmat Status</label>
+<div class="flex items-center h-[50px] px-4 gap-3">
+<input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary/20" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant">Hazardous Material</span>
+</div>
+</div>
+<div class="col-span-1 flex justify-center pb-3">
+<button class="text-outline hover:text-error transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Content: Carrier & Summary -->
+<aside class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Carrier Selection -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 ambient-shadow">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Carrier Selection</h3>
+<div class="space-y-4">
+<!-- Smart Suggestion Card -->
+<div class="p-4 rounded-xl border-2 border-secondary bg-secondary-container/5 relative overflow-hidden group cursor-pointer transition-all">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-white border border-outline-variant/30 flex items-center justify-center p-1">
+<img class="w-full h-full object-contain" data-alt="A minimalist tech-focused logo for a premium logistics carrier named SwiftLink. The logo features clean, sharp geometric lines in charcoal and emerald green, embodying speed and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOovR61fJjQFe2Jni0PsVWa7L2sOzb5UEXFAw-eaIzRYQ8BVOxqjkNQwAYDifgWjnonkd8wQu_gL_w8Dnu2TWOzy0dPWxTQrLgF48T1ZqyN4ay6yCJrPaqLZItuPA7rQ3g3Ds_zxnpU9FPWYDTlUVhutm7iorpwIrttf67vuqV9IpYMPj-Nu96kdFfWoYWI3tIBd1fCxIcgMYOlY4eE8aoLbFRXG2rQB7gPtaPLYswsq4NIia_nGo"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-primary">SwiftLink Logistics</p>
+<p class="font-label-sm text-label-sm text-secondary">AI Recommended</p>
+</div>
+</div>
+<span class="font-headline-md text-headline-md text-primary">$4,280</span>
+</div>
+<div class="flex items-center gap-4 mt-4">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">verified</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">99% Health</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">history</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 Day Transit</span>
+</div>
+</div>
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Alternative 1 -->
+<div class="p-4 rounded-xl border border-outline-variant/30 bg-surface hover:border-secondary/40 transition-all cursor-pointer">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-white border border-outline-variant/30 flex items-center justify-center p-1">
+<img class="w-full h-full object-contain" data-alt="A modern corporate logo for 'Atlas Global', a heavy-duty freight carrier. The design uses strong, bold typography in deep navy blue and steel gray, reflecting durability and global reach." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUoMUQSXPM_JqsVKi1_hdSbcJ540nxjSTE2pv-TWdF-_-7dvdyIiOSrzDzF37pnpL-izDS0XbnGFeLU2mKiDhIQvl5Su_kd7eSBZeP2XALqm24sKeykwb7ic_uLAJ0t7_YDO8W8zrE1j9Ll0UE5ARWlFFpQGp7aU7QLNRWpSr05wifWSOa8ublYiYfaQQPey8XtEhQIHSDWfR4CUkXB8IvTtpeaG1vAuQI7AWX2pICk4B7-XoD2Yg"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-primary">Atlas Global</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Lowest Price</p>
+</div>
+</div>
+<span class="font-headline-md text-headline-md text-primary">$3,950</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-3 border border-outline-variant text-on-surface font-label-sm text-label-sm rounded-[12px] hover:bg-surface-container-high transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">search</span>
+                            Browse All Carriers
+                        </button>
+</div>
+<!-- Summary & AI Insights -->
+<div class="bg-primary text-white rounded-[20px] p-6 ambient-shadow relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="font-label-sm text-label-sm uppercase tracking-[0.2em] opacity-60 mb-6">AI Health Check</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-white/10 pb-4">
+<span class="font-body-md text-body-md opacity-80">Route Reliability</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 bg-secondary text-white rounded-md">Excellent</span>
+</div>
+<div class="flex items-center justify-between border-b border-white/10 pb-4">
+<span class="font-body-md text-body-md opacity-80">CO2 Estimate</span>
+<span class="font-body-md text-body-md">1.2 Tons</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md opacity-80">Compliance Status</span>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+</div>
+<div class="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
+<p class="font-label-sm text-label-sm italic text-secondary-fixed">"Current route is optimal. AI predicts a 12% lower probability of port delays via SwiftLink."</p>
+</div>
+</div>
+<!-- Abstract Background Decoration -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-secondary/10 rounded-full blur-3xl"></div>
+</div>
+</aside>
+</div>
+</div>
+<!-- Sticky Mobile Bottom Bar Logic (Simulated) -->
+<div class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 flex justify-between items-center z-50">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Estimated Cost</span>
+<span class="font-headline-md text-headline-md text-primary">$4,280</span>
+</div>
+<button class="px-8 py-3 bg-tertiary text-white font-label-sm text-label-sm rounded-[12px]">
+                Confirm
+            </button>
+</div>
+<!-- Footer Anchor -->
+<footer class="w-full mt-section-gap border-t border-outline-variant/30 bg-surface-container-lowest">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-2">
+<p class="font-headline-md text-headline-md font-bold text-primary">ShipMind AI</p>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Security</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Status</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simulate auto-save behavior
+        const inputs = document.querySelectorAll('input, select');
+        const autoSaveIndicator = document.querySelector('.animate-pulse');
+        const autoSaveText = autoSaveIndicator.nextElementSibling;
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                autoSaveText.textContent = 'Saving changes...';
+                autoSaveIndicator.classList.add('bg-secondary');
+                autoSaveIndicator.classList.remove('bg-outline');
+                
+                clearTimeout(window.saveTimer);
+                window.saveTimer = setTimeout(() => {
+                    autoSaveText.textContent = 'All changes saved';
+                    autoSaveIndicator.classList.remove('animate-pulse');
+                }, 1500);
+            });
+        });
+
+        // Simple validation feedback logic
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if(this.value.trim() === '') {
+                    this.classList.add('border-error/50');
+                } else {
+                    this.classList.remove('border-error/50');
+                    this.classList.add('border-secondary/30');
+                }
+            });
+        });
+    </script>
+</body></html>

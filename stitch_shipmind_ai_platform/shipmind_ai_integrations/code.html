@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Integrations Marketplace | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#000000",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2f",
+                    "on-primary-fixed": "#141b2b",
+                    "on-surface": "#191c1d",
+                    "primary-container": "#141b2b",
+                    "primary-fixed": "#dce2f7",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary-fixed-variant": "#005321",
+                    "surface-tint": "#575e70",
+                    "surface-container": "#edeeef",
+                    "outline-variant": "#c6c6cd",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#002109",
+                    "on-surface-variant": "#45464c",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#c0c6db",
+                    "on-primary-container": "#7d8497",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-container": "#7d8492",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed": "#6bff8f",
+                    "on-background": "#191c1d",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-primary": "#c0c6db",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#dce2f3",
+                    "on-secondary-container": "#007432",
+                    "on-tertiary-fixed": "#151c27",
+                    "secondary-container": "#6bff8f",
+                    "inverse-surface": "#2e3132"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #191c1d;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .status-pill-active {
+            background-color: #ecfdf5;
+            color: #065f46;
+        }
+        .status-pill-inactive {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container-low/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-on-primary-fixed">
+                ShipMind AI
+            </div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all duration-200" href="#">Platform</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all duration-200" href="#">Solutions</a>
+<a class="text-secondary dark:text-secondary-fixed font-semibold font-body-md text-body-md transition-all duration-200" href="#">Network</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all duration-200" href="#">Company</a>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 rounded-xl text-on-surface-variant font-label-sm text-label-sm hover:opacity-80 transition-all duration-200">Login</button>
+<button class="px-6 py-2 bg-primary text-white rounded-xl font-label-sm text-label-sm hover:opacity-80 transition-all duration-150 active:scale-95">Get Started</button>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest dark:bg-surface-container-low border-r border-outline-variant/20 flex flex-col h-full py-gutter px-4 gap-element-gap mt-16">
+<div class="mb-4 px-3">
+<div class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed">ShipMind AI</div>
+<div class="text-on-surface-variant text-label-sm font-label-sm opacity-60">Enterprise Logistics</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span> Shipments
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span> Fleet
+            </a>
+<a class="flex items-center gap-3 bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span> Intelligence
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span> Documents
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> Settings
+            </a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/10 pt-4 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span> Support
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high rounded-lg transition-colors font-label-sm text-label-sm" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span> Account
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-20 p-margin-desktop min-h-screen">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-2">Integrations Marketplace</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Connect your existing ERP and supply chain systems to ShipMind AI for automated synchronization and real-time logistics intelligence.</p>
+</header>
+<!-- API & Webhooks Section (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-section-gap">
+<!-- API Key Management -->
+<div class="md:col-span-2 glass-card rounded-[20px] p-8">
+<div class="flex justify-between items-center mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="key">key</span>
+<h2 class="font-headline-md text-headline-md">API Management</h2>
+</div>
+<button class="text-secondary font-label-sm text-label-sm font-semibold hover:underline">+ Generate New Key</button>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface-container rounded-xl flex items-center justify-between group">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Production Key</p>
+<code class="font-mono text-sm tracking-wider">shpmnd_live_••••••••••••••••••••3a9c</code>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-lg transition-colors"><span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span></button>
+<button class="p-2 hover:bg-white rounded-lg transition-colors text-error"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded-xl flex items-center justify-between group">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Staging Environment</p>
+<code class="font-mono text-sm tracking-wider">shpmnd_test_••••••••••••••••••••92f1</code>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-white rounded-lg transition-colors"><span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span></button>
+<button class="p-2 hover:bg-white rounded-lg transition-colors text-error"><span class="material-symbols-outlined text-sm" data-icon="delete">delete</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Webhook Status -->
+<div class="glass-card rounded-[20px] p-8 flex flex-col">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" data-icon="webhook">webhook</span>
+<h2 class="font-headline-md text-headline-md">Webhooks</h2>
+</div>
+<div class="flex-1 space-y-6">
+<div class="flex items-center justify-between">
+<span class="text-body-md font-body-md">Shipment Updates</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-pill-active">Active</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-body-md">Exception Alerts</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-pill-active">Active</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-body-md">Billing Events</span>
+<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-pill-inactive">Disabled</span>
+</div>
+</div>
+<button class="mt-8 w-full py-3 bg-tertiary text-white rounded-xl font-label-sm text-label-sm hover:opacity-90 transition-all">Configure Endpoints</button>
+</div>
+</section>
+<!-- Integrations Grid -->
+<section>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg tracking-tight mb-2">ERP Connectors</h2>
+<p class="text-on-surface-variant font-body-md">Seamlessly link your core enterprise resource planning systems.</p>
+</div>
+<div class="flex gap-2 bg-surface-container p-1 rounded-xl">
+<button class="px-4 py-2 bg-white rounded-lg shadow-sm font-label-sm text-label-sm">Grid</button>
+<button class="px-4 py-2 hover:bg-white/50 rounded-lg transition-colors font-label-sm text-label-sm">List</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- SAP Card -->
+<div class="glass-card rounded-[20px] p-6 flex flex-col h-full hover:border-primary transition-all duration-300">
+<div class="h-16 w-16 mb-6 rounded-xl bg-surface-container-high flex items-center justify-center">
+<img class="w-10 h-10 object-contain" data-alt="A clean, minimalist vector-style logo for SAP, presented in a crisp blue and white color scheme, perfectly centered in a professional tech environment with soft directional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmeDzM7o8az_QHI4np8LASO7VGoqB3FZXajlz2s4Uc3ha5Rsim-mqyXX8YzDjTRNYtUot7Y_ROJkwbPLJK9LmSdt79ze0bqHbyKF3NevzaCLlnhT0z6v2IpET3AN1m9ph3NH6i2muq3UsynuLCazcQAwtxUb_05ih-ti_VlWHg_370jq2SBKRrv4RQ6PRMe4isDUWz4JqcZDI1OOiJopH2jlkmCnNVAUd7BupbCog9N1zbuagEycs"/>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">SAP S/4HANA</h3>
+<p class="text-on-surface-variant text-body-md font-body-md mb-8 flex-1">Integrate inventory, procurement, and warehouse management data directly.</p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Connected</span>
+</div>
+<button class="px-4 py-2 bg-surface-container-high rounded-xl font-label-sm text-label-sm hover:bg-primary hover:text-white transition-all">Configure</button>
+</div>
+</div>
+<!-- Oracle Card -->
+<div class="glass-card rounded-[20px] p-6 flex flex-col h-full hover:border-primary transition-all duration-300">
+<div class="h-16 w-16 mb-6 rounded-xl bg-surface-container-high flex items-center justify-center">
+<img class="w-10 h-10 object-contain" data-alt="A sophisticated minimalist logo for Oracle, featuring their signature corporate red styling in a modern, clean digital format. The setting is a bright, high-end office environment with professional studio lighting and a clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJrWefF-GEDqpvSUnkM9UFFBD2oHMSpSF3dl84W-XjCwWX0jGJnCGTWUcj1xgvwSWz0DuX_OS3EQI36fBVUsB7IHCAg6hHjP9UuF1o6RGrJRwq4ll-NmoasfCn33SlBqLVP0OCvrVrslJsjF7-A4fHa4WJwnF-6JJNV0rTk6L2QTtfsv9cHsWOVF40buaC0W2v2FJ7MBDBMrWEYiA9S8ZPv6ZoCqysXAtBvxnGUJwMEFjQhAvM0_w"/>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Oracle Cloud</h3>
+<p class="text-on-surface-variant text-body-md font-body-md mb-8 flex-1">Synchronize global supply chain operations and financial reporting metrics.</p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Not Linked</span>
+</div>
+<button class="px-4 py-2 bg-primary text-white rounded-xl font-label-sm text-label-sm hover:opacity-90 transition-all">Connect</button>
+</div>
+</div>
+<!-- Odoo Card -->
+<div class="glass-card rounded-[20px] p-6 flex flex-col h-full hover:border-primary transition-all duration-300">
+<div class="h-16 w-16 mb-6 rounded-xl bg-surface-container-high flex items-center justify-center">
+<img class="w-10 h-10 object-contain" data-alt="The Odoo logo in its vibrant purple corporate brand color, presented as a clean vector graphic on a white background. The visual style is modern, minimalist, and enterprise-ready, with soft ambient shadows and high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEXKJCH4XzFzePrJdxo14-EqHJ7Rurf_U8XfcUbnbSjfQP5V_8AbaT0Cicz2SeW0TmJgr9nrB-v9uJ9Fx0Ha9n2NHRfXu6ypms3r8foFFh2Aga-lG0dmJHnsfyAKL6v621Kh3636aVy4qWK1cQL4_ue5sKD-UHyGEsZIFPhxiisfhwC3wnYGY5wHY-CbOFPLK711qdGmVB98oCarNdFlp6KBcSCa9OZvKg06vLAdInMgnF8LEfvmQ"/>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Odoo ERP</h3>
+<p class="text-on-surface-variant text-body-md font-body-md mb-8 flex-1">Open-source ERP connectivity for medium enterprise logistics and sales.</p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Connected</span>
+</div>
+<button class="px-4 py-2 bg-surface-container-high rounded-xl font-label-sm text-label-sm hover:bg-primary hover:text-white transition-all">Configure</button>
+</div>
+</div>
+<!-- NetSuite Card -->
+<div class="glass-card rounded-[20px] p-6 flex flex-col h-full hover:border-primary transition-all duration-300">
+<div class="h-16 w-16 mb-6 rounded-xl bg-surface-container-high flex items-center justify-center">
+<img class="w-10 h-10 object-contain" data-alt="Oracle NetSuite logo rendered in a minimalist, professional design. The blue and grey tones are crisp and clean against a white background, embodying an 'A-round startup' aesthetic with bright, even lighting and corporate precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAg5XP2MNyB0h4BYBxs9EqwJ55rnWfyeymr5u-IFl9k0yoHG-T2-GnuB3T6ixEbQEMGyAeRck88ow2nKmHwoAVk1sttECzCpM0jfqurqwC9g3sm9doL_DgyYFPvPWOtj3w2EK5Mww7tHk3qOG5ahaWyKlw_oxW4jtuPpv_2CDBf-Bnv3fV5ZfUNFJn-Es4UACIY9v4ZDd7tsk6ZNNT3wYo9VtMhS2GP0Tn3Q4Wf72kHJHrxTUTPv5I"/>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">NetSuite</h3>
+<p class="text-on-surface-variant text-body-md font-body-md mb-8 flex-1">Real-time inventory visibility and automated fulfillment workflows.</p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Pending</span>
+</div>
+<button class="px-4 py-2 bg-primary text-white rounded-xl font-label-sm text-label-sm hover:opacity-90 transition-all">Setup</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Empty State / Support Section -->
+<section class="mt-section-gap mb-section-gap p-12 glass-card rounded-[32px] text-center border-dashed border-2 border-outline-variant/40">
+<div class="max-w-xl mx-auto">
+<span class="material-symbols-outlined text-5xl text-outline mb-4" data-icon="extension">extension</span>
+<h3 class="font-headline-md text-headline-md mb-4">Need a Custom Integration?</h3>
+<p class="text-on-surface-variant font-body-md mb-8">Our solutions team can build bespoke connectors for proprietary systems or legacy mainframes.</p>
+<button class="px-8 py-3 bg-secondary text-white rounded-xl font-label-sm text-label-sm hover:opacity-90 transition-all">Request Custom Connector</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant/30 mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-2">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">ShipMind AI</div>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-70">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all font-body-md text-body-md" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all font-body-md text-body-md" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all font-body-md text-body-md" href="#">Security</a>
+<a class="text-on-surface-variant hover:text-primary hover:underline decoration-secondary transition-all font-body-md text-body-md" href="#">Status</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions and effects
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'all 0.3s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Copy to clipboard mock
+        document.querySelectorAll('[data-icon="content_copy"]').forEach(btn => {
+            btn.parentElement.addEventListener('click', () => {
+                const originalIcon = btn.innerText;
+                btn.innerText = 'check';
+                btn.classList.add('text-secondary');
+                setTimeout(() => {
+                    btn.innerText = originalIcon;
+                    btn.classList.remove('text-secondary');
+                }, 2000);
+            });
+        });
+    </script>
+</body></html>

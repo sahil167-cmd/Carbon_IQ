@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Upload Center | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#141b2b",
+                    "on-secondary-container": "#007432",
+                    "surface": "#f8f9fa",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-tint": "#575e70",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#6bff8f",
+                    "primary-fixed-dim": "#c0c6db",
+                    "secondary-container": "#6bff8f",
+                    "on-surface-variant": "#45464c",
+                    "error-container": "#ffdad6",
+                    "on-background": "#191c1d",
+                    "outline-variant": "#c6c6cd",
+                    "on-primary-container": "#7d8497",
+                    "inverse-primary": "#c0c6db",
+                    "surface-container": "#edeeef",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "inverse-surface": "#2e3132",
+                    "secondary": "#006e2f",
+                    "on-surface": "#191c1d",
+                    "on-primary-fixed-variant": "#404758",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#4ae176",
+                    "on-tertiary-fixed": "#151c27",
+                    "surface-dim": "#d9dadb",
+                    "outline": "#76777d",
+                    "on-secondary-fixed": "#002109",
+                    "tertiary-container": "#151c27",
+                    "tertiary": "#000000",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "surface-variant": "#e1e3e4",
+                    "on-tertiary-container": "#7d8492",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "primary-fixed": "#dce2f7",
+                    "on-primary-fixed": "#141b2b",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#dce2f3",
+                    "surface-container-low": "#f3f4f5",
+                    "background": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-secondary-fixed-variant": "#005321"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "section-gap": "120px",
+                    "element-gap": "16px",
+                    "margin-mobile": "20px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .emerald-glow {
+            box-shadow: 0 0 40px rgba(74, 225, 118, 0.15);
+        }
+        .drag-zone:hover {
+            border-color: #006e2f;
+            background: rgba(107, 255, 143, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-x-hidden antialiased">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap hidden md:flex">
+<div class="mb-8 px-3">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-60">Enterprise Logistics</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10 space-y-1">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-label-sm text-label-sm mb-4 hover:opacity-90 transition-opacity active:scale-95 transition-transform">
+                New Shipment
+            </button>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen px-margin-mobile md:px-margin-desktop py-12">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-section-gap flex flex-col md:flex-row md:items-end justify-between gap-gutter">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Upload Center</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                        Seamlessly process bills of lading, customs declarations, and freight invoices using our predictive extraction engine.
+                    </p>
+</div>
+<div class="flex items-center gap-element-gap">
+<div class="text-right hidden md:block">
+<span class="block text-label-sm font-bold text-on-surface">Auto-Processing</span>
+<span class="text-label-sm text-secondary font-semibold">Active Engine • V4.2</span>
+</div>
+<div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center emerald-glow">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+</div>
+</div>
+</header>
+<!-- Main Interactive Zone: Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Upload & Pending (Column 1-8) -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Drag & Drop Zone -->
+<section class="glass-panel rounded-[20px] p-12 border-dashed border-2 border-outline-variant/50 drag-zone transition-all duration-300 flex flex-col items-center justify-center text-center emerald-glow group">
+<div class="w-20 h-20 bg-secondary-container/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[40px] text-secondary">cloud_upload</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Drop documents here</h3>
+<p class="text-on-surface-variant font-body-md max-w-xs mx-auto mb-8">
+                            Select multiple PDF or XLSX files to initiate predictive field extraction.
+                        </p>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-xl font-label-sm text-label-sm hover:translate-y-[-2px] transition-transform shadow-sm">
+                            Browse Files
+                        </button>
+<div class="mt-8 flex gap-6 opacity-40">
+<span class="text-label-sm font-label-sm">PDF</span>
+<span class="text-label-sm font-label-sm">XLSX</span>
+<span class="text-label-sm font-label-sm">JPEG</span>
+<span class="text-label-sm font-label-sm">CSV</span>
+</div>
+</section>
+<!-- Pending Extractions List -->
+<section class="bg-surface-container-lowest rounded-[20px] p-gutter border border-outline-variant/20">
+<div class="flex items-center justify-between mb-8">
+<h4 class="font-headline-md text-headline-md text-primary">Pending Extractions</h4>
+<span class="text-label-sm font-label-sm bg-surface-container px-3 py-1 rounded-full text-on-surface-variant">3 Items remaining</span>
+</div>
+<div class="space-y-6">
+<!-- Doc 1 -->
+<div class="flex flex-col gap-3 group">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface font-semibold">Inbound_Fret_Invoice_0492.pdf</p>
+<p class="text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Invoicing • 1.2 MB</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">82% Processed</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full transition-all duration-1000 ease-out" style="width: 82%"></div>
+</div>
+</div>
+<!-- Doc 2 -->
+<div class="flex flex-col gap-3 group">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface font-semibold">Customs_Declaration_AS_991.pdf</p>
+<p class="text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Compliance • 4.8 MB</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">45% Processed</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full transition-all duration-1000 ease-out" style="width: 45%"></div>
+</div>
+</div>
+<!-- Doc 3 -->
+<div class="flex flex-col gap-3 group">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface font-semibold">Bill_of_Lading_MSC_JULY.pdf</p>
+<p class="text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Maritime • 2.1 MB</p>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant opacity-60">Waiting...</span>
+</div>
+<div class="w-full bg-surface-container-high h-1 rounded-full overflow-hidden">
+<div class="bg-outline-variant h-full" style="width: 5%"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right: Integration Status (Column 9-12) -->
+<div class="lg:col-span-4 space-y-gutter">
+<section class="bg-surface-container-lowest rounded-[20px] p-gutter border border-outline-variant/20">
+<div class="flex items-center gap-2 mb-8">
+<span class="material-symbols-outlined text-primary">hub</span>
+<h4 class="font-headline-md text-headline-md text-primary">Integration Status</h4>
+</div>
+<div class="space-y-4">
+<!-- SAP -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="text-[10px] text-on-primary font-bold">SAP</span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold">SAP S/4HANA</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim shadow-[0_0_8px_#4ae176]"></span>
+<span class="text-[11px] text-on-secondary-container font-bold uppercase">Connected</span>
+</div>
+</div>
+<!-- Oracle -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#F80000] flex items-center justify-center">
+<span class="text-[10px] text-white font-bold">ORA</span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold">Oracle Cloud</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim shadow-[0_0_8px_#4ae176]"></span>
+<span class="text-[11px] text-on-secondary-container font-bold uppercase">Connected</span>
+</div>
+</div>
+<!-- NetSuite -->
+<div class="flex items-center justify-between p-4 bg-surface rounded-xl border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-[#002159] flex items-center justify-center">
+<span class="text-[10px] text-white font-bold">NET</span>
+</div>
+<span class="font-label-sm text-label-sm font-semibold">NetSuite ERP</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed-dim shadow-[0_0_8px_#4ae176]"></span>
+<span class="text-[11px] text-on-secondary-container font-bold uppercase">Connected</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<button class="w-full text-center text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors py-2 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                                Add Integration
+                            </button>
+</div>
+</section>
+<!-- Confidence Metric Card -->
+<section class="glass-panel rounded-[20px] p-gutter emerald-glow">
+<div class="text-center">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest font-bold mb-2">Extraction Confidence</p>
+<h5 class="text-[48px] font-bold text-primary leading-tight">99.4%</h5>
+<div class="flex items-center justify-center gap-1 text-secondary font-bold text-label-sm mb-6">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                                +0.2% this week
+                            </div>
+<div class="w-full h-40 bg-cover bg-center rounded-xl mb-4" data-alt="A clean, minimalist 3D render of a geometric abstract shape with smooth curves, symbolizing high accuracy and data flow. The style is white-on-white with subtle green lighting accents, captured in high resolution with a soft-focus background to emphasize technical precision and modern SaaS aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCbPgX_4LnrkGAuof95SbsV0U-bEZ1_9cjlk5z5AGSF0mIWKgIrmAZOXxbBUpSJ5RJERVtIOiZ_EYfOnMxDCTJsui3S-3RS-dGbR6fV4UCSzN0iETCgkukZItOAEaai0nooVoJq_bldAiBcZPXJx7l40NvymAaBa-i8solK3DZgC5pjsh_T9l5s5RfYrPgnnqDTJgL4b2r9FYvecNJqk5O23W_2L63z6CF-a1bGrmA_w7BDAcjZJ-w')"></div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="md:ml-64 bg-surface-container-lowest border-t border-outline-variant/30 w-full mt-section-gap">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-2">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">ShipMind AI</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Security</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Status</a>
+</div>
+</div>
+</footer>
+<!-- Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dragZone = document.querySelector('.drag-zone');
+            
+            dragZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dragZone.classList.add('scale-[1.01]', 'bg-secondary-container/10');
+            });
+
+            dragZone.addEventListener('dragleave', () => {
+                dragZone.classList.remove('scale-[1.01]', 'bg-secondary-container/10');
+            });
+
+            dragZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dragZone.classList.remove('scale-[1.01]', 'bg-secondary-container/10');
+                alert('Files received. Initiating ShipMind AI extraction engine...');
+            });
+        });
+    </script>
+</body></html>

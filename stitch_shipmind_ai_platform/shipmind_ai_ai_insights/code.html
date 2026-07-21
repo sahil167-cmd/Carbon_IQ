@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Insights | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+        .intelligence-badge {
+            transition: all 0.2s ease-in-out;
+        }
+        .intelligence-badge:hover {
+            transform: translateY(-1px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#000000",
+                      "on-error": "#ffffff",
+                      "secondary": "#006e2f",
+                      "on-primary-fixed": "#141b2b",
+                      "on-surface": "#191c1d",
+                      "primary-container": "#141b2b",
+                      "primary-fixed": "#dce2f7",
+                      "outline": "#76777d",
+                      "secondary-fixed-dim": "#4ae176",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed-dim": "#c0c7d6",
+                      "inverse-on-surface": "#f0f1f2",
+                      "tertiary-container": "#151c27",
+                      "surface-container-low": "#f3f4f5",
+                      "on-secondary-fixed-variant": "#005321",
+                      "surface-tint": "#575e70",
+                      "surface-container": "#edeeef",
+                      "outline-variant": "#c6c6cd",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#002109",
+                      "on-surface-variant": "#45464c",
+                      "on-primary": "#ffffff",
+                      "primary-fixed-dim": "#c0c6db",
+                      "on-primary-container": "#7d8497",
+                      "surface-bright": "#f8f9fa",
+                      "on-tertiary-container": "#7d8492",
+                      "on-tertiary-fixed-variant": "#404754",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#f8f9fa",
+                      "secondary-fixed": "#6bff8f",
+                      "on-background": "#191c1d",
+                      "surface-container-highest": "#e1e3e4",
+                      "inverse-primary": "#c0c6db",
+                      "surface": "#f8f9fa",
+                      "surface-container-high": "#e7e8e9",
+                      "primary": "#000000",
+                      "on-error-container": "#93000a",
+                      "surface-variant": "#e1e3e4",
+                      "surface-dim": "#d9dadb",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed-variant": "#404758",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#dce2f3",
+                      "on-secondary-container": "#007432",
+                      "on-tertiary-fixed": "#151c27",
+                      "secondary-container": "#6bff8f",
+                      "inverse-surface": "#2e3132"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "container-max": "1280px",
+                      "margin-mobile": "20px",
+                      "element-gap": "16px",
+                      "section-gap": "120px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "display-xl": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-40 hidden md:flex">
+<div class="mb-6 px-3">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant/70 uppercase tracking-widest mt-1">Enterprise Logistics</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 border-t border-outline-variant/10 pt-6">
+<button class="bg-primary text-on-primary font-label-sm text-label-sm py-3 px-4 rounded-[12px] flex items-center justify-center gap-2 mb-4 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Shipment
+            </button>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<div class="flex items-center gap-3 p-3 mt-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold text-on-surface">Alex Chen</span>
+<span class="text-[10px] text-on-surface-variant">Fleet Manager</span>
+</div>
+</div>
+</div></aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant mb-2">
+<span class="text-label-sm font-label-sm">ShipMind AI</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-label-sm font-label-sm text-primary font-bold">AI Insights</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-primary">Intelligence Hub</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Real-time predictive analysis and data integrity monitoring for your global logistics network.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2 mr-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-primary-fixed flex items-center justify-center">
+<span class="text-[10px] font-bold">AI</span>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container-highest"></div>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">System Health: <span class="text-secondary font-bold">Optimal</span></span>
+</div>
+</header>
+<!-- Bento Grid Insights -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- AI Route Optimization (Priority Feature) -->
+<div class="md:col-span-8 glass-card rounded-[20px] p-8 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4">
+<span class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+</div>
+<div class="flex flex-col h-full">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-secondary-container/20 rounded-lg text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">route</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">AI Route Optimization</h3>
+</div>
+<div class="flex flex-col lg:flex-row gap-8 items-start">
+<div class="flex-1 space-y-6">
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant/30">
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Recommendation</p>
+<p class="font-body-md text-body-md text-on-surface">Reroute <span class="font-bold">#SM-9842</span> via Singapore North Hub to avoid typhoon-related delays in the South China Sea.</p>
+<div class="mt-4 flex gap-4">
+<div class="flex flex-col">
+<span class="text-[11px] text-on-surface-variant">Est. Savings</span>
+<span class="text-secondary font-bold text-headline-md">14.2h</span>
+</div>
+<div class="w-[1px] bg-outline-variant/30"></div>
+<div class="flex flex-col">
+<span class="text-[11px] text-on-surface-variant">Confidence</span>
+<span class="text-primary font-bold text-headline-md">98%</span>
+</div>
+</div>
+</div>
+<button class="bg-tertiary text-on-secondary px-6 py-3 rounded-[12px] font-label-sm text-label-sm flex items-center gap-2 hover:opacity-90 transition-all active:scale-95">
+                                Implement All Suggestions
+                                <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+</button>
+</div>
+<div class="w-full lg:w-64 h-48 rounded-xl bg-surface-container overflow-hidden relative border border-outline-variant/50">
+<div class="w-full h-full bg-cover bg-center" data-alt="A stylized minimalist digital map of maritime routes across Southeast Asia. The map is rendered in light mode with clean charcoal lines for geography and glowing neon green pulses representing optimized ship paths. The overall aesthetic is professional, data-centric, and futuristic, following a premium SaaS design language." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCezN7Eql_84fdoqvP_zWsG5sokx9ES894LO6tNaLCkEyo06ib-QQQGWHol2E6tDRjJBMKz5N3FQPfvyMZmvtBiiJ4m6e62WDCMxOPqhqgTsP4aj6mfreqg-eE5VKuC_MQimY1haJaqx3TT-KP6ilg5ahWelWmnYHd0scmvuZStqDG8LxdH-kTaonHIllVUtkd8tYobLwZSwEfbGSC3RbuxMM7p_ox44nDRHyVavZeS_Yk3XngIz-Y')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent flex items-end p-3">
+<span class="text-[10px] font-medium bg-surface/90 px-2 py-1 rounded-full border border-outline-variant/30 shadow-sm">Real-time Visualization</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Risk Detection Alert -->
+<div class="md:col-span-4 glass-card rounded-[20px] p-8 flex flex-col justify-between border-l-4 border-l-error bg-error-container/5">
+<div>
+<div class="flex items-center justify-between mb-6">
+<div class="p-2 bg-error-container/10 rounded-lg text-error">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="bg-error text-on-error text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">Critical</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Risk Detection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">3 potential disruptions detected in the next 48 hours for North American shipments.</p>
+</div>
+<div class="mt-8 space-y-4">
+<div class="flex items-start gap-3 p-3 bg-white/50 rounded-lg border border-error/10">
+<span class="material-symbols-outlined text-error text-[18px] mt-1">severe_cold</span>
+<div>
+<p class="text-label-sm font-bold text-on-surface">Port Congestion (LA)</p>
+<p class="text-[12px] text-on-surface-variant">Labor strike probable starting Monday.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-white/50 rounded-lg border border-error/10">
+<span class="material-symbols-outlined text-error text-[18px] mt-1">event_busy</span>
+<div>
+<p class="text-label-sm font-bold text-on-surface">Carrier Shortage</p>
+<p class="text-[12px] text-on-surface-variant">Unexpected demand surge in Region 4.</p>
+</div>
+</div>
+<a class="text-primary font-bold text-label-sm flex items-center gap-1 hover:gap-2 transition-all mt-2" href="#">
+                        View Disruptions Report
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Duplicate Detection Card -->
+<div class="md:col-span-4 glass-card rounded-[20px] p-8 flex flex-col h-full group">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-primary-container/5 rounded-lg text-primary">
+<span class="material-symbols-outlined">content_copy</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Duplicates</h3>
+</div>
+<div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar max-h-64">
+<div class="p-4 rounded-xl border border-outline-variant/30 hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-bold">BOL #90234</span>
+<span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high">94% Match</span>
+</div>
+<p class="text-[12px] text-on-surface-variant">Conflicts with Record ID: SHIP-8812. Address mismatch.</p>
+</div>
+<div class="p-4 rounded-xl border border-outline-variant/30 hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-bold">INV #TX-771</span>
+<span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high">89% Match</span>
+</div>
+<p class="text-[12px] text-on-surface-variant">Duplicate invoice amounts for Vendor: Globex Corp.</p>
+</div>
+<div class="p-4 rounded-xl border border-outline-variant/30 hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-bold">ASN #2121</span>
+<span class="text-[10px] px-2 py-0.5 rounded bg-surface-container-high">99% Match</span>
+</div>
+<p class="text-[12px] text-on-surface-variant">Exact timestamp and payload duplicate.</p>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-outline-variant/30 flex items-center justify-between">
+<span class="text-label-sm text-on-surface-variant">12 items pending</span>
+<button class="text-label-sm font-bold text-primary underline">Clean All</button>
+</div>
+</div>
+<!-- Missing Data Patterns -->
+<div class="md:col-span-8 glass-card rounded-[20px] p-8 h-full">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary-container/5 rounded-lg text-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Missing Data Patterns</h3>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high text-[11px] font-bold px-3 py-1.5 rounded-full border border-outline-variant/30">Last 30 Days</button>
+<button class="text-[11px] font-bold px-3 py-1.5 rounded-full border border-outline-variant/30 opacity-50">Last 7 Days</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+<div class="p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 rounded-full bg-secondary-container/10 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+</div>
+<span class="text-display-xl text-[32px] font-bold text-primary">24%</span>
+<p class="text-label-sm text-on-surface-variant mt-1">Origin Coordinates Missing</p>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-4">
+<div class="bg-secondary h-full rounded-full" style="width: 24%"></div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-tertiary">inventory_2</span>
+</div>
+<span class="text-display-xl text-[32px] font-bold text-primary">8.2%</span>
+<p class="text-label-sm text-on-surface-variant mt-1">HS Codes Incomplete</p>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-4">
+<div class="bg-tertiary h-full rounded-full" style="width: 8.2%"></div>
+</div>
+</div>
+<div class="p-6 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 flex flex-col justify-center items-center text-center">
+<div class="w-12 h-12 rounded-full bg-error-container/10 flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-error">hourglass_bottom</span>
+</div>
+<span class="text-display-xl text-[32px] font-bold text-primary">15%</span>
+<p class="text-label-sm text-on-surface-variant mt-1">ETAs Lacking Updates</p>
+<div class="w-full bg-outline-variant/20 h-1.5 rounded-full mt-4">
+<div class="bg-error h-full rounded-full" style="width: 15%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex items-center gap-4 p-4 bg-primary text-on-primary rounded-xl">
+<span class="material-symbols-outlined text-secondary-fixed">tips_and_updates</span>
+<p class="text-label-sm font-label-sm">
+<span class="font-bold">Pro-tip:</span> ShipMind AI can auto-enrich missing HS codes using item descriptions with 92% accuracy.
+                        <a class="underline ml-2" href="#">Enable Auto-Enrichment</a>
+</p>
+</div>
+</div>
+<!-- Intelligence Badges Section -->
+<div class="md:col-span-12 mt-4">
+<div class="flex flex-wrap gap-4">
+<div class="intelligence-badge bg-white border border-outline-variant/50 rounded-full px-5 py-3 flex items-center gap-3 shadow-sm cursor-default">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-sm font-bold text-primary">Data Verifier</span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-[11px] text-on-surface-variant">99.2% Fidelity</span>
+</div>
+<div class="intelligence-badge bg-white border border-outline-variant/50 rounded-full px-5 py-3 flex items-center gap-3 shadow-sm cursor-default">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-sm font-bold text-primary">Express Logic</span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-[11px] text-on-surface-variant">Active Optimization</span>
+</div>
+<div class="intelligence-badge bg-white border border-outline-variant/50 rounded-full px-5 py-3 flex items-center gap-3 shadow-sm cursor-default">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="text-label-sm font-bold text-primary">Compliance Shield</span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-[11px] text-on-surface-variant">Reg. Check Passive</span>
+</div>
+<div class="intelligence-badge bg-white border border-outline-variant/50 rounded-full px-5 py-3 flex items-center gap-3 shadow-sm cursor-default">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-label-sm font-bold text-primary">Carbon Tracker</span>
+<span class="h-1 w-1 rounded-full bg-outline-variant"></span>
+<span class="text-[11px] text-on-surface-variant">Net Zero Target</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Shell -->
+<footer class="mt-section-gap pt-12 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-headline-md text-headline-md font-bold text-primary mb-2">ShipMind AI</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Security</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary hover:underline transition-all" href="#">Status</a>
+</div>
+</footer>
+</main>
+<!-- Mobile Bottom NavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface/80 backdrop-blur-md border-t border-outline-variant/10 md:hidden z-50 flex justify-around items-center py-3 px-6">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-secondary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="text-[10px] font-bold">AI</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-[10px] font-bold">Fleet</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions for glass cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>

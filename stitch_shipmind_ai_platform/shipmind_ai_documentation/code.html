@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ShipMind AI | Documentation Portal</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#000000",
+                        "on-error": "#ffffff",
+                        "secondary": "#006e2f",
+                        "on-primary-fixed": "#141b2b",
+                        "on-surface": "#191c1d",
+                        "primary-container": "#141b2b",
+                        "primary-fixed": "#dce2f7",
+                        "outline": "#76777d",
+                        "secondary-fixed-dim": "#4ae176",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#c0c7d6",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary-container": "#151c27",
+                        "surface-container-low": "#f3f4f5",
+                        "on-secondary-fixed-variant": "#005321",
+                        "surface-tint": "#575e70",
+                        "surface-container": "#edeeef",
+                        "outline-variant": "#c6c6cd",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#002109",
+                        "on-surface-variant": "#45464c",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#c0c6db",
+                        "on-primary-container": "#7d8497",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary-container": "#7d8492",
+                        "on-tertiary-fixed-variant": "#404754",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f8f9fa",
+                        "secondary-fixed": "#6bff8f",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "inverse-primary": "#c0c6db",
+                        "surface": "#f8f9fa",
+                        "surface-container-high": "#e7e8e9",
+                        "primary": "#000000",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#404758",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#dce2f3",
+                        "on-secondary-container": "#007432",
+                        "on-tertiary-fixed": "#151c27",
+                        "secondary-container": "#6bff8f",
+                        "inverse-surface": "#2e3132"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "container-max": "1280px",
+                        "margin-mobile": "20px",
+                        "element-gap": "16px",
+                        "section-gap": "120px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        pre code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 14px;
+        }
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar (Fixed) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container-low/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm h-16 flex items-center">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto w-full">
+<div class="flex items-center gap-8">
+<a class="text-headline-md font-headline-md font-bold tracking-tight text-primary dark:text-on-primary-fixed" href="#">ShipMind AI</a>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-md text-body-md" href="#">Platform</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-md text-body-md" href="#">Solutions</a>
+<a class="text-secondary dark:text-secondary-fixed font-semibold font-body-md text-body-md" href="#">Docs</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-all duration-200 font-body-md text-body-md" href="#">Network</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px]">search</span>
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-lg pl-10 pr-4 py-1.5 w-64 text-label-sm font-label-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all group-hover:bg-surface-container-high" placeholder="Search documentation..." type="text"/>
+<div class="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1 items-center">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest text-[10px] font-mono border border-outline-variant/30">⌘</kbd>
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container-highest text-[10px] font-mono border border-outline-variant/30">K</kbd>
+</div>
+</div>
+<button class="text-on-surface-variant hover:opacity-80 transition-all duration-200 font-label-sm text-label-sm px-4 py-2">Login</button>
+<button class="bg-primary text-white font-label-sm text-label-sm px-5 py-2 rounded-xl scale-95 transition-transform duration-150 active:scale-90 shadow-sm">Get Started</button>
+</div>
+</div>
+</header>
+<div class="flex max-w-container-max mx-auto pt-16">
+<!-- SideNavBar (Sticky) -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-72 bg-surface-container-lowest border-r border-outline-variant/20 hidden lg:flex flex-col py-8 px-8 sidebar-scroll overflow-y-auto">
+<div class="mb-8">
+<h3 class="text-label-sm font-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">Introduction</h3>
+<ul class="space-y-1">
+<li><a class="block bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-2 -ml-2 rounded-r-lg text-body-md" href="#">Getting Started</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Architecture</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Release Notes</a></li>
+</ul>
+</div>
+<div class="mb-8">
+<h3 class="text-label-sm font-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">API Reference</h3>
+<ul class="space-y-1">
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Authentication</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Endpoints</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Rate Limits</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Errors</a></li>
+</ul>
+</div>
+<div class="mb-8">
+<h3 class="text-label-sm font-label-sm font-bold uppercase tracking-widest text-on-surface-variant mb-4">SDKs</h3>
+<ul class="space-y-1">
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">JavaScript / TS</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Python</a></li>
+<li><a class="block text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-lg text-body-md" href="#">Go</a></li>
+</ul>
+</div>
+<div class="mt-auto pt-8 border-t border-outline-variant/20 flex flex-col gap-4">
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-all text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span> Support
+                </a>
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-all text-label-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">forum</span> Community
+                </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 lg:pl-72 w-full">
+<div class="px-margin-mobile md:px-margin-desktop py-12 max-w-4xl mx-auto">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mb-8">
+<a class="hover:text-primary" href="#">Docs</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Introduction</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Getting Started</span>
+</nav>
+<!-- Hero Editorial Content -->
+<section class="mb-16">
+<h1 class="font-display-xl text-display-xl mb-6">Getting Started with ShipMind AI</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed max-w-2xl">
+                        ShipMind AI is a predictive logistics platform that leverages deep neural networks to optimize global supply chains. Integrate our SDK into your stack in minutes and start predicting transit delays before they happen.
+                    </p>
+<!-- Quick Setup Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-12">
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/30 hover:shadow-lg transition-shadow group">
+<div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-6 text-secondary">
+<span class="material-symbols-outlined text-[28px]">rocket_launch</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Quick Start Guide</h3>
+<p class="text-on-surface-variant text-body-md mb-6">Learn the core concepts of the ShipMind engine and make your first API call.</p>
+<a class="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all" href="#">
+                                Read Guide <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="p-8 rounded-3xl bg-surface-container-lowest border border-outline-variant/30 hover:shadow-lg transition-shadow group">
+<div class="w-12 h-12 bg-primary-fixed/50 rounded-xl flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined text-[28px]">api</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">API Explorer</h3>
+<p class="text-on-surface-variant text-body-md mb-6">Interactive documentation to test endpoints directly from your browser.</p>
+<a class="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all" href="#">
+                                Explore APIs <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<hr class="border-outline-variant/20 mb-16"/>
+<!-- Installation Section -->
+<section class="mb-16" id="installation">
+<h2 class="font-headline-lg text-headline-lg mb-6">Installation</h2>
+<p class="text-body-lg text-on-surface-variant mb-6">
+                        Install the ShipMind SDK using your preferred package manager. We recommend using <code class="bg-surface-container-high px-1.5 py-0.5 rounded text-primary">@shipmind/core</code> for modern TypeScript environments.
+                    </p>
+<!-- Code Block -->
+<div class="rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm mb-10">
+<div class="bg-tertiary-container text-white/50 px-6 py-2 text-label-sm font-label-sm flex justify-between items-center">
+<span>Terminal</span>
+<button class="hover:text-white transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+                            </button>
+</div>
+<div class="bg-tertiary p-6 text-tertiary-fixed font-mono text-sm leading-relaxed overflow-x-auto">
+<span class="text-secondary-fixed-dim">npm</span> install @shipmind/core<br/>
+<span class="text-outline"># or</span><br/>
+<span class="text-secondary-fixed-dim">yarn</span> add @shipmind/core
+                        </div>
+</div>
+</section>
+<!-- SDK Initialization -->
+<section class="mb-16">
+<h2 class="font-headline-lg text-headline-lg mb-6">Initialization</h2>
+<p class="text-body-lg text-on-surface-variant mb-6">
+                        Initialize the client using your API key found in the <a class="text-secondary hover:underline" href="#">ShipMind Console</a>.
+                    </p>
+<div class="rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm">
+<div class="bg-tertiary-container text-white/50 px-6 py-2 text-label-sm font-label-sm flex gap-4">
+<span class="text-white border-b border-white pb-1 cursor-pointer">TypeScript</span>
+<span class="cursor-pointer hover:text-white transition-colors">Python</span>
+<span class="cursor-pointer hover:text-white transition-colors ml-auto flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+                            </span>
+</div>
+<div class="bg-tertiary p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+<pre><code class="text-on-primary-container"><span class="text-secondary-fixed-dim">import</span> { ShipMind } <span class="text-secondary-fixed-dim">from</span> <span class="text-secondary-fixed">'@shipmind/core'</span>;
+
+<span class="text-outline">// Initialize the client</span>
+<span class="text-secondary-fixed-dim">const</span> client = <span class="text-secondary-fixed-dim">new</span> <span class="text-headline-md font-bold text-on-primary">ShipMind</span>({
+  apiKey: <span class="text-secondary-fixed">'SM_LIVE_928374'</span>,
+  region: <span class="text-secondary-fixed">'us-east-1'</span>
+});
+
+<span class="text-outline">// Optimize a route</span>
+<span class="text-secondary-fixed-dim">const</span> results = <span class="text-secondary-fixed-dim">await</span> client.optimize({
+  origin: <span class="text-secondary-fixed">'SFO'</span>,
+  destination: <span class="text-secondary-fixed">'LHR'</span>
+});</code></pre>
+</div>
+</div>
+</section>
+<!-- Predictive Diagram Component -->
+<section class="mb-16">
+<h2 class="font-headline-lg text-headline-lg mb-6">How It Works</h2>
+<div class="rounded-3xl bg-surface-container border border-outline-variant/30 p-12 text-center relative overflow-hidden h-[400px] flex flex-col items-center justify-center">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="w-full h-full" style="background-image: radial-gradient(circle at 2px 2px, #000 1px, transparent 0); background-size: 24px 24px;"></div>
+</div>
+<!-- Visual Diagram -->
+<div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+<div class="w-32 h-32 bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-[40px] mb-2">database</span>
+<span class="text-label-sm font-bold uppercase tracking-tighter">Raw Data</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+<div class="w-12 h-[2px] bg-outline-variant/30"></div>
+</div>
+<div class="w-48 h-48 bg-tertiary text-white rounded-3xl shadow-2xl flex flex-col items-center justify-center border-4 border-secondary/20 relative">
+<div class="absolute -top-4 -right-4 bg-secondary text-white text-[10px] px-3 py-1 rounded-full font-bold">ACTIVE AI</div>
+<span class="material-symbols-outlined text-secondary-fixed text-[64px] mb-2">auto_awesome</span>
+<span class="text-label-sm font-bold uppercase tracking-widest">Inference</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-12 h-[2px] bg-outline-variant/30"></div>
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+</div>
+<div class="w-32 h-32 bg-white rounded-2xl shadow-xl flex flex-col items-center justify-center border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary text-[40px] mb-2">trending_up</span>
+<span class="text-label-sm font-bold uppercase tracking-tighter">Prediction</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Feedback Footer -->
+<footer class="mt-20 pt-12 border-t border-outline-variant/30">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="text-center md:text-left">
+<p class="text-body-md font-semibold mb-1">Was this page helpful?</p>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-lg border border-outline-variant/30 hover:bg-surface-container-high transition-colors text-label-sm">
+<span class="material-symbols-outlined text-[18px]">thumb_up</span> Yes
+                                </button>
+<button class="flex items-center gap-2 px-4 py-1.5 rounded-lg border border-outline-variant/30 hover:bg-surface-container-high transition-colors text-label-sm">
+<span class="material-symbols-outlined text-[18px]">thumb_down</span> No
+                                </button>
+</div>
+</div>
+<div class="flex flex-col md:items-end">
+<p class="text-label-sm text-on-surface-variant mb-2">Last updated on Nov 24, 2024</p>
+<a class="text-primary hover:underline font-label-sm flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-[16px]">edit</span> Edit this page on GitHub
+                            </a>
+</div>
+</div>
+</footer>
+</div>
+<!-- Global Footer -->
+<div class="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">ShipMind AI</span>
+<p class="text-on-surface-variant font-label-sm text-label-sm">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary font-label-sm text-label-sm" href="#">Security</a>
+<a class="text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary font-label-sm text-label-sm" href="#">Status</a>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Hand On-This-Page (Floating) -->
+<aside class="fixed right-0 top-16 h-[calc(100vh-64px)] w-64 hidden xl:flex flex-col py-12 px-8">
+<h4 class="text-label-sm font-bold uppercase tracking-widest text-primary mb-4">On this page</h4>
+<ul class="space-y-4 text-label-sm font-label-sm text-on-surface-variant border-l border-outline-variant/30 pl-4">
+<li><a class="block hover:text-primary text-primary font-bold" href="#">Introduction</a></li>
+<li><a class="block hover:text-primary" href="#installation">Installation</a></li>
+<li><a class="block hover:text-primary" href="#">Initialization</a></li>
+<li><a class="block hover:text-primary" href="#">How It Works</a></li>
+<li><a class="block hover:text-primary" href="#">Next Steps</a></li>
+</ul>
+<div class="mt-auto p-4 rounded-xl bg-secondary/5 border border-secondary/20">
+<p class="text-[11px] font-bold text-secondary uppercase mb-2">Pro Tip</p>
+<p class="text-label-sm text-secondary font-medium leading-relaxed">
+                    Use our CLI to automate your CI/CD shipping pipeline deployments.
+                </p>
+</div>
+</aside>
+</div>
+<script>
+        // Simple search shortcut handler
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                document.querySelector('input').focus();
+            }
+        });
+
+        // Sticky Header Scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 10) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

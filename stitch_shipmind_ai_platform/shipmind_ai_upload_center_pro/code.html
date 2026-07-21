@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Upload Center | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-container": "#141b2b",
+                    "on-secondary-container": "#007432",
+                    "surface": "#F8F9F7",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-tint": "#575e70",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#4CAF6A",
+                    "primary-fixed-dim": "#c0c6db",
+                    "secondary-container": "#e8f5e9",
+                    "on-surface-variant": "#45464c",
+                    "error-container": "#ffdad6",
+                    "on-background": "#191c1d",
+                    "outline-variant": "#c6c6cd",
+                    "on-primary-container": "#7d8497",
+                    "inverse-primary": "#c0c6db",
+                    "surface-container": "#edeeef",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "inverse-surface": "#2e3132",
+                    "secondary": "#4CAF6A",
+                    "on-surface": "#191c1d",
+                    "on-primary-fixed-variant": "#404758",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#4CAF6A",
+                    "on-tertiary-fixed": "#151c27",
+                    "surface-dim": "#d9dadb",
+                    "outline": "#76777d",
+                    "on-secondary-fixed": "#002109",
+                    "tertiary-container": "#151c27",
+                    "tertiary": "#000000",
+                    "surface-bright": "#F8F9F7",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "surface-variant": "#e1e3e4",
+                    "on-tertiary-container": "#7d8492",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "primary-fixed": "#dce2f7",
+                    "on-primary-fixed": "#141b2b",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#dce2f3",
+                    "surface-container-low": "#f3f4f5",
+                    "background": "#F8F9F7",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f2",
+                    "on-secondary-fixed-variant": "#005321"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "section-gap": "120px",
+                    "element-gap": "16px",
+                    "margin-mobile": "20px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .emerald-glow {
+            box-shadow: 0 0 50px rgba(76, 175, 106, 0.1);
+        }
+        .drag-zone {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .drag-zone:hover {
+            border-color: #4CAF6A;
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e1e3e4;
+            border-radius: 10px;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-x-hidden antialiased">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap hidden md:flex">
+<div class="mb-8 px-3">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-60">Enterprise Logistics</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 bg-secondary-container text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant/10 space-y-1">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-label-sm text-label-sm mb-4 hover:opacity-90 transition-opacity active:scale-95 transition-transform">
+            New Shipment
+        </button>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen px-margin-mobile md:px-margin-desktop py-12">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-gutter">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Upload Center</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    High-stakes enterprise document processing with real-time AI validation and malware scanning.
+                </p>
+</div>
+<div class="flex items-center gap-element-gap">
+<div class="text-right hidden md:block">
+<span class="block text-label-sm font-bold text-on-surface">Auto-Processing</span>
+<span class="text-label-sm text-secondary font-semibold">Security Level: Enterprise</span>
+</div>
+<div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center emerald-glow">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+</div>
+</div>
+</header>
+<!-- Massive Interactive Zone -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Dropzone & Progress (Column 1-8) -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- Massive minimalist drag-and-drop zone -->
+<section class="glass-panel rounded-[32px] p-24 border-dashed border-2 border-outline-variant/30 drag-zone emerald-glow group cursor-pointer relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center justify-center text-center">
+<div class="w-24 h-24 bg-white/80 rounded-3xl flex items-center justify-center mb-8 shadow-sm group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined text-[48px] text-secondary">upload_file</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Initiate secure upload</h3>
+<p class="text-on-surface-variant font-body-md max-w-sm mx-auto mb-10 leading-relaxed">
+                            Drag and drop enterprise documents here to start multi-stage validation and AI extraction.
+                        </p>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-10 py-4 rounded-2xl font-label-sm text-label-sm hover:shadow-lg transition-all active:scale-95">
+                                Select Documents
+                            </button>
+<button class="glass-panel text-primary px-10 py-4 rounded-2xl font-label-sm text-label-sm hover:bg-white transition-all">
+                                Connect Cloud
+                            </button>
+</div>
+<div class="mt-12 flex gap-8 opacity-30 grayscale group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-500">
+<img alt="PDF" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFY1i7qTDstwyauoyYQu9Twd7LJ7v3EkxrVhBM5xcmsmLSIxRVB2TEvmAJQdsNw4WFkHktj0NzM7AuoikhyFDkqp-uMq6AsMcQYBmR8rbDUp7xdeMPVrXCGlq5dRtBYZG6XxSJvsb9QPFJqGHsot_AlcGvxDK1WBQ2iUhu0_wXKN0BxtuSi63aKywVGM8CZfWypKg1cVua7EQGsRvpyYL68Fe9RSfHcAZ2x2zqUe5JxUbHP1bPGfs"/>
+<img alt="Excel" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQz5oCvTQFdOKA4C4qnKZFYaDr2SVPNsil9ixVM2wSc00y_8BD8iouGPuexjTNL6TyKJmNkSnE-HMBjQBgvvvl2y5Sem6G0ubzTT73J-YFt24t134cbDpHuJ4ZzeSRER4sfyHHAYbNoYiaeDZjFTOZvDO2KCEkHJNpD7VdpnmS614TtAJynvLluf-_nvIPk8e-cgrtdE41jo1ykEacniUp4ONWfWGMV9I7Xl4kKW3JMR7rvQkANvQ"/>
+<img alt="CSV" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACIAaIgEzMENm3QGwyo30wvixr7YaQgU16OMXlLA_GzKI9YQQ_OFOzUsr-rGdwfeM6gl4SO8Nzh3yxFEc4UTVc6ZqaF_5lMamtg8-5yll1dC7BadFRb_Q8ABk3uOJqsvSn6sUynEFyUM-KLeV5-hbhjT0aS6dOv6WLwVfyjYo8_N4WWJfoWinmflJ1HPk0m4bnkU0JEJ3ha1YBVvKrLtYgohVMe-A-o_iCpvP7vJyvlRTvtL0I24I"/>
+</div>
+</div>
+</section>
+<!-- Recent Uploads Preview Grid -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-md text-headline-md text-primary">Recent Uploads</h4>
+<button class="text-label-sm font-semibold text-secondary hover:underline">View History</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Recent 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/10 flex items-center gap-4 hover:border-secondary/30 transition-colors group">
+<div class="w-16 h-20 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant/10">
+<span class="material-symbols-outlined text-outline-variant text-[32px]">description</span>
+</div>
+<div class="flex-grow">
+<p class="text-label-sm font-bold text-on-surface truncate max-w-[150px]">PL_EU_3301.pdf</p>
+<p class="text-[11px] text-on-surface-variant">Validated • 2m ago</p>
+</div>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<!-- Recent 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/10 flex items-center gap-4 hover:border-secondary/30 transition-colors group">
+<div class="w-16 h-20 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant/10">
+<span class="material-symbols-outlined text-outline-variant text-[32px]">table_view</span>
+</div>
+<div class="flex-grow">
+<p class="text-label-sm font-bold text-on-surface truncate max-w-[150px]">Quarterly_Audit_04.xlsx</p>
+<p class="text-[11px] text-on-surface-variant">Validated • 15m ago</p>
+</div>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right: Progress & Metrics (Column 9-12) -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Real-time Upload Progress List -->
+<section class="bg-surface-container-lowest rounded-[24px] p-6 border border-outline-variant/20 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-label-sm font-bold uppercase tracking-wider text-on-surface-variant">Active Operations</h4>
+<span class="flex h-2 w-2 rounded-full bg-secondary animate-pulse"></span>
+</div>
+<div class="space-y-6">
+<!-- Progress Item 1 -->
+<div class="space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-label-sm font-bold text-on-surface">INV-2024-001.pdf</p>
+<p class="text-[11px] text-secondary font-medium">Scanning for malware...</p>
+</div>
+<span class="text-[11px] font-bold text-on-surface-variant">42%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full transition-all duration-300" style="width: 42%"></div>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center gap-1.5 text-[10px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Format
+                                </div>
+<div class="flex items-center gap-1.5 text-[10px] text-on-surface-variant/40">
+<span class="material-symbols-outlined text-[14px] animate-pulse-soft">sync</span> Security
+                                </div>
+<div class="flex items-center gap-1.5 text-[10px] text-on-surface-variant/20">
+<span class="material-symbols-outlined text-[14px]">pending</span> AI Pre-op
+                                </div>
+</div>
+</div>
+<!-- Progress Item 2 -->
+<div class="space-y-3">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-label-sm font-bold text-on-surface">BOL_Shipment_99.pdf</p>
+<p class="text-[11px] text-on-surface-variant font-medium">AI preprocessing...</p>
+</div>
+<span class="text-[11px] font-bold text-on-surface-variant">88%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full transition-all duration-300" style="width: 88%"></div>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center gap-1.5 text-[10px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Format
+                                </div>
+<div class="flex items-center gap-1.5 text-[10px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Security
+                                </div>
+<div class="flex items-center gap-1.5 text-[10px] text-secondary">
+<span class="material-symbols-outlined text-[14px] animate-spin text-[10px]">refresh</span> AI Pre-op
+                                </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Status Summary -->
+<section class="glass-panel rounded-[24px] p-6 emerald-glow text-center">
+<p class="text-label-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Daily Volume</p>
+<div class="flex items-baseline justify-center gap-2 mb-2">
+<span class="text-[40px] font-bold text-primary">1,284</span>
+<span class="text-secondary font-bold text-label-sm">Documents</span>
+</div>
+<p class="text-[12px] text-on-surface-variant">99.9% Validation Success Rate</p>
+</section>
+<!-- Help/Support Mini Card -->
+<div class="p-6 bg-primary rounded-[24px] text-on-primary">
+<h5 class="font-bold text-label-sm mb-2">Technical Assistance</h5>
+<p class="text-[12px] opacity-70 mb-4">Need help with custom formats or bulk API uploads?</p>
+<button class="w-full bg-white/10 hover:bg-white/20 py-2 rounded-xl text-[12px] font-bold transition-colors">
+                        Open Support Ticket
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="md:ml-64 bg-surface-container-lowest border-t border-outline-variant/10 w-full mt-24">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-2">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">ShipMind AI</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant">© 2024 ShipMind AI. Secure Enterprise Document Processing.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Privacy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Security Policy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">API Documentation</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Status</a>
+</div>
+</div>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dragZone = document.querySelector('.drag-zone');
+        
+        dragZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragZone.classList.add('scale-[1.005]', 'bg-white/70', 'border-secondary');
+        });
+
+        dragZone.addEventListener('dragleave', () => {
+            dragZone.classList.remove('scale-[1.005]', 'bg-white/70', 'border-secondary');
+        });
+
+        dragZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragZone.classList.remove('scale-[1.005]', 'bg-white/70', 'border-secondary');
+            alert('Enterprise validation sequence initiated. Files are being scanned for malware and formatted for AI extraction.');
+        });
+    });
+</script>
+</body></html>

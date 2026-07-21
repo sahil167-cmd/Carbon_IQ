@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Review Workspace | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#7d8492",
+                    "inverse-surface": "#2e3132",
+                    "surface": "#f8f9fa",
+                    "on-surface": "#191c1d",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "primary-fixed-dim": "#c0c6db",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "on-surface-variant": "#45464c",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-fixed": "#6bff8f",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "outline-variant": "#c6c6cd",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#575e70",
+                    "inverse-primary": "#c0c6db",
+                    "primary-container": "#141b2b",
+                    "on-secondary-fixed": "#002109",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#007432",
+                    "tertiary": "#000000",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#6bff8f",
+                    "secondary": "#006e2f",
+                    "on-secondary-fixed-variant": "#005321",
+                    "tertiary-fixed": "#dce2f3",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-dim": "#d9dadb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-primary-fixed": "#141b2b",
+                    "primary": "#000000",
+                    "surface-bright": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "background": "#f8f9fa",
+                    "on-tertiary-fixed": "#151c27",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed": "#dce2f7",
+                    "surface-container-high": "#e7e8e9",
+                    "error-container": "#ffdad6",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "on-primary-container": "#7d8497"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "container-max": "1280px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .bounding-box-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .interactive-box {
+            cursor: pointer;
+            pointer-events: all;
+            transition: all 0.2s ease;
+        }
+        .interactive-box:hover {
+            stroke-width: 3;
+            fill-opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex h-screen overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col py-gutter px-4 gap-element-gap border-r border-outline-variant/20 z-50">
+<div class="px-2 mb-4">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary">ShipMind AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Enterprise Logistics</p>
+</div>
+<button class="bg-primary text-on-primary py-3 px-4 rounded-xl font-body-md font-semibold mb-4 flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+        New Shipment
+    </button>
+<nav class="flex flex-col gap-1 flex-grow">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/10 pt-4 flex flex-col gap-1">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<div class="flex items-center gap-3 p-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-xs">JD</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">John Doe</span>
+<span class="text-[10px] text-on-surface-variant">Admin</span>
+</div>
+<span class="material-symbols-outlined ml-auto text-on-surface-variant">more_vert</span>
+</div>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-grow ml-64 flex flex-col bg-surface-container-low overflow-hidden">
+<!-- Header -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-8 z-40 shrink-0">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-primary flex items-center gap-2 leading-none">
+                    Bill of Lading <span class="text-on-surface-variant text-body-md font-normal">#BOL-2024-0089</span>
+</h2>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 bg-secondary-container/20 text-secondary px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-sm text-label-sm font-bold">AI Verified 98%</span>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 px-4 py-2 text-secondary font-label-sm text-label-sm font-bold hover:bg-secondary-container/10 rounded-xl transition-all">
+<span class="material-symbols-outlined text-[20px]">history</span>
+                Audit Trail
+            </button>
+</div>
+</header>
+<!-- Split Screen Content -->
+<div class="flex flex-grow overflow-hidden relative">
+<!-- LEFT: PDF Viewer -->
+<div class="w-1/2 h-full p-8 overflow-y-auto bg-surface-dim/20 flex flex-col items-center hide-scrollbar relative">
+<!-- Zoom Controls -->
+<div class="absolute top-6 right-6 flex flex-col gap-2 z-30">
+<div class="bg-surface-container-lowest shadow-lg border border-outline-variant/30 rounded-xl overflow-hidden flex flex-col">
+<button class="p-3 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">zoom_in</span></button>
+<div class="h-px bg-outline-variant/30 w-full"></div>
+<button class="p-3 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">zoom_out</span></button>
+<div class="h-px bg-outline-variant/30 w-full"></div>
+<button class="p-3 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">restart_alt</span></button>
+</div>
+<div class="bg-surface-container-lowest shadow-lg border border-outline-variant/30 rounded-xl overflow-hidden flex flex-col">
+<button class="p-3 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">print</span></button>
+<button class="p-3 hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined">download</span></button>
+</div>
+</div>
+<!-- PDF Page Wrapper -->
+<div class="relative w-full max-w-3xl bg-white shadow-2xl rounded-sm aspect-[1/1.414] overflow-hidden group border border-outline-variant/30">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD1c-j8AhRJ5DQ4oG_6MkbctTGCHAOkawDoJ9ozwLWq6nbphC5y0nwZpL635B4P02HtrF7ZBn_DqyB5WNpZRiUP8N0KzhgpHJQOy_s7fLklcv3KExsSiOw50gNAFJzeWwDRDZ7IXmybXBNGMPkb949QuqpzyMxr6jowMLoYBur02LQrK0aHw1kOENlXK5AHCSpJGym59w64mSIBzXNnr6ozF-JMr71-4hNHKE0FNqGxSdrSiDX1aVE')"></div>
+<!-- SVG Bounding Boxes -->
+<svg class="bounding-box-svg" viewbox="0 0 1000 1414">
+<!-- Shipper -->
+<rect class="interactive-box" data-field="shipper" fill="#006e2f" fill-opacity="0.1" height="150" rx="4" stroke="#006e2f" stroke-width="2" width="320" x="90" y="190"></rect>
+<!-- Consignee -->
+<rect class="interactive-box" data-field="consignee" fill="#006e2f" fill-opacity="0.1" height="150" rx="4" stroke="#006e2f" stroke-width="2" width="320" x="90" y="440"></rect>
+<!-- Document Number (Error) -->
+<rect class="interactive-box" data-field="doc_no" fill="#ba1a1a" fill-opacity="0.1" height="90" rx="4" stroke="#ba1a1a" stroke-width="2" width="360" x="540" y="190"></rect>
+<!-- Vessel -->
+<rect class="interactive-box" data-field="vessel" fill="#006e2f" fill-opacity="0.1" height="60" rx="4" stroke="#006e2f" stroke-width="2" width="320" x="90" y="610"></rect>
+<!-- Line Items Table -->
+<rect class="interactive-box" data-field="line_items" fill="#006e2f" fill-opacity="0.05" height="380" rx="8" stroke="#006e2f" stroke-dasharray="4 4" stroke-width="1" width="810" x="90" y="700"></rect>
+</svg>
+</div>
+</div>
+<!-- RIGHT: Extracted Fields Panel -->
+<div class="w-1/2 h-full flex flex-col border-l border-outline-variant/30 bg-surface-container-lowest">
+<div class="flex-grow overflow-y-auto p-8 hide-scrollbar pb-32">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md">Extracted Fields</h3>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-[11px] font-bold text-on-surface-variant bg-surface-container-high px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                            SCHEMA: LOGISTICS_V2
+                        </span>
+</div>
+</div>
+<div class="space-y-8">
+<!-- Stakeholders Group -->
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Stakeholders</h4>
+<div class="h-px flex-grow bg-outline-variant/20"></div>
+</div>
+<!-- Shipper Field -->
+<div class="group" id="field-shipper">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Shipper</label>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold text-secondary">99.4% Confidence</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+</div>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface-container border border-outline-variant/40 rounded-xl p-4 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none outline-none" rows="3">Global Logistics Partners Inc.
+1200 Industrial Way, Suite 400
+Newark, NJ 07105, USA</textarea>
+</div>
+</div>
+<!-- Consignee Field -->
+<div class="group" id="field-consignee">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Consignee</label>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold text-secondary">98.1% Confidence</span>
+<span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span>
+</div>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface-container border border-outline-variant/40 rounded-xl p-4 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none outline-none" rows="3">EuroTech Distribution GmbH
+Kaiserstraße 42, 60311
+Frankfurt am Main, Germany</textarea>
+</div>
+</div>
+</div>
+<!-- Details Group -->
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Shipment Details</h4>
+<div class="h-px flex-grow bg-outline-variant/20"></div>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Vessel -->
+<div id="field-vessel">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant font-semibold">Vessel Name</label>
+<span class="text-[11px] font-bold text-secondary">99%</span>
+</div>
+<input class="w-full bg-surface-container border border-outline-variant/40 rounded-xl p-4 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" type="text" value="Ever Ace"/>
+</div>
+<!-- Voyage (Error State) -->
+<div id="field-doc_no">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm text-error font-bold flex items-center gap-1">
+                                        Voyage No.
+                                        <span class="material-symbols-outlined text-[14px]">warning</span>
+</label>
+<span class="text-[11px] font-bold text-error">65% Low Confidence</span>
+</div>
+<input class="w-full bg-error-container/10 border-2 border-error rounded-xl p-4 font-body-md text-body-md focus:ring-2 focus:ring-error/20 outline-none" type="text" value="EA-092-X"/>
+<p class="text-error text-[11px] mt-1 font-medium">Verify barcode vs. text extraction</p>
+</div>
+</div>
+</div>
+<!-- Line Items Table -->
+<div class="space-y-4" id="field-line_items">
+<div class="flex justify-between items-center">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Line Items</h4>
+<span class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold tracking-tight">3 ITEMS DETECTED</span>
+</div>
+<div class="border border-outline-variant/30 rounded-2xl overflow-hidden bg-surface-container/30">
+<table class="w-full text-left font-body-md">
+<thead class="bg-surface-container-high/50 font-label-sm text-label-sm text-on-surface-variant">
+<tr>
+<th class="p-4">Description</th>
+<th class="p-4">Weight</th>
+<th class="p-4">Qty</th>
+<th class="p-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-full" value="Precision Circuit Boards"/></td>
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-24" value="1,200kg"/></td>
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-12" value="24"/></td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-full" value="Cooling Fan Assemblies"/></td>
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-24" value="450kg"/></td>
+<td class="p-4"><input class="bg-transparent border-none focus:ring-0 p-0 w-12" value="12"/></td>
+<td class="p-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<button class="w-full py-4 bg-surface-container-high/20 hover:bg-surface-container-high/40 text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center gap-2 border-t border-outline-variant/20 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                                Add Row
+                            </button>
+</div>
+</div>
+<!-- Audit Trail / Timeline -->
+<div class="space-y-6 pt-6 border-t border-outline-variant/20">
+<div class="flex items-center justify-between">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Processing Timeline</h4>
+<button class="text-[12px] font-bold text-secondary">View Detail</button>
+</div>
+<div class="space-y-6 relative ml-4">
+<div class="absolute left-[-17px] top-2 bottom-2 w-px bg-outline-variant/30"></div>
+<div class="relative flex gap-4">
+<div class="absolute left-[-22px] top-1.5 w-2.5 h-2.5 rounded-full bg-secondary"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">Extraction Verified</span>
+<span class="text-on-surface-variant text-[12px]">2 minutes ago • AI Engine V4.2</span>
+</div>
+</div>
+<div class="relative flex gap-4 opacity-60">
+<div class="absolute left-[-22px] top-1.5 w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">Field Matching Rule: 301.A</span>
+<span class="text-on-surface-variant text-[12px]">4 minutes ago • System</span>
+</div>
+</div>
+<div class="relative flex gap-4 opacity-60">
+<div class="absolute left-[-22px] top-1.5 w-2.5 h-2.5 rounded-full bg-outline-variant"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold">Document Ingested</span>
+<span class="text-on-surface-variant text-[12px]">5 minutes ago • S. Mitchell</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FIXED FOOTER -->
+<footer class="absolute bottom-0 right-0 w-1/2 bg-surface-container-lowest border-t border-outline-variant/30 p-6 flex items-center justify-between gap-4 z-50">
+<button class="flex items-center gap-2 px-6 py-3 border border-outline-variant text-on-surface rounded-xl font-label-sm text-label-sm font-bold hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined text-[20px]">close</span>
+                    Reject
+                </button>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-6 py-3 text-secondary font-label-sm text-label-sm font-bold hover:bg-secondary-container/10 rounded-xl transition-all">
+<span class="material-symbols-outlined text-[20px]">auto_fix</span>
+                        Revalidate
+                    </button>
+<button class="flex items-center gap-2 px-10 py-3 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm font-extrabold shadow-lg shadow-primary/20 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+                        Approve &amp; File
+                    </button>
+</div>
+</footer>
+</div>
+</div>
+</main>
+<script>
+    // Visual interaction between PDF and Data Panel
+    document.querySelectorAll('.interactive-box').forEach(box => {
+        box.addEventListener('mouseenter', () => {
+            const fieldId = box.getAttribute('data-field');
+            const targetField = document.getElementById('field-' + fieldId);
+            if (targetField) {
+                targetField.classList.add('ring-2', 'ring-secondary/20', 'bg-secondary/5', 'rounded-xl', 'p-2', '-m-2', 'transition-all');
+            }
+        });
+        
+        box.addEventListener('mouseleave', () => {
+            const fieldId = box.getAttribute('data-field');
+            const targetField = document.getElementById('field-' + fieldId);
+            if (targetField) {
+                targetField.classList.remove('ring-2', 'ring-secondary/20', 'bg-secondary/5', 'rounded-xl', 'p-2', '-m-2');
+            }
+        });
+
+        box.addEventListener('click', () => {
+            const fieldId = box.getAttribute('data-field');
+            const targetField = document.getElementById('field-' + fieldId);
+            if (targetField) {
+                targetField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const input = targetField.querySelector('input, textarea');
+                if (input) input.focus();
+            }
+        });
+    });
+
+    // Inverse interaction: focus field highlights PDF region
+    document.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('focus', () => {
+            const parent = input.closest('[id^="field-"]');
+            if (parent) {
+                const fieldName = parent.id.replace('field-', '');
+                const svgBox = document.querySelector(`[data-field="${fieldName}"]`);
+                if (svgBox) {
+                    svgBox.setAttribute('stroke-width', '4');
+                    svgBox.setAttribute('fill-opacity', '0.4');
+                }
+            }
+        });
+        input.addEventListener('blur', () => {
+            const parent = input.closest('[id^="field-"]');
+            if (parent) {
+                const fieldName = parent.id.replace('field-', '');
+                const svgBox = document.querySelector(`[data-field="${fieldName}"]`);
+                if (svgBox) {
+                    svgBox.setAttribute('stroke-width', '2');
+                    svgBox.setAttribute('fill-opacity', '0.1');
+                }
+            }
+        });
+    });
+</script>
+</body></html>

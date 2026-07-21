@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ShipMind AI | Predictive Logistics Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#7d8492",
+                    "inverse-surface": "#2e3132",
+                    "surface": "#f8f9f7",
+                    "on-surface": "#191c1d",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "primary-fixed-dim": "#c0c6db",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "on-surface-variant": "#45464c",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-fixed": "#6bff8f",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "outline-variant": "#c6c6cd",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#575e70",
+                    "inverse-primary": "#c0c6db",
+                    "primary-container": "#141b2b",
+                    "on-secondary-fixed": "#002109",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#007432",
+                    "tertiary": "#000000",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#6bff8f",
+                    "secondary": "#006e2f",
+                    "on-secondary-fixed-variant": "#005321",
+                    "tertiary-fixed": "#dce2f3",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-dim": "#d9dadb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-primary-fixed": "#141b2b",
+                    "primary": "#000000",
+                    "surface-bright": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "background": "#f8f9f7",
+                    "on-tertiary-fixed": "#151c27",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed": "#dce2f7",
+                    "surface-container-high": "#e7e8e9",
+                    "error-container": "#ffdad6",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "on-primary-container": "#7d8497"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "container-max": "1280px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9f7; }
+        .glass { backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.8); }
+        .ambient-shadow { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .chart-grid { background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 24px 24px; }
+        
+        @keyframes pulse-emerald {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-emerald-pulse { animation: pulse-emerald 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-panel {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-panel.active {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden">
+<!-- Report Builder Modal/Panel -->
+<div class="modal-overlay fixed inset-0 z-[100] flex justify-end" id="exportModal">
+<div class="modal-panel w-full max-w-md bg-white h-full shadow-2xl flex flex-col" id="modalPanel">
+<div class="p-6 border-b border-outline-variant/30 flex justify-between items-center">
+<div>
+<h3 class="font-headline-md text-[20px] font-bold">Report Builder</h3>
+<p class="text-label-sm text-on-surface-variant">Configure your intelligence export</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors" onclick="toggleExportModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-8">
+<section>
+<label class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant/70 mb-4 block">Select Data Range</label>
+<div class="grid grid-cols-2 gap-3">
+<button class="p-3 border-2 border-secondary bg-secondary/5 rounded-xl text-label-sm font-bold text-secondary">Last 30 Days</button>
+<button class="p-3 border border-outline-variant/50 rounded-xl text-label-sm hover:border-secondary transition-colors">Custom Range</button>
+</div>
+</section>
+<section>
+<label class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant/70 mb-4 block">Report Components</label>
+<div class="space-y-3">
+<label class="flex items-center gap-3 p-3 border border-outline-variant/50 rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+<input checked="" class="w-5 h-5 rounded border-outline text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-label-sm font-medium">Global Shipments Heatmap</span>
+</label>
+<label class="flex items-center gap-3 p-3 border border-outline-variant/50 rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+<input checked="" class="w-5 h-5 rounded border-outline text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-label-sm font-medium">Supplier Reliability Matrix</span>
+</label>
+<label class="flex items-center gap-3 p-3 border border-outline-variant/50 rounded-xl cursor-pointer hover:bg-surface-container-low transition-colors">
+<input class="w-5 h-5 rounded border-outline text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-label-sm font-medium">Carbon Emission Analysis</span>
+</label>
+</div>
+</section>
+<section>
+<label class="text-label-sm font-bold uppercase tracking-wider text-on-surface-variant/70 mb-4 block">Export Format</label>
+<div class="flex gap-4">
+<button class="flex-1 p-3 border border-outline-variant/50 rounded-xl flex flex-col items-center gap-2 hover:border-secondary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">picture_as_pdf</span>
+<span class="text-[11px] font-bold">PDF Report</span>
+</button>
+<button class="flex-1 p-3 border border-outline-variant/50 rounded-xl flex flex-col items-center gap-2 hover:border-secondary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">table_chart</span>
+<span class="text-[11px] font-bold">CSV Data</span>
+</button>
+</div>
+</section>
+</div>
+<div class="p-6 border-t border-outline-variant/30 bg-surface-container-lowest">
+<button class="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                Generate Report
+            </button>
+</div>
+</div>
+</div>
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-6 px-4 gap-4 z-50">
+<div class="px-3 mb-6">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant/70 uppercase tracking-widest mt-1">Enterprise Logistics</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="local_shipping">local_shipping</span>
+<span class="text-label-sm font-label-sm">Shipments</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="text-label-sm font-label-sm">Fleet</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group transition-all" href="#" style="font-variation-settings: 'FILL' 1;">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="insights" data-weight="fill">insights</span>
+<span class="text-label-sm font-label-sm">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="description">description</span>
+<span class="text-label-sm font-label-sm">Documents</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</a>
+</nav>
+<button class="mt-4 mb-8 bg-primary text-white font-label-sm text-label-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+            New Shipment
+        </button>
+<div class="pt-4 border-t border-outline-variant/20 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="help">help</span>
+<span class="text-label-sm font-label-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+<span class="text-label-sm font-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen px-margin-desktop py-gutter bg-surface">
+<!-- Header -->
+<header class="flex justify-between items-start mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary leading-none">Intelligence Dashboard</h2>
+<p class="text-body-md text-on-surface-variant mt-2">Real-time global logistics performance and predictive insights.</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 bg-white px-4 py-2 rounded-full border border-outline-variant/30 ambient-shadow">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary animate-emerald-pulse"></div>
+<div class="flex flex-col">
+<span class="text-[11px] font-bold text-secondary leading-tight uppercase tracking-wide">AI Engine Live</span>
+<span class="text-[10px] text-on-surface-variant/60 leading-tight">Optimization Status: Optimal</span>
+</div>
+</div>
+<button class="bg-primary text-white font-label-sm text-label-sm py-2.5 px-6 rounded-full flex items-center gap-2 hover:shadow-lg hover:shadow-primary/20 active:scale-95 transition-all" onclick="toggleExportModal()">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+        Export
+    </button>
+</div>
+</header>
+<!-- Top Level Stats Bento -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-gutter">
+<div class="bg-white border border-outline-variant/30 rounded-[20px] p-6 ambient-shadow hover:translate-y-[-2px] transition-transform group">
+<p class="text-label-sm text-on-surface-variant font-medium mb-1 group-hover:text-secondary transition-colors">Active Shipments</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-headline-md font-bold">12,842</h3>
+<span class="text-[12px] text-secondary font-bold flex items-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span> 12%
+                    </span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant/30 rounded-[20px] p-6 ambient-shadow hover:translate-y-[-2px] transition-transform group">
+<p class="text-label-sm text-on-surface-variant font-medium mb-1 group-hover:text-secondary transition-colors">On-Time Performance</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-headline-md font-bold">98.4%</h3>
+<span class="text-[12px] text-secondary font-bold flex items-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant/30 rounded-[20px] p-6 ambient-shadow hover:translate-y-[-2px] transition-transform group">
+<p class="text-label-sm text-on-surface-variant font-medium mb-1 group-hover:text-secondary transition-colors">Carbon Footprint (MT)</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-headline-md font-bold">2,410</h3>
+<span class="text-[12px] text-error font-bold flex items-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_down">trending_down</span> 4.2%
+                    </span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant/30 rounded-[20px] p-6 ambient-shadow hover:translate-y-[-2px] transition-transform group">
+<p class="text-label-sm text-on-surface-variant font-medium mb-1 group-hover:text-secondary transition-colors">Average Cost/kg</p>
+<div class="flex items-baseline gap-2">
+<h3 class="text-headline-md font-bold">$1.42</h3>
+<span class="text-[12px] text-secondary font-bold flex items-center">
+                        -$0.12
+                    </span>
+</div>
+</div>
+</div>
+<!-- Main Analytics Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- World Map Card (8 Columns) -->
+<section class="col-span-12 lg:col-span-8 bg-white border border-outline-variant/30 rounded-[24px] ambient-shadow overflow-hidden flex flex-col h-[520px]">
+<div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
+<div>
+<h4 class="font-headline-md text-[18px] font-bold">Global Country Analytics</h4>
+<p class="text-label-sm text-on-surface-variant">Shipping density and regional latency hotspots.</p>
+</div>
+<div class="flex gap-1 bg-surface-container p-1 rounded-xl">
+<button class="px-4 py-1.5 bg-white shadow-sm rounded-lg text-label-sm font-bold transition-all">Real-time</button>
+<button class="px-4 py-1.5 hover:bg-white/50 rounded-lg text-label-sm transition-all">Forecast</button>
+</div>
+</div>
+<div class="flex-1 relative bg-[#F1F3F5] overflow-hidden group/map">
+<div class="absolute inset-0 z-0 opacity-20 chart-grid"></div>
+<!-- Data-Location Map Placement -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-full bg-cover bg-center transition-transform duration-[20s] linear group-hover/map:scale-110" data-alt="A high-end, minimalist world map visualization for a logistics dashboard. The map is rendered in light monochromatic tones with emerald green pulsating dots representing shipping hubs and thin, glowing green lines connecting major global routes. The style is clean, corporate, and intellectually rigorous, fitting an A-round AI startup aesthetic with subtle tonal layering." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH4rDI-Iyv22Wq7UbykM050biwL4anV9ehSQwCeMdxvfR3UNmVMZuo2rRRGqCYgo-7GYdz__hCv-Th3opP1UChzmLr6OdE4UOF7lsmwT4HJLFYqf4fWSNnpYGGZw8P-iDiWxmnlu0_dp-BqeKF4RlT7QUo_kRJ-pT1G3IJnzQ9J5NHDRcXyJPedmUW17HxFtOR8IcFX716BvnLmQyOZ5hkM30Iu6udohlWPZvaXJnPvs9UFpEsi4A')"></div>
+</div>
+<!-- Map Overlays -->
+<div class="absolute top-6 left-6 flex flex-col gap-3">
+<div class="glass p-3 rounded-xl border border-outline-variant/30 text-label-sm shadow-lg animate-fade-in">
+<span class="block font-bold text-secondary">Shanghai Port</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-[10px] text-on-surface-variant">Delay Prob: 12%</span>
+</div>
+</div>
+<div class="glass p-3 rounded-xl border border-outline-variant/30 text-label-sm shadow-lg">
+<span class="block font-bold text-on-surface">Rotterdam Hub</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-[10px] text-on-surface-variant">Congestion: Low</span>
+</div>
+</div>
+</div>
+<!-- Hotspot Indicators -->
+<div class="absolute top-[40%] left-[65%]">
+<div class="w-4 h-4 bg-secondary rounded-full animate-emerald-pulse shadow-[0_0_20px_rgba(0,110,47,0.5)]"></div>
+</div>
+<div class="absolute top-[35%] left-[48%]">
+<div class="w-3 h-3 bg-secondary rounded-full animate-emerald-pulse opacity-75 shadow-[0_0_15px_rgba(0,110,47,0.3)]"></div>
+</div>
+</div>
+</section>
+<!-- Transport Mode Breakdown (4 Columns) -->
+<section class="col-span-12 lg:col-span-4 bg-white border border-outline-variant/30 rounded-[24px] ambient-shadow p-8 flex flex-col h-[520px]">
+<h4 class="font-headline-md text-[18px] font-bold mb-8">Transport Mode Breakdown</h4>
+<div class="flex-1 flex flex-col justify-around gap-8">
+<!-- Sea -->
+<div class="group cursor-pointer">
+<div class="flex justify-between items-end mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="directions_boat">directions_boat</span>
+</div>
+<div>
+<span class="font-bold text-label-sm block">Sea Freight</span>
+<p class="text-[11px] text-on-surface-variant">Avg Transit: 24.2d</p>
+</div>
+</div>
+<span class="text-headline-md font-extrabold text-secondary">64%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[64%] group-hover:brightness-110 transition-all duration-500 rounded-full"></div>
+</div>
+</div>
+<!-- Air -->
+<div class="group cursor-pointer">
+<div class="flex justify-between items-end mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="flight">flight</span>
+</div>
+<div>
+<span class="font-bold text-label-sm block">Air Freight</span>
+<p class="text-[11px] text-on-surface-variant">Avg Transit: 3.1d</p>
+</div>
+</div>
+<span class="text-headline-md font-extrabold text-secondary">22%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[22%] group-hover:brightness-110 transition-all duration-500 rounded-full"></div>
+</div>
+</div>
+<!-- Road -->
+<div class="group cursor-pointer">
+<div class="flex justify-between items-end mb-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="local_shipping">local_shipping</span>
+</div>
+<div>
+<span class="font-bold text-label-sm block">Road Freight</span>
+<p class="text-[11px] text-on-surface-variant">Avg Transit: 5.4d</p>
+</div>
+</div>
+<span class="text-headline-md font-extrabold text-secondary">14%</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[14%] group-hover:brightness-110 transition-all duration-500 rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/20">
+<button class="w-full py-4 border-2 border-outline-variant/50 rounded-xl font-bold text-label-sm hover:bg-secondary hover:text-white hover:border-secondary transition-all active:scale-[0.98]">
+                        View Detailed Route Efficiency
+                    </button>
+</div>
+</section>
+<!-- Shipment Trends (8 Columns) -->
+<section class="col-span-12 lg:col-span-8 bg-white border border-outline-variant/30 rounded-[24px] ambient-shadow p-8 h-[440px] flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h4 class="font-headline-md text-[18px] font-bold">Volume Trends</h4>
+<p class="text-label-sm text-on-surface-variant">Volume comparison: Actual vs. Predictive Forecast</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<span class="text-[12px] font-bold">Actual</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-secondary/30 border border-secondary"></div>
+<span class="text-[12px] font-bold">Forecast</span>
+</div>
+</div>
+</div>
+<!-- Line Chart Visualization (Mock) -->
+<div class="flex-1 relative">
+<div class="absolute inset-0 chart-grid opacity-30"></div>
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 800 240">
+<!-- Grid Lines -->
+<line stroke="#E5E7EB" stroke-width="1" x1="0" x2="800" y1="200" y2="200"></line>
+<line stroke="#E5E7EB" stroke-width="1" x1="0" x2="800" y1="150" y2="150"></line>
+<line stroke="#E5E7EB" stroke-width="1" x1="0" x2="800" y1="100" y2="100"></line>
+<line stroke="#E5E7EB" stroke-width="1" x1="0" x2="800" y1="50" y2="50"></line>
+<!-- Forecast Path (Dashed) -->
+<path d="M0,180 Q100,160 200,120 T400,140 T600,100 T800,40" fill="none" stroke="#006e2f44" stroke-dasharray="8,6" stroke-width="2.5"></path>
+<!-- Actual Path -->
+<path d="M0,180 Q100,170 200,130 T300,150 T400,140 T500,110 T600,120" fill="none" stroke="#000000" stroke-linecap="round" stroke-width="3.5"></path>
+<!-- Pulse Point -->
+<circle cx="600" cy="120" fill="#000000" r="6"></circle>
+<circle class="animate-ping opacity-20" cx="600" cy="120" fill="#000000" r="14"></circle>
+</svg>
+<!-- X-Axis Labels -->
+<div class="flex justify-between mt-6 text-[11px] text-on-surface-variant font-extrabold px-2">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span>
+</div>
+</div>
+</section>
+<!-- Supplier Reliability Score (4 Columns) -->
+<section class="col-span-12 lg:col-span-4 bg-white border border-outline-variant/30 rounded-[24px] ambient-shadow p-8 h-[440px] flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h4 class="font-headline-md text-[18px] font-bold">Supplier Trust Matrix</h4>
+<span class="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-1 rounded">Weekly Update</span>
+</div>
+<div class="space-y-5 flex-1 overflow-y-auto scrollbar-hide">
+<!-- Supplier 1 -->
+<div class="p-4 border border-outline-variant/30 rounded-2xl hover:border-secondary transition-all cursor-default bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center font-bold text-secondary text-lg">GL</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-sm font-bold">Global Logistics Co.</span>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="text-label-sm font-extrabold">94%</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[94%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Supplier 2 -->
+<div class="p-4 border border-outline-variant/30 rounded-2xl hover:border-secondary transition-all cursor-default bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center font-bold text-on-surface-variant text-lg">NX</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-sm font-bold">NexTrans Corp</span>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">trending_flat</span>
+<span class="text-label-sm font-extrabold">82%</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-on-surface-variant w-[82%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Supplier 3 -->
+<div class="p-4 border border-outline-variant/30 rounded-2xl hover:border-secondary transition-all cursor-default bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center font-bold text-secondary text-lg">PS</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-sm font-bold">Prime Shipping</span>
+<div class="flex items-center gap-1 text-secondary">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="text-label-sm font-extrabold">91%</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[91%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Supplier 4 -->
+<div class="p-4 border border-outline-variant/30 rounded-2xl hover:border-error/50 transition-all cursor-default bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-error/10 flex items-center justify-center font-bold text-error text-lg">WF</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-sm font-bold">WayFair Hubs</span>
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+<span class="text-label-sm font-extrabold">68%</span>
+</div>
+</div>
+<div class="h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error w-[68%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Anchor -->
+<footer class="mt-section-gap w-full flex flex-col md:flex-row justify-between items-center py-12 border-t border-outline-variant/30 gap-gutter opacity-60">
+<div class="flex flex-col gap-2">
+<span class="font-headline-md text-[18px] font-bold text-primary">ShipMind AI</span>
+<p class="text-label-sm font-body-md text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-6">
+<a class="text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Privacy Policy</a>
+<a class="text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Terms of Service</a>
+<a class="text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Security</a>
+<a class="text-label-sm text-on-surface-variant hover:text-primary transition-all hover:underline decoration-secondary" href="#">Status</a>
+</div>
+</footer>
+</main>
+<script>
+    function toggleExportModal() {
+        const modal = document.getElementById('exportModal');
+        const panel = document.getElementById('modalPanel');
+        
+        if (modal.classList.contains('active')) {
+            panel.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.remove('active');
+            }, 300);
+        } else {
+            modal.classList.add('active');
+            setTimeout(() => {
+                panel.classList.add('active');
+            }, 10);
+        }
+    }
+
+    // Modal background click to close
+    document.getElementById('exportModal').addEventListener('click', (e) => {
+        if (e.target.id === 'exportModal') {
+            toggleExportModal();
+        }
+    });
+
+    // Micro-interaction for hover states on bento cards
+    document.querySelectorAll('section').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.borderColor = 'rgba(0, 110, 47, 0.4)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.borderColor = 'rgba(198, 198, 205, 0.3)';
+        });
+    });
+
+    // Simple mock "Real-time" counter updates
+    setInterval(() => {
+        const el = document.querySelector('h3');
+        if (el) {
+            const current = parseInt(el.innerText.replace(',', ''));
+            const next = current + Math.floor(Math.random() * 3) - 1;
+            el.innerText = next.toLocaleString();
+        }
+    }, 5000);
+</script>
+</body></html>

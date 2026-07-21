@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Review Queue | ShipMind AI</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#141b2b",
+                        "on-secondary-container": "#007432",
+                        "surface": "#f8f9fa",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-tint": "#575e70",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#6bff8f",
+                        "primary-fixed-dim": "#c0c6db",
+                        "secondary-container": "#6bff8f",
+                        "on-surface-variant": "#45464c",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191c1d",
+                        "outline-variant": "#c6c6cd",
+                        "on-primary-container": "#7d8497",
+                        "inverse-primary": "#c0c6db",
+                        "surface-container": "#edeeef",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "primary": "#000000",
+                        "inverse-surface": "#2e3132",
+                        "secondary": "#006e2f",
+                        "on-surface": "#191c1d",
+                        "on-primary-fixed-variant": "#404758",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#4ae176",
+                        "on-tertiary-fixed": "#151c27",
+                        "surface-dim": "#d9dadb",
+                        "outline": "#76777d",
+                        "on-secondary-fixed": "#002109",
+                        "tertiary-container": "#151c27",
+                        "tertiary": "#000000",
+                        "surface-bright": "#f8f9fa",
+                        "tertiary-fixed-dim": "#c0c7d6",
+                        "surface-variant": "#e1e3e4",
+                        "on-tertiary-container": "#7d8492",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#404754",
+                        "primary-fixed": "#dce2f7",
+                        "on-primary-fixed": "#141b2b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#dce2f3",
+                        "surface-container-low": "#f3f4f5",
+                        "background": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-secondary-fixed-variant": "#005321"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "card": "24px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "section-gap": "120px",
+                        "element-gap": "16px",
+                        "margin-mobile": "20px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .confidence-ring {
+            transition: stroke-dashoffset 0.6s ease-in-out;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
+        }
+        .bounding-box {
+            border: 2px solid #007432;
+            background: rgba(0, 116, 50, 0.08);
+            position: absolute;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<!-- Navigation Sidebar (Shared Component Style) -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-50">
+<div class="px-3 mb-4">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm text-on-surface-variant/70 uppercase tracking-widest mt-1">Enterprise Logistics</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<!-- Navigation Mapping: Intelligence is active as this is an AI Queue -->
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-all flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-all flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm">Shipments</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-sm">Intelligence</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-all flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-sm">Documents</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-all flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 pt-4 border-t border-outline-variant/10">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-all flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm">Support</span>
+</a>
+<div class="flex items-center gap-3 p-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center text-[10px] font-bold">JD</div>
+<div class="flex flex-col">
+<span class="font-label-sm leading-tight">John Doe</span>
+<span class="text-[10px] text-on-surface-variant">Admin</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 h-screen flex flex-col bg-surface relative">
+<!-- Top App Bar -->
+<header class="h-16 flex items-center justify-between px-8 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/10 z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md">AI Review Queue</h2>
+<span class="px-2.5 py-0.5 bg-error-container text-on-error-container text-[11px] font-bold rounded-full">12 Pending</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-on-surface-variant bg-surface-container px-3 py-1.5 rounded-full border border-outline-variant/20">
+<span class="material-symbols-outlined text-[18px]">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-sm p-0 w-48" placeholder="Search by BOL ID..." type="text"/>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</header>
+<!-- Split View Layout -->
+<div class="flex-1 flex overflow-hidden p-6 gap-6">
+<!-- Left Side: Queue List -->
+<section class="w-1/3 flex flex-col gap-4 overflow-y-auto">
+<!-- Active Item Card -->
+<div class="glass p-5 rounded-card border-2 border-secondary shadow-[0_8px_30px_rgba(0,0,0,0.04)] cursor-pointer">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-label-sm text-secondary font-bold mb-1">CURRENTLY REVIEWING</p>
+<h3 class="font-headline-md text-[18px] mb-1">BOL-77492-AX</h3>
+<p class="text-on-surface-variant text-[12px]">Carrier: Global Wings Logistics</p>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle cx="24" cy="24" fill="none" r="20" stroke="#e1e3e4" stroke-width="4"></circle>
+<circle class="confidence-ring" cx="24" cy="24" fill="none" r="20" stroke="#007432" stroke-dasharray="125.6" stroke-dashoffset="22.6" stroke-width="4"></circle>
+</svg>
+<span class="text-[12px] font-bold text-on-secondary-container">82%</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant/60 text-[11px] font-medium border-t border-outline-variant/10 pt-3">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> Oct 24, 14:20</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> AI Assistant</span>
+</div>
+</div>
+<!-- Next Items -->
+<div class="bg-surface-container-lowest p-5 rounded-card border border-outline-variant/30 hover:border-outline transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-[18px] mb-1 group-hover:text-primary transition-colors">BOL-77488-BC</h3>
+<p class="text-on-surface-variant text-[12px]">Carrier: North Star Freight</p>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center opacity-60">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle cx="24" cy="24" fill="none" r="20" stroke="#e1e3e4" stroke-width="4"></circle>
+<circle cx="24" cy="24" fill="none" r="20" stroke="#ba1a1a" stroke-dasharray="125.6" stroke-dashoffset="32.6" stroke-width="4"></circle>
+</svg>
+<span class="text-[12px] font-bold">74%</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant/40 text-[11px] pt-3">
+<span class="flex items-center gap-1">Flagged: Name Mismatch</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-card border border-outline-variant/30 hover:border-outline transition-all cursor-pointer opacity-80">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-[18px] mb-1">INV-99021-X</h3>
+<p class="text-on-surface-variant text-[12px]">Type: Commercial Invoice</p>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center opacity-60">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle cx="24" cy="24" fill="none" r="20" stroke="#e1e3e4" stroke-width="4"></circle>
+<circle cx="24" cy="24" fill="none" r="20" stroke="#007432" stroke-dasharray="125.6" stroke-dashoffset="15.6" stroke-width="4"></circle>
+</svg>
+<span class="text-[12px] font-bold">88%</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-card border border-outline-variant/30 hover:border-outline transition-all cursor-pointer opacity-80">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-[18px] mb-1">BOL-77485-ZZ</h3>
+<p class="text-on-surface-variant text-[12px]">Carrier: Swift Marine</p>
+</div>
+<div class="relative w-12 h-12 flex items-center justify-center opacity-60">
+<svg class="absolute inset-0 w-full h-full -rotate-90">
+<circle cx="24" cy="24" fill="none" r="20" stroke="#e1e3e4" stroke-width="4"></circle>
+<circle cx="24" cy="24" fill="none" r="20" stroke="#ba1a1a" stroke-dasharray="125.6" stroke-dashoffset="40.6" stroke-width="4"></circle>
+</svg>
+<span class="text-[12px] font-bold">68%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Document Viewer & Fields -->
+<section class="flex-1 flex gap-6 overflow-hidden">
+<!-- PDF Viewer Canvas -->
+<div class="flex-1 bg-surface-container rounded-card border border-outline-variant/30 overflow-hidden relative group">
+<div class="absolute top-4 left-4 z-10 flex gap-2">
+<button class="w-8 h-8 rounded-lg bg-primary-container text-white flex items-center justify-center hover:bg-black transition-colors">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-on-surface flex items-center justify-center hover:bg-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">zoom_out</span>
+</button>
+</div>
+<!-- Simulated PDF Rendering -->
+<div class="w-full h-full bg-white p-12 overflow-y-auto shadow-inner flex justify-center">
+<div class="w-[600px] bg-white h-[840px] relative shadow-lg border border-outline-variant/20 p-8">
+<!-- Document Header -->
+<div class="flex justify-between items-start mb-12">
+<div class="text-4xl font-extrabold tracking-tighter opacity-10">SHIPMIND</div>
+<div class="text-right">
+<h4 class="font-bold text-xl uppercase tracking-widest text-primary mb-2">Bill of Lading</h4>
+<p class="text-[10px] text-on-surface-variant font-mono">DOCUMENT ID: 77492-AX</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8 mb-12">
+<div class="relative p-2">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-2">Shipper</p>
+<p class="text-[14px] leading-relaxed">TechNova Solutions Inc.<br/>4500 Innovation Way<br/>Palo Alto, CA 94304</p>
+<!-- Bounding Box -->
+<div class="bounding-box -inset-1 rounded"></div>
+</div>
+<div class="relative p-2">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-2">Consignee</p>
+<p class="text-[14px] leading-relaxed">Global Hub Rotterdam<br/>Prinses Beatrixlaan 23<br/>2595 AK Den Haag, NL</p>
+<!-- Bounding Box -->
+<div class="bounding-box -inset-1 rounded"></div>
+</div>
+</div>
+<table class="w-full text-left mb-12 border-collapse">
+<thead>
+<tr class="border-b border-on-surface/10">
+<th class="py-2 text-[10px] uppercase">Description of Goods</th>
+<th class="py-2 text-[10px] uppercase">Weight</th>
+<th class="py-2 text-[10px] uppercase">Packages</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-outline-variant/10">
+<td class="py-4 text-sm font-medium">Lithium-Ion Battery Modules (UN3480)</td>
+<td class="py-4 text-sm relative">
+                                            1,420 kg
+                                            <div class="bounding-box -inset-x-2 -inset-y-1 rounded border-secondary"></div>
+</td>
+<td class="py-4 text-sm">24 Pallets</td>
+</tr>
+</tbody>
+</table>
+<div class="mt-auto pt-12 border-t-2 border-primary/5 flex justify-between">
+<div class="w-32 h-12 bg-surface-container-high rounded opacity-20"></div>
+<div class="text-right">
+<p class="text-[10px] uppercase font-bold">Authorized Signature</p>
+<p class="font-bold text-sm italic mt-2">D. Sterling</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Fields Panel -->
+<div class="w-80 glass flex flex-col rounded-card border border-outline-variant/30 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
+<div class="p-5 border-b border-outline-variant/10 bg-surface-container-lowest/50 rounded-t-card">
+<h4 class="font-bold text-on-surface text-[14px]">Data Extraction</h4>
+<p class="text-[11px] text-on-surface-variant">Validate AI identified fields</p>
+</div>
+<div class="flex-1 overflow-y-auto p-5 flex flex-col gap-5">
+<!-- Field 1 -->
+<div class="space-y-1.5">
+<label class="flex justify-between items-center text-[10px] uppercase font-bold text-on-surface-variant">
+<span>Shipper Name</span>
+<span class="text-secondary flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">verified</span> 98%</span>
+</label>
+<div class="relative">
+<input class="w-full bg-white border border-outline-variant/50 rounded-lg py-2 px-3 text-[13px] focus:ring-1 focus:ring-secondary focus:border-secondary transition-all" type="text" value="TechNova Solutions Inc."/>
+</div>
+</div>
+<!-- Field 2 -->
+<div class="space-y-1.5">
+<label class="flex justify-between items-center text-[10px] uppercase font-bold text-on-surface-variant">
+<span>Destination City</span>
+<span class="text-secondary flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">verified</span> 94%</span>
+</label>
+<input class="w-full bg-white border border-outline-variant/50 rounded-lg py-2 px-3 text-[13px] focus:ring-1 focus:ring-secondary focus:border-secondary" type="text" value="Rotterdam"/>
+</div>
+<!-- Field 3 (Low Confidence/Error) -->
+<div class="space-y-1.5">
+<label class="flex justify-between items-center text-[10px] uppercase font-bold text-error">
+<span>Total Weight</span>
+<span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">warning</span> 62%</span>
+</label>
+<div class="flex gap-2">
+<input class="flex-1 bg-white border border-error/30 rounded-lg py-2 px-3 text-[13px] focus:ring-1 focus:ring-error focus:border-error" type="text" value="1,420"/>
+<div class="bg-surface-container flex items-center px-3 rounded-lg text-xs font-bold text-on-surface-variant">KG</div>
+</div>
+<p class="text-[10px] text-error font-medium">Ambiguity detected in handwritten note.</p>
+</div>
+<!-- Field 4 -->
+<div class="space-y-1.5">
+<label class="flex justify-between items-center text-[10px] uppercase font-bold text-on-surface-variant">
+<span>Hazard Class</span>
+<span class="text-secondary flex items-center gap-0.5"><span class="material-symbols-outlined text-[12px]">verified</span> 99%</span>
+</label>
+<select class="w-full bg-white border border-outline-variant/50 rounded-lg py-2 px-3 text-[13px] focus:ring-1 focus:ring-secondary focus:border-secondary">
+<option>Class 9 - Miscellaneous</option>
+<option>Class 3 - Flammable</option>
+</select>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-5 border-t border-outline-variant/10 bg-surface-container-lowest/50 rounded-b-card flex flex-col gap-2">
+<button class="w-full bg-secondary text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">check_circle</span>
+                            Approve Extraction
+                        </button>
+<div class="flex gap-2">
+<button class="flex-1 border border-outline-variant/50 text-on-surface-variant py-2.5 rounded-xl font-bold text-[13px] hover:bg-surface transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">flag</span>
+                                Flag
+                            </button>
+<button class="flex-1 border border-outline-variant/50 text-on-surface-variant py-2.5 rounded-xl font-bold text-[13px] hover:bg-surface transition-all flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                                Re-run AI
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Overlay Micro-interactions -->
+<script>
+        // Simple ripple-like effect on button hover
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'translateY(-1px)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Toggle focus on input to simulate bounding box highlighting
+        const inputs = document.querySelectorAll('input, select');
+        const boxes = document.querySelectorAll('.bounding-box');
+        
+        inputs.forEach((input, index) => {
+            input.addEventListener('focus', () => {
+                if(boxes[index]) {
+                    boxes[index].style.borderColor = '#006e2f';
+                    boxes[index].style.backgroundColor = 'rgba(0, 110, 47, 0.15)';
+                    boxes[index].style.boxShadow = '0 0 15px rgba(0, 110, 47, 0.2)';
+                }
+            });
+            input.addEventListener('blur', () => {
+                if(boxes[index]) {
+                    boxes[index].style.borderColor = '#007432';
+                    boxes[index].style.backgroundColor = 'rgba(0, 116, 50, 0.08)';
+                    boxes[index].style.boxShadow = 'none';
+                }
+            });
+        });
+    </script>
+</body></html>

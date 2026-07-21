@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Team &amp; Roles | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#000000",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2f",
+                    "on-primary-fixed": "#141b2b",
+                    "on-surface": "#191c1d",
+                    "primary-container": "#141b2b",
+                    "primary-fixed": "#dce2f7",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "surface-container-low": "#f3f4f5",
+                    "on-secondary-fixed-variant": "#005321",
+                    "surface-tint": "#575e70",
+                    "surface-container": "#edeeef",
+                    "outline-variant": "#c6c6cd",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#002109",
+                    "on-surface-variant": "#45464c",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#c0c6db",
+                    "on-primary-container": "#7d8497",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-container": "#7d8492",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f8f9fa",
+                    "secondary-fixed": "#6bff8f",
+                    "on-background": "#191c1d",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-primary": "#c0c6db",
+                    "surface": "#f8f9fa",
+                    "surface-container-high": "#e7e8e9",
+                    "primary": "#000000",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#dce2f3",
+                    "on-secondary-container": "#007432",
+                    "on-tertiary-fixed": "#151c27",
+                    "secondary-container": "#6bff8f",
+                    "inverse-surface": "#2e3132"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "margin-mobile": "20px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest dark:bg-surface-container-low border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-50">
+<div class="mb-8 px-3">
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary dark:text-on-primary-fixed">ShipMind AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Enterprise Logistics</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary dark:text-secondary-fixed-dim border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3 active:opacity-70 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 space-y-1 border-t border-outline-variant/10">
+<button class="w-full bg-primary text-white py-3 px-4 rounded-[12px] font-label-sm text-label-sm mb-4 flex items-center justify-center gap-2 hover:opacity-80 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                New Shipment
+            </button>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-grow ml-64 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-64 right-0 bg-surface/80 dark:bg-surface-container-low/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm z-40">
+<div class="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-gutter">
+<h2 class="text-headline-md font-headline-md font-bold tracking-tight text-primary">Settings</h2>
+<nav class="hidden md:flex gap-6">
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">General</a>
+<a class="text-secondary font-semibold font-body-md text-body-md border-b-2 border-secondary pb-1" href="#">Team</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Billing</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">API Keys</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all" href="#">Security</a>
+</nav>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md">Login</button>
+<button class="bg-primary text-white px-5 py-2 rounded-[12px] font-body-md text-body-md transition-all hover:opacity-80 active:scale-95">Get Started</button>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<section class="mt-20 px-gutter py-10 max-w-7xl mx-auto w-full">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary tracking-tight">Organization Members</h3>
+<p class="text-on-surface-variant font-body-md text-body-md mt-1">Manage who has access to your ShipMind AI workspace and define their capabilities.</p>
+</div>
+<button class="bg-primary text-white px-6 py-3 rounded-[12px] flex items-center gap-2 font-label-sm text-label-sm hover:opacity-90 transition-all shadow-md active:translate-y-px" onclick="toggleModal('invite-modal')">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+                    Invite Member
+                </button>
+</div>
+<!-- Internal Tabs -->
+<div class="flex gap-8 border-b border-outline-variant/30 mb-8 overflow-x-auto custom-scrollbar pb-1">
+<button class="pb-4 border-b-2 border-primary text-primary font-semibold font-body-md text-body-md whitespace-nowrap" id="tab-members" onclick="switchTab('members')">
+                    Active Members (12)
+                </button>
+<button class="pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all whitespace-nowrap" id="tab-permissions" onclick="switchTab('permissions')">
+                    Role Permissions
+                </button>
+<button class="pb-4 border-b-2 border-transparent text-on-surface-variant hover:text-primary font-body-md text-body-md transition-all whitespace-nowrap" id="tab-pending" onclick="switchTab('pending')">
+                    Pending Invites (2)
+                </button>
+</div>
+<!-- Members Table Card -->
+<div class="glass-card rounded-[20px] overflow-hidden" id="content-members">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/20">
+<th class="p-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Member</th>
+<th class="p-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Role</th>
+<th class="p-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="p-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Last Active</th>
+<th class="p-6"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
+<img alt="Alex Sterling" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAanI_suWbOHwif45sQ9d6VJWRhoWZ23hiUfYPk17nhLV2HNHbQr9W8oP0V37-JcyX-UVH9qotEElwSSViqc9OKDBJ90voMydq4UtQW5rEGLFWEyqgieRC6ABSX5D_yXw6VguvieJqXpUlaUCTJcbp0ptlYQw4JjVBvDgXAeWpW9P5F8CqRocQrP3g6EqxNEqy8ta6HiYfI-wEkY5p10a5tZQunlAxNDEL4Aw5inkLYUXexoBriKXk"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-primary">Alex Sterling</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">alex.sterling@shipmind.ai</p>
+</div>
+</div>
+</td>
+<td class="p-6">
+<select class="bg-surface border border-outline-variant/50 rounded-lg px-3 py-1.5 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+<option selected="">Admin</option>
+<option>Editor</option>
+<option>Reviewer</option>
+</select>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
+                                        Active
+                                    </span>
+</td>
+<td class="p-6 text-on-surface-variant font-body-md text-body-md">2 mins ago</td>
+<td class="p-6 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="Sarah Chen" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDF57eoPLTkK7j0qgxK2Mgx2lYUnxgNM7jBdcAtC4SfaykSQlSp0t3pYF4Z9CcgNBduzs2aM6H8U6Xay-b8JIOYVqP7jcAd9dEzqVUjrxTxY-ERseJmQI24NHFx2w7Q-G_lq_6L6iUMoRRxb4oVdXbMBabne9S4OTWuVXeuvBsueChCgm4koPm_MQgFP7GuaCii0Uf5_2CwnA-8aZyTewBbO5hRsNZInbnf8rXh31_71x_nkJFqimg"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-primary">Sarah Chen</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">s.chen@shipmind.ai</p>
+</div>
+</div>
+</td>
+<td class="p-6">
+<select class="bg-surface border border-outline-variant/50 rounded-lg px-3 py-1.5 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+<option>Admin</option>
+<option selected="">Editor</option>
+<option>Reviewer</option>
+</select>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">
+                                        Active
+                                    </span>
+</td>
+<td class="p-6 text-on-surface-variant font-body-md text-body-md">1 hour ago</td>
+<td class="p-6 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center overflow-hidden">
+<img alt="Marcus Thorne" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2hwV17Oi092BvyVZJlPKk8X_yAKGkwlxUZOFKzc6IVFzOdlb4XlYODbYNpiFuWNrqH9AY1T658xfpNInI4h-jJDPL5rz-IRbB1wLOVjF-8u_VGyCclK9Lmd5tAafmba-EM7atDnBYdzeisVZVTMPHR02G0APKYT255TeOZgR81FUGJlhJNCRYbEZhyRbDO568nvVD6ZIrMCJlOaVhViflLLFAWNm-hwgHYzzy4L6mlAong0L6jHQ"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-primary">Marcus Thorne</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">m.thorne@shipmind.ai</p>
+</div>
+</div>
+</td>
+<td class="p-6">
+<select class="bg-surface border border-outline-variant/50 rounded-lg px-3 py-1.5 font-body-md text-body-md focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+<option>Admin</option>
+<option>Editor</option>
+<option selected="">Reviewer</option>
+</select>
+</td>
+<td class="p-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-on-surface-variant/10 text-on-surface-variant border border-outline-variant/20">
+                                        Offline
+                                    </span>
+</td>
+<td class="p-6 text-on-surface-variant font-body-md text-body-md">Yesterday</td>
+<td class="p-6 text-right">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 border-t border-outline-variant/10 flex justify-between items-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Showing 3 of 12 members</p>
+<div class="flex gap-2">
+<button class="px-4 py-2 border border-outline-variant/30 rounded-lg font-label-sm text-label-sm hover:bg-surface-container-low transition-colors">Previous</button>
+<button class="px-4 py-2 border border-outline-variant/30 rounded-lg font-label-sm text-label-sm hover:bg-surface-container-low transition-colors">Next</button>
+</div>
+</div>
+</div>
+<!-- Permissions Tab Content (Hidden) -->
+<div class="hidden space-y-gutter" id="content-permissions">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<div class="glass-card p-8 rounded-[20px] flex flex-col">
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Admin</h4>
+<p class="text-on-surface-variant font-body-md text-body-md mb-6">Full system access and billing management.</p>
+<ul class="space-y-4 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Manage users &amp; teams
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Access billing
+                            </li>
+</ul>
+<button class="mt-8 py-3 border border-outline-variant/30 rounded-[12px] font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all">Edit Permissions</button>
+</div>
+<div class="glass-card p-8 rounded-[20px] flex flex-col">
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Editor</h4>
+<p class="text-on-surface-variant font-body-md text-body-md mb-6">Create and manage shipment operations.</p>
+<ul class="space-y-4 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Edit shipment details
+                            </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-on-surface-variant/30 text-[20px]" data-icon="cancel">cancel</span>
+<span class="text-on-surface-variant/60 line-through">Delete records</span>
+</li>
+</ul>
+<button class="mt-8 py-3 border border-outline-variant/30 rounded-[12px] font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all">Edit Permissions</button>
+</div>
+<div class="glass-card p-8 rounded-[20px] flex flex-col">
+<h4 class="font-headline-md text-headline-md text-primary mb-2">Reviewer</h4>
+<p class="text-on-surface-variant font-body-md text-body-md mb-6">Read-only access for tracking &amp; reports.</p>
+<ul class="space-y-4 flex-grow">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                View shipment status
+                            </li>
+</ul>
+<button class="mt-8 py-3 border border-outline-variant/30 rounded-[12px] font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-all">Edit Permissions</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="mt-auto w-full bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant/30 shadow-none">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-12 max-w-container-max mx-auto gap-gutter">
+<div class="flex flex-col gap-2">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">ShipMind AI</span>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-70">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-all font-label-sm text-label-sm" href="#">Security</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Invite Member Modal -->
+<div class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" id="invite-modal">
+<div class="bg-white rounded-[20px] shadow-2xl max-w-md w-full p-8 animate-in fade-in zoom-in duration-200">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-headline-md text-headline-md text-primary">Invite a Member</h4>
+<button class="text-on-surface-variant hover:text-primary transition-all" onclick="toggleModal('invite-modal')">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Email Address</label>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md" placeholder="e.g. teammate@shipmind.ai" type="email"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Assign Role</label>
+<div class="grid grid-cols-2 gap-3">
+<button class="border border-primary bg-primary/5 p-3 rounded-xl text-left transition-all">
+<p class="font-semibold font-body-md text-body-md text-primary">Editor</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Edit operations</p>
+</button>
+<button class="border border-outline-variant/30 p-3 rounded-xl text-left transition-all hover:bg-surface-container-low">
+<p class="font-semibold font-body-md text-body-md text-primary">Reviewer</p>
+<p class="text-[11px] text-on-surface-variant mt-0.5">View &amp; Approve</p>
+</button>
+</div>
+</div>
+<div class="pt-4 flex gap-3">
+<button class="flex-1 py-3 border border-outline-variant/30 rounded-[12px] font-label-sm text-label-sm hover:bg-surface-container-low transition-all" onclick="toggleModal('invite-modal')">Cancel</button>
+<button class="flex-1 py-3 bg-primary text-white rounded-[12px] font-label-sm text-label-sm hover:opacity-90 shadow-md transition-all active:translate-y-px">Send Invite</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.toggle('hidden');
+        }
+
+        function switchTab(tab) {
+            const membersBtn = document.getElementById('tab-members');
+            const permissionsBtn = document.getElementById('tab-permissions');
+            const pendingBtn = document.getElementById('tab-pending');
+            
+            const membersContent = document.getElementById('content-members');
+            const permissionsContent = document.getElementById('content-permissions');
+
+            // Reset tabs
+            [membersBtn, permissionsBtn, pendingBtn].forEach(btn => {
+                if (btn) {
+                    btn.classList.remove('border-primary', 'text-primary', 'font-semibold');
+                    btn.classList.add('border-transparent', 'text-on-surface-variant');
+                }
+            });
+
+            // Set active tab
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-on-surface-variant');
+                activeBtn.classList.add('border-primary', 'text-primary', 'font-semibold');
+            }
+
+            // Toggle content
+            if (tab === 'members') {
+                membersContent.classList.remove('hidden');
+                permissionsContent.classList.add('hidden');
+            } else if (tab === 'permissions') {
+                membersContent.classList.add('hidden');
+                permissionsContent.classList.remove('hidden');
+            }
+        }
+    </script>
+</body></html>

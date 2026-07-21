@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Library | ShipMind AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#7d8492",
+                    "inverse-surface": "#2e3132",
+                    "surface": "#f8f9fa",
+                    "on-surface": "#191c1d",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#404758",
+                    "primary-fixed-dim": "#c0c6db",
+                    "tertiary-fixed-dim": "#c0c7d6",
+                    "on-surface-variant": "#45464c",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-fixed": "#6bff8f",
+                    "inverse-on-surface": "#f0f1f2",
+                    "tertiary-container": "#151c27",
+                    "outline-variant": "#c6c6cd",
+                    "on-tertiary": "#ffffff",
+                    "surface-tint": "#575e70",
+                    "inverse-primary": "#c0c6db",
+                    "primary-container": "#141b2b",
+                    "on-secondary-fixed": "#002109",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#007432",
+                    "tertiary": "#000000",
+                    "on-background": "#191c1d",
+                    "secondary-container": "#6bff8f",
+                    "secondary": "#006e2f",
+                    "on-secondary-fixed-variant": "#005321",
+                    "tertiary-fixed": "#dce2f3",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-dim": "#d9dadb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#edeeef",
+                    "on-primary-fixed": "#141b2b",
+                    "primary": "#000000",
+                    "surface-bright": "#f8f9fa",
+                    "error": "#ba1a1a",
+                    "background": "#f8f9fa",
+                    "on-tertiary-fixed": "#151c27",
+                    "surface-container-highest": "#e1e3e4",
+                    "primary-fixed": "#dce2f7",
+                    "surface-container-high": "#e7e8e9",
+                    "error-container": "#ffdad6",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#4ae176",
+                    "on-tertiary-fixed-variant": "#404754",
+                    "on-primary-container": "#7d8497"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "container-max": "1280px",
+                    "element-gap": "16px",
+                    "section-gap": "120px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+        .glass { backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.8); }
+        .ambient-shadow { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .high-density-table td { padding-top: 12px; padding-bottom: 12px; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col py-gutter px-4 gap-element-gap z-40 hidden md:flex">
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">ShipMind AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Logistics</p>
+</div>
+</div>
+<button class="mt-4 mx-3 bg-primary text-white py-3 px-4 rounded-xl font-label-sm text-label-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+            New Shipment
+        </button>
+<nav class="mt-6 flex flex-col gap-1">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-sm text-label-sm">Shipments</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-sm text-label-sm">Fleet</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<a class="bg-secondary-container/10 text-secondary border-l-2 border-secondary font-bold p-3 rounded-r-lg flex items-center gap-3" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-sm text-label-sm">Documents</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-sm text-label-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 pt-4 border-t border-outline-variant/20">
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-sm text-label-sm">Support</span>
+</a>
+<a class="text-on-surface-variant p-3 hover:bg-surface-container-high transition-colors flex items-center gap-3 rounded-lg" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-sm text-label-sm">Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen pb-section-gap">
+<!-- Header / Top Bar -->
+<header class="sticky top-0 z-30 glass border-b border-outline-variant/30 px-margin-mobile md:px-margin-desktop py-6">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Document Library</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and audit automated document extractions.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-primary text-white py-2.5 px-6 rounded-xl font-label-sm text-label-sm font-bold hover:opacity-90 transition-all active:scale-95">
+                        Upload Documents
+                    </button>
+</div>
+</div>
+</header>
+<!-- Stats Overview -->
+<section class="px-margin-mobile md:px-margin-desktop mt-gutter max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-white border border-outline-variant p-6 rounded-xl ambient-shadow flex flex-col justify-between">
+<div class="flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Extraction Confidence</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">verified</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-primary">98.2%</span>
+<span class="text-secondary text-label-sm font-bold">+0.4%</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-6 rounded-xl ambient-shadow flex flex-col justify-between">
+<div class="flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Awaiting Review</span>
+<span class="material-symbols-outlined text-error text-[20px]">error</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-primary">124</span>
+<span class="text-on-surface-variant text-[12px]">Files</span>
+</div>
+</div>
+<div class="bg-primary text-white p-6 rounded-xl ambient-shadow flex flex-col justify-between">
+<div class="flex justify-between items-center">
+<span class="text-label-sm font-label-sm text-white/70 uppercase tracking-wider">Total Processed</span>
+<span class="material-symbols-outlined text-white/70 text-[20px]">database</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-md text-headline-md text-white">4,284</span>
+<span class="text-white/70 text-[12px]">All time</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Document Library Content -->
+<section class="px-margin-mobile md:px-margin-desktop mt-10 max-w-container-max mx-auto">
+<!-- Controls Header -->
+<div class="bg-white border border-outline-variant border-b-0 rounded-t-xl p-4 flex flex-col gap-4">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="relative flex-grow max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/50 rounded-lg py-2 pl-10 pr-4 font-body-md text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Filter by document ID, type or source..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-3 py-2 bg-white border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export
+                        </button>
+<button class="flex items-center gap-2 px-3 py-2 bg-white border border-outline-variant rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+                            Configure
+                        </button>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap items-center gap-2 border-t border-outline-variant/10 pt-4">
+<div class="text-label-sm font-label-sm text-on-surface-variant mr-2">Filters:</div>
+<button class="bg-surface-container-high px-3 py-1.5 rounded-md font-label-sm text-label-sm text-primary flex items-center gap-1.5 border border-outline-variant/50">
+                        Status: <span class="font-bold">All</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="bg-white px-3 py-1.5 rounded-md font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5 border border-outline-variant/50">
+                        Confidence: <span class="font-bold">High</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="bg-white px-3 py-1.5 rounded-md font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5 border border-outline-variant/50">
+                        Date Range: <span class="font-bold">30d</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<button class="bg-white px-3 py-1.5 rounded-md font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5 border border-outline-variant/50">
+                        Source: <span class="font-bold">All</span>
+<span class="material-symbols-outlined text-[14px]">expand_more</span>
+</button>
+<div class="w-px h-4 bg-outline-variant/30 mx-1"></div>
+<button class="text-on-surface-variant font-label-sm text-[12px] hover:text-primary transition-colors">Clear all</button>
+</div>
+<!-- Bulk Actions Bar (Sticky if items selected) -->
+<div class="flex items-center justify-between py-2 border-t border-outline-variant/10 mt-2">
+<div class="flex items-center gap-4">
+<span class="text-label-sm font-label-sm text-on-surface-variant">0 items selected</span>
+<div class="flex items-center gap-2">
+<button class="bg-surface-container border border-outline-variant px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant opacity-50 cursor-not-allowed">Approve Selected</button>
+<button class="bg-surface-container border border-outline-variant px-3 py-1 rounded-md font-label-sm text-label-sm text-on-surface-variant opacity-50 cursor-not-allowed">Re-process</button>
+</div>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">
+                        Showing <span class="font-bold text-primary">1-50</span> of 4,284
+                    </div>
+</div>
+</div>
+<!-- High-Density Data Table -->
+<div class="bg-white border border-outline-variant rounded-b-xl ambient-shadow overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse high-density-table">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/50">
+<th class="py-3 pl-6 pr-4 w-10">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">
+<div class="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors">
+                            Document <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+</div>
+</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Status</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Confidence</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Indicator</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Date Processed</th>
+<th class="py-3 px-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Source</th>
+<th class="py-3 pl-4 pr-6 text-right font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1: Verified -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="pl-6 pr-4">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-10 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] opacity-40">picture_as_pdf</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] text-primary font-semibold truncate max-w-[200px]">INV-2024-0892.pdf</div>
+<div class="text-[11px] text-on-surface-variant">Commercial Invoice • 1.2 MB</div>
+</div>
+</div>
+</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-bold uppercase tracking-tighter">Verified</span>
+</td>
+<td class="px-4">
+<span class="font-label-sm text-label-sm text-primary font-bold">99.8%</span>
+</td>
+<td class="px-4">
+<div class="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Oct 14, 2024</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">SAP ERP</td>
+<td class="pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Review Required -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="pl-6 pr-4">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-10 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] opacity-40">description</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] text-primary font-semibold truncate max-w-[200px]">BOL-HK-4410.pdf</div>
+<div class="text-[11px] text-on-surface-variant">Bill of Lading • 840 KB</div>
+</div>
+</div>
+</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase tracking-tighter">Flagged</span>
+</td>
+<td class="px-4">
+<span class="font-label-sm text-label-sm text-primary font-bold">76.4%</span>
+</td>
+<td class="px-4">
+<div class="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 w-[76%]"></div>
+</div>
+</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Oct 14, 2024</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Mail Drop</td>
+<td class="pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Critical Flag -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="pl-6 pr-4">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-10 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] opacity-40">image</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] text-primary font-semibold truncate max-w-[200px]">MANIFEST_LAX_12.jpg</div>
+<div class="text-[11px] text-on-surface-variant">Cargo Manifest • 2.4 MB</div>
+</div>
+</div>
+</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[11px] font-bold uppercase tracking-tighter">Critical</span>
+</td>
+<td class="px-4">
+<span class="font-label-sm text-label-sm text-error font-bold">42.1%</span>
+</td>
+<td class="px-4">
+<div class="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-red-600 w-[42%]"></div>
+</div>
+</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Oct 13, 2024</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Mobile Scan</td>
+<td class="pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-error"><span class="material-symbols-outlined text-[18px]">warning</span></button>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Processing -->
+<tr class="hover:bg-surface-container-low/40 transition-colors bg-surface-container/10">
+<td class="pl-6 pr-4">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-10 bg-surface-container-high rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden relative">
+<div class="absolute inset-0 bg-primary/10 animate-pulse"></div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-30 text-[18px]">sync</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] text-primary font-semibold truncate max-w-[200px]">RECEIPT_SHG_01.pdf</div>
+<div class="text-[11px] text-on-surface-variant italic">Extracting data...</div>
+</div>
+</div>
+</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-[11px] font-bold uppercase tracking-tighter">Processing</span>
+</td>
+<td class="px-4">
+<span class="font-label-sm text-[12px] text-on-surface-variant italic">Calculating...</span>
+</td>
+<td class="px-4">
+<div class="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary/20 animate-[progress_2s_ease-in-out_infinite] w-[45%]"></div>
+</div>
+</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Just now</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">API Upload</td>
+<td class="pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">stop_circle</span></button>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Verified 2 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="pl-6 pr-4">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+</td>
+<td class="px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-10 bg-surface-container rounded border border-outline-variant flex-shrink-0 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] opacity-40">task</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] text-primary font-semibold truncate max-w-[200px]">PL_6772_EU.pdf</div>
+<div class="text-[11px] text-on-surface-variant">Packing List • 2.1 MB</div>
+</div>
+</div>
+</td>
+<td class="px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[11px] font-bold uppercase tracking-tighter">Verified</span>
+</td>
+<td class="px-4">
+<span class="font-label-sm text-label-sm text-primary font-bold">94.2%</span>
+</td>
+<td class="px-4">
+<div class="w-20 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[94%]"></div>
+</div>
+</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">Oct 12, 2024</td>
+<td class="px-4 font-body-md text-[13px] text-on-surface-variant">SAP ERP</td>
+<td class="pl-4 pr-6 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+<button class="p-1.5 rounded-md hover:bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 flex items-center justify-between border-t border-outline-variant/30">
+<div class="flex items-center gap-4">
+<div class="text-label-sm font-label-sm text-on-surface-variant">
+                            Row per page: 
+                            <select class="bg-transparent border-none focus:ring-0 text-primary font-bold cursor-pointer pr-8">
+<option>50</option>
+<option>100</option>
+<option>250</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-md bg-primary text-white font-label-sm text-[12px] font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-[12px] font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-[12px] font-bold">3</button>
+<span class="text-on-surface-variant px-1 text-[12px]">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-label-sm text-[12px] font-bold">857</button>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-md border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30 mt-section-gap">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-desktop py-8 max-w-container-max mx-auto gap-gutter">
+<div>
+<div class="font-headline-md text-[20px] font-bold text-primary tracking-tight">ShipMind AI</div>
+<p class="font-body-md text-[14px] text-on-surface-variant">© 2024 ShipMind AI. Predictive Logistics Excellence.</p>
+</div>
+<div class="flex flex-wrap gap-6">
+<a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-all" href="#">Privacy</a>
+<a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-all" href="#">Terms</a>
+<a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-all" href="#">Security</a>
+<a class="font-body-md text-[14px] text-on-surface-variant hover:text-primary transition-all" href="#">Status</a>
+</div>
+</div>
+</footer>
+<!-- Mobile Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 px-6 py-4 flex justify-between items-center md:hidden z-50">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-[10px] font-bold">Fleet</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="text-[10px] font-bold">Docs</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[10px] font-bold">Stats</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="text-[10px] font-bold">You</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                    // Action for selecting or opening document detail
+                    console.log('Open Document Details');
+                    row.classList.toggle('bg-primary/5');
+                }
+            });
+        });
+    </script>
+</body></html>
