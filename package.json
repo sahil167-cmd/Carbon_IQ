@@ -1,0 +1,31 @@
+{
+  "name": "carbon-os",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm --filter @carbon-os/core-api dev",
+    "dev:web": "pnpm --filter @carbon-os/web dev",
+    "dev:ml": "pnpm --filter @carbon-os/ml-service dev",
+    "db:generate": "pnpm --filter @carbon-os/db generate",
+    "db:migrate": "pnpm --filter @carbon-os/db migrate:dev",
+    "db:migrate:deploy": "pnpm --filter @carbon-os/db migrate:deploy",
+    "db:seed": "pnpm --filter @carbon-os/db seed",
+    "db:studio": "pnpm --filter @carbon-os/db studio",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "worker:ai": "pnpm --filter @carbon-os/core-api worker:ai",
+    "worker:calc": "pnpm --filter @carbon-os/core-api worker:calc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "dependencies": {
+    "pdfkit": "^0.19.1"
+  }
+}
