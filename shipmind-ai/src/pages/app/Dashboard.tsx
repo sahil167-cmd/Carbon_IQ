@@ -1,27 +1,133 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import KPICard from "../../components/shared/KPICard";
-import DocumentRow from "../../components/shared/DocumentRow";
-import type { Document } from "../../types";
+import StatusBadge from "../../components/shared/StatusBadge";
+import { apiGet } from "../../lib/api-client";
 
-const kpis = [
-  { icon: "description", label: "Total Documents", value: "12,482", badge: "+12%", badgeColor: "green" as const },
-  { icon: "verified", label: "Extraction Accuracy", value: "99.8%", iconFill: true, iconColor: "text-secondary", iconBg: "bg-secondary-container/20" },
-  { icon: "flag", label: "Flagged for Review", value: "24", badge: "High", badgeColor: "red" as const, iconColor: "text-error", iconBg: "bg-error-container/40" },
-  { icon: "hub", label: "Integrated Carriers", value: "158" },
-];
-
-const recentDocs: Document[] = [
-  { id: "1", name: "BOL_CH-29381.pdf", type: "Bill of Lading", confidence: 99.4, status: "Processed", date: "Oct 14, 2024", source: "SAP ERP", size: "1.2 MB" },
-  { id: "2", name: "INV_MAERSK_001.pdf", type: "Invoice", confidence: 76.2, status: "Flagged", date: "Oct 14, 2024", source: "Mail Drop", size: "840 KB" },
-  { id: "3", name: "BOL_FEDEX_Z88.pdf", type: "Bill of Lading", confidence: 88.9, status: "Manual Review", date: "Oct 13, 2024", source: "API Upload", size: "1.1 MB" },
-  { id: "4", name: "BOL_UPS_TRAK_9.pdf", type: "Bill of Lading", confidence: 99.9, status: "Processed", date: "Oct 12, 2024", source: "SAP ERP", size: "640 KB" },
-];
+interface DocItem {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  status: string;
+  source: string;
+  createdAt: string;
+  category?: { name: string; scope: string; code: string };
+}
 
 export default function Dashboard() {
+  const [documents, setDocuments] = useState<DocItem[]>([]);
+  const [totalDocs, setTotalDocs] = useState<number | null>(null);
+  const [reviewCount, setReviewCount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [docsRes, queueRes] = await Promise.allSettled([
+          apiGet<{ items: DocItem[]; total: number }>("/api/v1/documents", { limit: 20 }),
+          apiGet<{ items: unknown[]; total: number }>("/api/v1/review-queue"),
+        ]);
+
+        if (docsRes.status === "fulfilled") {
+          setDocuments(docsRes.value.items || []);
+          setTotalDocs(docsRes.value.total ?? 0);
+        }
+        if (queueRes.status === "fulfilled") {
+          setReviewCount(queueRes.value.total ?? 0);
+        }
+      } catch (err: any) {
+        console.error("Dashboard load error:", err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const kpis = [
+    {
+      icon: "folder_open",
+      label: "Historical Documents",
+      value: loading ? "—" : totalDocs !== null ? totalDocs.toLocaleString() : "0",
+      badge: "Live Log",
+      badgeColor: "green" as const,
+    },
+    {
+      icon: "co2",
+      label: "Emissions Standards",
+      value: "DEFRA & GLEC",
+      badge: "Official",
+      badgeColor: "green" as const,
+      iconFill: true,
+      iconColor: "text-emerald-700",
+      iconBg: "bg-emerald-100",
+    },
+    {
+      icon: "flag",
+      label: "Review Queue",
+      value: loading ? "—" : reviewCount !== null ? reviewCount.toString() : "0",
+      badge: "Live",
+      badgeColor: "green" as const,
+      iconColor: "text-error",
+      iconBg: "bg-error-container/40",
+    },
+    {
+      icon: "history",
+      label: "Audit Log Status",
+      value: "100% Immutable",
+      badgeColor: "green" as const,
+    },
+  ];
+
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  })();
+
   return (
-    <AppLayout title="Dashboard" subtitle="Shipment Intelligence">
-      <div className="pt-8 pb-[120px] px-6 max-w-[1280px] mx-auto space-y-10">
+    <AppLayout
+      title="Dashboard & History"
+      subtitle={`Welcome back${user.fullName ? `, ${user.fullName}` : ""} — Historical GHG Emissions & Audit Log`}
+    >
+      <div className="pt-8 pb-[120px] px-6 max-w-[1280px] mx-auto space-y-8">
+        
+        {/* Scope 1 / 2 / 3 Historical Summary Cards */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-[20px] p-6 shadow-md border border-emerald-800/40">
+            <span className="text-emerald-400 font-extrabold text-[11px] uppercase tracking-wider block mb-1">
+              SCOPE 1 — DIRECT COMBUSTION
+            </span>
+            <p className="text-2xl font-bold">Stationary & Fleet Fuel</p>
+            <p className="text-xs text-emerald-200/70 mt-2">
+              Official DEFRA Factors: Diesel (2.6878 kgCO2e/L), Petrol (2.3148 kgCO2e/L)
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-teal-900 to-slate-900 text-white rounded-[20px] p-6 shadow-md border border-teal-800/40">
+            <span className="text-teal-400 font-extrabold text-[11px] uppercase tracking-wider block mb-1">
+              SCOPE 2 — PURCHASED ENERGY
+            </span>
+            <p className="text-2xl font-bold">Grid Electricity & Heating</p>
+            <p className="text-xs text-teal-200/70 mt-2">
+              Official Grid Factors: US (0.3850), India (0.7160), Europe (0.2550 kgCO2e/kWh)
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-cyan-900 to-slate-900 text-white rounded-[20px] p-6 shadow-md border border-cyan-800/40">
+            <span className="text-cyan-400 font-extrabold text-[11px] uppercase tracking-wider block mb-1">
+              SCOPE 3 — VALUE CHAIN FREIGHT
+            </span>
+            <p className="text-2xl font-bold">Upstream Freight & Travel</p>
+            <p className="text-xs text-cyan-200/70 mt-2">
+              GLEC Framework v2.0: Truck (0.0921), Ocean (0.0161), Air (0.6020 kgCO2e/tkm)
+            </p>
+          </div>
+        </section>
+
         {/* KPI Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {kpis.map((k) => (
@@ -29,121 +135,80 @@ export default function Dashboard() {
           ))}
         </section>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Activity Table */}
-          <div className="lg:col-span-2 bg-surface-container-lowest border border-outline-variant/30 rounded-[20px] overflow-hidden">
-            <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center">
-              <div>
-                <h4 className="text-2xl font-semibold mb-1">Recent Activity</h4>
-                <p className="text-[15px] text-on-surface-variant opacity-60">Real-time AI document processing stream</p>
-              </div>
-              <button className="p-2 hover:bg-surface-container rounded-lg transition-colors">
-                <span className="material-symbols-outlined">more_horiz</span>
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="bg-surface-container/30">
-                  <tr>
-                    {["Document Name", "Type", "AI Confidence", "Status"].map((h) => (
-                      <th key={h} className="px-8 py-4 text-[13px] text-on-surface-variant uppercase tracking-widest font-semibold">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant/10">
-                  {recentDocs.map((doc) => (
-                    <DocumentRow key={doc.id} doc={doc} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Sidebar Widgets */}
-          <div className="space-y-6">
-            {/* AI Engine Status */}
-            <div className="glass border border-outline-variant/30 rounded-[20px] p-8">
-              <h4 className="text-[13px] font-bold mb-6 flex items-center gap-2 uppercase tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                AI Engine Status
-              </h4>
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-[15px] text-on-surface-variant">Latency</span>
-                  <span className="text-[13px] font-bold">42ms</span>
-                </div>
-                <div className="h-1 bg-surface-container rounded-full overflow-hidden">
-                  <div className="h-full bg-secondary w-4/5 rounded-full" />
-                </div>
-                <div className="pt-4 border-t border-outline-variant/20">
-                  <p className="text-[15px] text-on-surface-variant leading-relaxed">
-                    System is operating at{" "}
-                    <span className="text-secondary font-bold">Peak Efficiency</span>. 1,204 documents queued for nocturnal optimization.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Skeleton Widget */}
-            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-[20px] p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg skeleton" />
-                <div className="space-y-2">
-                  <div className="w-24 h-4 rounded skeleton" />
-                  <div className="w-16 h-3 rounded skeleton" />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="w-full h-24 rounded-xl skeleton" />
-                <div className="flex gap-2">
-                  <div className="w-1/2 h-10 rounded-lg skeleton" />
-                  <div className="w-1/2 h-10 rounded-lg skeleton" />
-                </div>
-              </div>
-              <p className="mt-4 text-center text-[13px] text-on-surface-variant opacity-40 italic">
-                Syncing carrier rates...
+        {/* Main Activity History Table */}
+        <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-[20px] overflow-hidden ambient-shadow">
+          <div className="p-8 border-b border-outline-variant/20 flex justify-between items-center">
+            <div>
+              <h4 className="text-2xl font-bold text-primary mb-1">Historical Processing Stream</h4>
+              <p className="text-[14px] text-on-surface-variant">
+                Complete historical record of uploaded activity documents and calculated carbon footprints
               </p>
             </div>
+            <span className="px-3 py-1 bg-surface-container text-xs font-bold text-primary rounded-full">
+              {documents.length} Records Logged
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-surface-container/30">
+                <tr>
+                  {["Document Name", "Category / Scope", "Status", "Date Uploaded", "Actions"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-8 py-4 text-[12px] text-on-surface-variant uppercase tracking-widest font-semibold"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/10">
+                {loading ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-xs text-on-surface-variant">
+                      Loading activity history log...
+                    </td>
+                  </tr>
+                ) : documents.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-xs text-on-surface-variant">
+                      No historical documents in log. Upload your first document in the Upload Wizard.
+                    </td>
+                  </tr>
+                ) : (
+                  documents.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-surface-container/20 transition-colors">
+                      <td className="px-8 py-4">
+                        <Link to={`/app/documents/${doc.id}`} className="font-bold text-sm text-primary hover:underline block">
+                          {doc.fileName}
+                        </Link>
+                        <span className="text-[11px] text-on-surface-variant font-mono">{doc.id}</span>
+                      </td>
+                      <td className="px-8 py-4 text-xs font-medium">
+                        {doc.category?.name || "General Category"}
+                      </td>
+                      <td className="px-8 py-4 text-xs">
+                        <StatusBadge status={doc.status} />
+                      </td>
+                      <td className="px-8 py-4 text-xs text-on-surface-variant font-medium">
+                        {new Date(doc.createdAt).toLocaleDateString()} {new Date(doc.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                      <td className="px-8 py-4 text-xs">
+                        <Link
+                          to={`/app/documents/${doc.id}`}
+                          className="px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-xl font-bold transition-all"
+                        >
+                          View Audit Trace →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-
-        {/* Bento Insights */}
-        <section className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="md:col-span-8 bg-primary text-on-primary rounded-[20px] p-10 flex flex-col justify-between min-h-[320px]">
-            <div>
-              <h3 className="text-[40px] font-semibold leading-[1.2] tracking-[-0.03em] mb-4">
-                Unlocking $2.4M in<br />Hidden Inefficiencies.
-              </h3>
-              <p className="text-on-primary-container max-w-md text-[18px] leading-7">
-                Our predictive models identified systematic routing errors across 14% of your ocean freight contracts.
-              </p>
-            </div>
-            <div className="flex gap-4 items-center">
-              <Link
-                to="/app/analytics"
-                className="bg-secondary-fixed text-on-secondary-fixed font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all"
-              >
-                Review Optimization Report
-              </Link>
-              <span className="text-on-primary-container text-[13px]">Updated 2m ago</span>
-            </div>
-          </div>
-          <div className="md:col-span-4 bg-surface-container-high rounded-[20px] p-10 flex flex-col items-center justify-center text-center">
-            <span
-              className="material-symbols-outlined text-6xl text-primary mb-6"
-              style={{ fontVariationSettings: "'wght' 200" }}
-            >
-              rocket_launch
-            </span>
-            <h4 className="text-2xl font-semibold mb-2">v4.2 Deploy</h4>
-            <p className="text-on-surface-variant text-[15px] px-4">
-              New OCR engines for Cyrillic and Kanji scripts now active.
-            </p>
-          </div>
-        </section>
       </div>
     </AppLayout>
   );
