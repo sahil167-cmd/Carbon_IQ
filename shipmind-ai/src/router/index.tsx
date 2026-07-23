@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 // Marketing Pages
 import Home from "../pages/Home";
@@ -32,8 +33,13 @@ import IntelligenceSystem from "../pages/app/IntelligenceSystem";
 import Support from "../pages/app/Support";
 import Account from "../pages/app/Account";
 
+/** Wrap a JSX element in ProtectedRoute (redirects to /login if not authenticated) */
+function P(element: JSX.Element) {
+  return <ProtectedRoute>{element}</ProtectedRoute>;
+}
+
 export const router = createBrowserRouter([
-  // Marketing
+  // Marketing (public)
   { path: "/", element: <Home /> },
   { path: "/about", element: <About /> },
   { path: "/contact", element: <Contact /> },
@@ -44,32 +50,33 @@ export const router = createBrowserRouter([
   { path: "/docs", element: <Documentation /> },
   { path: "/integrations", element: <Integrations /> },
 
-  // App
-  { path: "/app/dashboard", element: <Dashboard /> },
-  { path: "/app/analytics", element: <Analytics /> },
-  { path: "/app/analytics/enterprise", element: <EnterpriseAnalytics /> },
-  { path: "/app/dashboard/enterprise", element: <EnterpriseDashboard /> },
-  { path: "/app/documents", element: <DocumentLibrary /> },
-  { path: "/app/documents/pro", element: <DocumentLibraryPro /> },
-  { path: "/app/documents/:id", element: <DocumentDetails /> },
-  { path: "/app/documents/:id/review", element: <DocumentReviewWorkspace /> },
-  { path: "/app/upload", element: <UploadCenter /> },
-  { path: "/app/upload/pro", element: <UploadCenterPro /> },
-  { path: "/app/upload/wizard", element: <UploadWizard /> },
-  { path: "/app/insights", element: <AIInsights /> },
-  { path: "/app/review-queue", element: <AIReviewQueue /> },
-  { path: "/app/manual-entry", element: <ManualEntry /> },
-  { path: "/app/admin", element: <AdminConsole /> },
-  { path: "/app/settings/organization", element: <OrganizationSettings /> },
-  { path: "/app/settings/team", element: <TeamRoles /> },
-  { path: "/app/intelligence", element: <IntelligenceSystem /> },
-  { path: "/app/support", element: <Support /> },
-  { path: "/app/account", element: <Account /> },
+  // App (protected — require JWT in localStorage)
+  { path: "/app/dashboard", element: P(<Dashboard />) },
+  { path: "/app/analytics", element: P(<Analytics />) },
+  { path: "/app/analytics/enterprise", element: P(<EnterpriseAnalytics />) },
+  { path: "/app/dashboard/enterprise", element: P(<EnterpriseDashboard />) },
+  { path: "/app/documents", element: P(<DocumentLibrary />) },
+  { path: "/app/documents/pro", element: P(<DocumentLibraryPro />) },
+  { path: "/app/documents/:id", element: P(<DocumentDetails />) },
+  { path: "/app/documents/:id/review", element: P(<DocumentReviewWorkspace />) },
+  { path: "/app/upload", element: P(<UploadCenter />) },
+  { path: "/app/upload/pro", element: P(<UploadCenterPro />) },
+  { path: "/app/upload/wizard", element: P(<UploadWizard />) },
+  { path: "/app/upload-wizard", element: P(<UploadWizard />) },
+  { path: "/app/insights", element: P(<AIInsights />) },
+  { path: "/app/review-queue", element: P(<AIReviewQueue />) },
+  { path: "/app/manual-entry", element: P(<ManualEntry />) },
+  { path: "/app/admin", element: P(<AdminConsole />) },
+  { path: "/app/settings/organization", element: P(<OrganizationSettings />) },
+  { path: "/app/settings/team", element: P(<TeamRoles />) },
+  { path: "/app/intelligence", element: P(<IntelligenceSystem />) },
+  { path: "/app/support", element: P(<Support />) },
+  { path: "/app/account", element: P(<Account />) },
 
-  // Mapped sidebar routes
-  { path: "/app/shipments", element: <DocumentLibraryPro /> },
-  { path: "/app/fleet", element: <EnterpriseDashboard /> },
+  // Sidebar mapped routes
+  { path: "/app/shipments", element: P(<DocumentLibrary />) },
+  { path: "/app/fleet", element: P(<EnterpriseDashboard />) },
 
-  // Catch-all redirect
+  // Catch-all
   { path: "*", element: <Home /> },
 ]);
