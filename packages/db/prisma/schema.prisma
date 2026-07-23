@@ -1,0 +1,731 @@
+// =============================================================================
+// Carbon OS — Prisma Schema
+// Database: PostgreSQL 16 with pgvector extension
+// ORM: Prisma 5.x
+//
+// Migration naming convention: YYYYMMDDHHMM_verb_noun
+// (e.g. 202607231900_add_carbon_accounting_engine_models)
+//
+// Every PR that changes this schema must include a one-line rollback note.
+// =============================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+enum UserRole {
+  SUPER_ADMIN
+  ORG_ADMIN
+  ORG_MEMBER
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+}
+
+enum FeatureFlagScope {
+  GLOBAL
+  ORG
+}
+
+enum NotificationType {
+  DOCUMENT_UPLOADED
+  EXTRACTION_COMPLETE
+  EXTRACTION_FAILED
+  VALIDATION_FLAGGED
+  HUMAN_REVIEW_REQUIRED
+  CALCULATION_COMPLETE
+  CALCULATION_FAILED
+  FORECAST_READY
+  REPORT_DRAFT_READY
+  INVITE_RECEIVED
+  SYSTEM
+}
+
+enum AuthTokenPurpose {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum ReportingPeriodStatus {
+  OPEN
+  LOCKED
+  FINALIZED
+}
+
+enum SiteType {
+  MANUFACTURING_PLANT
+  WAREHOUSE
+  OFFICE
+  DISTRIBUTION_CENTER
+}
+
+enum SiteStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ScopeType {
+  SCOPE_1
+  SCOPE_2
+  SCOPE_3
+}
+
+enum DocumentSource {
+  UPLOAD
+  MANUAL
+}
+
+enum DocumentStatus {
+  UPLOADED
+  EXTRACTING
+  EXTRACTED
+  EXTRACTION_FAILED
+  VALIDATING
+  NEEDS_REVIEW
+  VALIDATED
+  APPROVED
+  REJECTED
+  CALCULATION_BLOCKED
+}
+
+enum ExtractionJobStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+enum AiFeature {
+  EXTRACTION
+  VALIDATION_L3
+  COPILOT
+  COMPLIANCE_DRAFT
+}
+
+enum ValidationLayer {
+  LAYER_1
+  LAYER_2
+  LAYER_3
+}
+
+enum ValidationStatus {
+  PASS
+  FLAGGED
+}
+
+enum ReviewActionType {
+  APPROVE
+  REJECT
+  EDIT
+}
+
+enum Layer3Label {
+  OK
+  SUSPICIOUS
+  LIKELY_ERROR
+  MISSING_INFO
+}
+
+// =============================================================================
+// IDENTITY, ORGANIZATION, SITE, DOCUMENT, AI, VALIDATION & CARBON ENGINE DOMAIN
+// (Module 7 — Carbon Accounting Engine)
+// =============================================================================
+
+/// Multi-tenant root entity.
+model Organization {
+  id         String   @id @default(cuid())
+  name       String
+  legalName  String?
+  industryId String?
+  country    String? // ISO 3166-1 alpha-2
+  address    String?
+  logoUrl    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  industry             Industry?            @relation(fields: [industryId], references: [id])
+  organizationSettings OrganizationSetting?
+  reportingPeriods     ReportingPeriod[]
+  sites                Site[]
+  documents            Document[]
+  users                User[]
+  sessions             Session[]
+  featureFlags         FeatureFlag[]
+  notifications        Notification[]
+  auditLogs            AuditLog[]
+  aiLogs               AiLog[]
+  invites              Invite[]
+  calculatedEmissions  CalculatedEmissions[]
+  emissionsAggregates  EmissionsAggregate[]
+
+  @@map("organizations")
+}
+
+/// Facility / Site Entity
+model Site {
+  id                 String     @id @default(cuid())
+  organizationId     String
+  name               String
+  type               SiteType
+  status             SiteStatus @default(ACTIVE)
+  address            String?
+  city               String?
+  state              String?
+  country            String
+  productionCapacity Float?
+  capacityUnit       String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents           Document[]
+  calculatedEmissions CalculatedEmissions[]
+  emissionsAggregates EmissionsAggregate[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, status])
+  @@map("sites")
+}
+
+/// Fiscal & Calendar Reporting Periods
+model ReportingPeriod {
+  id             String                @id @default(cuid())
+  organizationId String
+  name           String
+  startDate      DateTime
+  endDate        DateTime
+  status         ReportingPeriodStatus @default(OPEN)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  documents           Document[]
+  calculatedEmissions CalculatedEmissions[]
+  emissionsAggregates EmissionsAggregate[]
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("reporting_periods")
+}
+
+/// Controlled GHG Document Taxonomy Categories
+model DocumentCategory {
+  id                String    @id @default(cuid())
+  code              String    @unique
+  name              String
+  scope             ScopeType
+  description       String
+  requiredByDefault Boolean   @default(false)
+  acceptedMimeTypes String[]
+  createdAt         DateTime  @default(now())
+
+  documents Document[]
+
+  @@map("document_categories")
+}
+
+/// Uploaded Activity Document Entity
+model Document {
+  id                String         @id @default(cuid())
+  organizationId    String
+  siteId            String
+  reportingPeriodId String
+  categoryId        String
+  uploadedById      String
+  fileName          String
+  fileSize          Int
+  mimeType          String
+  s3Key             String
+  source            DocumentSource @default(UPLOAD)
+  status            DocumentStatus @default(UPLOADED)
+  manualData        Json?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  organization        Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  site                Site                    @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  reportingPeriod     ReportingPeriod         @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+  category            DocumentCategory        @relation(fields: [categoryId], references: [id])
+  uploadedBy          User                    @relation(fields: [uploadedById], references: [id])
+  statusHistory       DocumentStatusHistory[]
+  extractedData       ExtractedData[]
+  extractionJobs      ExtractionJob[]
+  validationResults   ValidationResult[]
+  reviewActions       ReviewAction[]
+  calculatedEmissions CalculatedEmissions[]
+  calculationLogs     CalculationLog[]
+
+  @@index([organizationId, siteId, reportingPeriodId])
+  @@index([status])
+  @@map("documents")
+}
+
+/// Document Status State Machine Audit History
+model DocumentStatusHistory {
+  id          String          @id @default(cuid())
+  documentId  String
+  fromStatus  DocumentStatus?
+  toStatus    DocumentStatus
+  reason      String?
+  changedById String?
+  createdAt   DateTime        @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("document_status_history")
+}
+
+/// Extracted Structured Data (Versioned with Optimistic Lock version)
+model ExtractedData {
+  id                  String              @id @default(cuid())
+  documentId          String
+  extractionVersion   Int                 @default(1)
+  version             Int                 @default(1)
+  fieldsJson          Json
+  fieldConfidenceJson Json
+  modelVersion        String              @default("tesseract-v5+langchain")
+  status              ExtractionJobStatus @default(SUCCESS)
+  createdAt           DateTime            @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([extractionVersion])
+  @@map("extracted_data")
+}
+
+/// AI Extraction Pipeline Jobs Tracking
+model ExtractionJob {
+  id           String              @id @default(cuid())
+  documentId   String
+  status       ExtractionJobStatus @default(PENDING)
+  attemptCount Int                 @default(0)
+  lastError    String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime            @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("extraction_jobs")
+}
+
+/// Validation Rules Catalog
+model ValidationRule {
+  id          String          @id @default(cuid())
+  ruleCode    String          @unique
+  name        String
+  description String
+  layer       ValidationLayer
+  configJson  Json?
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+
+  @@map("validation_rules")
+}
+
+/// Validation Results
+model ValidationResult {
+  id              String           @id @default(cuid())
+  documentId      String
+  layer           ValidationLayer
+  status          ValidationStatus @default(PASS)
+  issuesJson      Json
+  explanationText String?
+  createdAt       DateTime         @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([layer])
+  @@map("validation_results")
+}
+
+/// Human Review Audit Actions
+model ReviewAction {
+  id                 String           @id @default(cuid())
+  documentId         String
+  action             ReviewActionType
+  performedById      String
+  reason             String?
+  previousValuesJson Json?
+  createdAt          DateTime         @default(now())
+
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  performedBy User     @relation(fields: [performedById], references: [id])
+
+  @@index([documentId])
+  @@index([performedById])
+  @@map("review_actions")
+}
+
+// =============================================================================
+// DETERMINISTIC CARBON ACCOUNTING ENGINE MODELS (FWS §9 & PRD §7)
+// =============================================================================
+
+/// Controlled Emission Factors Library (SUPER_ADMIN additive versioning)
+model EmissionFactor {
+  id            String    @id @default(cuid())
+  category      String    // e.g. "STATIONARY_COMBUSTION", "ELECTRICITY"
+  subCategory   String    // e.g. "DIESEL", "GRID_US_EAST"
+  region        String    @default("GLOBAL") // Country/Region ISO
+  factorValue   Float     // kg CO2e per unit
+  unit          String    // e.g. "LITERS", "KWH", "TONNE_KM"
+  co2eUnit      String    @default("kgCO2e")
+  sourceSet     String    @default("GLEC_2023") // "GLEC_2023", "GHG_PROTOCOL_2023", "DEFRA_2023"
+  version       Int       @default(1)
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+  createdBy     String    @default("SYSTEM")
+  createdAt     DateTime  @default(now())
+
+  calculatedEmissions CalculatedEmissions[]
+
+  @@unique([category, subCategory, region, sourceSet, version])
+  @@index([category, subCategory, region])
+  @@map("emission_factors")
+}
+
+/// Unit Conversion Scaling Matrix
+model UnitConversion {
+  id               String   @id @default(cuid())
+  fromUnit         String
+  toUnit           String
+  conversionFactor Float
+  createdAt        DateTime @default(now())
+
+  @@unique([fromUnit, toUnit])
+  @@map("unit_conversions")
+}
+
+/// Deterministic Output: Calculated CO2e Emissions
+model CalculatedEmissions {
+  id                String    @id @default(cuid())
+  organizationId   String
+  siteId           String
+  reportingPeriodId String
+  documentId        String
+  emissionFactorId  String
+  scope             ScopeType
+  co2e              Float     // Total kgCO2e
+  co2eLocation      Float?    // Location-based for Scope 2
+  co2eMarket        Float?    // Market-based for Scope 2
+  co2               Float?
+  ch4               Float?
+  n2o               Float?
+  activityValue     Float
+  activityUnit      String
+  calculationMethod String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  site            Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  reportingPeriod ReportingPeriod @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+  document        Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  emissionFactor  EmissionFactor  @relation(fields: [emissionFactorId], references: [id], onDelete: Restrict)
+  calculationLogs CalculationLog[]
+
+  @@index([organizationId, siteId, reportingPeriodId])
+  @@index([scope])
+  @@map("calculated_emissions")
+}
+
+/// Immutable Formula & Input Audit Trail Log (PRD §7.11)
+model CalculationLog {
+  id                    String   @id @default(cuid())
+  calculatedEmissionsId String
+  documentId            String
+  inputSnapshot         Json     // Complete JSON snapshot of activity input
+  factorVersion         Int
+  formulaVersion        String   @default("v1.0-GLEC-GHG")
+  formulaUsed           String
+  triggeredBy           String
+  createdAt             DateTime @default(now())
+
+  calculatedEmissions CalculatedEmissions @relation(fields: [calculatedEmissionsId], references: [id], onDelete: Cascade)
+  document            Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([calculatedEmissionsId])
+  @@index([documentId])
+  @@map("calculation_logs")
+}
+
+/// Rollup Aggregates per Org, Site, and Reporting Period
+model EmissionsAggregate {
+  id                  String   @id @default(cuid())
+  organizationId      String
+  siteId              String
+  reportingPeriodId    String
+  scope1Total         Float    @default(0)
+  scope2LocationTotal Float    @default(0)
+  scope2MarketTotal   Float    @default(0)
+  scope3Total         Float    @default(0)
+  grandTotal          Float    @default(0)
+  updatedAt           DateTime @updatedAt
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  site            Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  reportingPeriod ReportingPeriod @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, siteId, reportingPeriodId])
+  @@map("emissions_aggregates")
+}
+
+/// AI Engine Usage & Cost Tracking Audit Log
+model AiLog {
+  id             String    @id @default(cuid())
+  feature        AiFeature
+  organizationId String?
+  inputRef       String?
+  promptText     String?
+  responseText   String?
+  tokensUsed     Int?
+  latencyMs      Int?
+  costEstimate   Float?
+  createdAt      DateTime  @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([feature])
+  @@map("ai_logs")
+}
+
+/// Organization Preferences & Settings
+model OrganizationSetting {
+  id                      String   @id @default(cuid())
+  organizationId          String   @unique
+  unitSystem              String   @default("METRIC")
+  currency                String   @default("USD")
+  defaultFramework        String   @default("BRSR")
+  reportingYearStartMonth Int      @default(1)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_settings")
+}
+
+/// Controlled Industry Catalog
+model Industry {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  organizations          Organization[]
+  emissionFactorMappings IndustryFactorMapping[]
+
+  @@map("industries")
+}
+
+/// Industry to Emission Factor Set Mappings
+model IndustryFactorMapping {
+  id                String   @id @default(cuid())
+  industryId        String
+  emissionFactorSet String
+  scopeCategory     String?
+  createdAt         DateTime @default(now())
+
+  industry Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
+
+  @@index([industryId])
+  @@map("industry_factor_mappings")
+}
+
+/// Platform users.
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  passwordHash    String
+  fullName        String
+  role            UserRole   @default(ORG_MEMBER)
+  status          UserStatus @default(PENDING_VERIFICATION)
+  organizationId  String?
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization      Organization?  @relation(fields: [organizationId], references: [id])
+  sessions          Session[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  authTokens        AuthToken[]
+  invitesCreated    Invite[]       @relation("InvitedByUser")
+  documentsUploaded Document[]
+  reviewActions     ReviewAction[]
+
+  @@index([email])
+  @@index([organizationId])
+  @@map("users")
+}
+
+/// Refresh token sessions.
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  organizationId   String?
+  refreshTokenHash String    @unique
+  deviceInfo       String?
+  ipAddress        String?
+  expiresAt        DateTime
+  isRevoked        Boolean   @default(false)
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([refreshTokenHash])
+  @@map("sessions")
+}
+
+/// Verification and Reset Tokens
+model AuthToken {
+  id        String           @id @default(cuid())
+  userId    String
+  tokenHash String           @unique
+  purpose   AuthTokenPurpose
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("auth_tokens")
+}
+
+/// Organization Teammate Invites
+model Invite {
+  id             String       @id @default(cuid())
+  organizationId String
+  email          String
+  invitedById    String
+  tokenHash      String       @unique
+  role           UserRole     @default(ORG_MEMBER)
+  status         InviteStatus @default(PENDING)
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy    User         @relation("InvitedByUser", fields: [invitedById], references: [id])
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([tokenHash])
+  @@map("invites")
+}
+
+// =============================================================================
+// PLATFORM SERVICES
+// =============================================================================
+
+/// Named feature flags.
+model FeatureFlag {
+  id             String           @id @default(cuid())
+  key            String           @unique
+  description    String
+  isEnabled      Boolean          @default(true)
+  scope          FeatureFlagScope @default(GLOBAL)
+  organizationId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([key])
+  @@index([organizationId])
+  @@map("feature_flags")
+}
+
+/// Business-tunable config key/value store.
+model ConfigEntry {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  valueJson   Json
+  description String
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@map("config_entries")
+}
+
+/// In-app notification record.
+model Notification {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String?
+  type           NotificationType
+  message        String
+  isRead         Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([organizationId])
+  @@map("notifications")
+}
+
+/// Platform-wide audit trail.
+model AuditLog {
+  id             String   @id @default(cuid())
+  userId         String?
+  organizationId String?
+  action         String
+  entityType     String?
+  entityId       String?
+  oldValue       Json?
+  newValue       Json?
+  ipAddress      String?
+  userAgent      String?
+  reason         String?
+  createdAt      DateTime @default(now())
+
+  user         User?         @relation(fields: [userId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
