@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import SideNav from "./SideNav";
 import AppHeader from "./AppHeader";
 import Footer from "./Footer";
