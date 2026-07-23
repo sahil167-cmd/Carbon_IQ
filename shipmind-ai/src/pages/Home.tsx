@@ -22,42 +22,6 @@ const features = [
   },
 ];
 
-const bentoItems = [
-  {
-    cols: "md:col-span-8",
-    bg: "bg-white",
-    icon: "insights",
-    title: "Predictive ETAs",
-    body: "Our AI factors in weather patterns, port congestion, and historical lane performance to predict arrivals with 24-hour precision.",
-    visual: "chart",
-  },
-  {
-    cols: "md:col-span-4",
-    bg: "bg-tertiary text-on-primary",
-    icon: "security",
-    title: "Compliance Guard",
-    body: "Automatically screen shipments against 200+ global sanctions lists and trade regulations in real-time.",
-    badge: "Certified SOC2 Type II",
-  },
-  {
-    cols: "md:col-span-4",
-    bg: "bg-white",
-    icon: "sync",
-    title: "Live ERP Sync",
-    body: "Bidirectional synchronization ensures your source of truth is always updated across your entire tech stack.",
-  },
-  {
-    cols: "md:col-span-8",
-    bg: "glass border border-outline-variant",
-    icon: "",
-    title: "Intelligent Routing",
-    body: "Identify alternative routes and carriers when disruptions occur. Save up to 14% on spot-market freight costs.",
-    stats: [
-      { value: "14%", label: "Avg. Savings" },
-      { value: "40%", label: "Time Reduced" },
-    ],
-  },
-];
 
 const logos = [
   { icon: "anchor", name: "PACIFIC" },
