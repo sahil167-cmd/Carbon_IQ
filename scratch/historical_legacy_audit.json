@@ -1,0 +1,1513 @@
+{
+  "auditDate": "2026-08-28T00:30:00Z",
+  "database": "carbon_os_dev",
+  "mode": "READ_ONLY",
+  "affectedCount": 37,
+  "records": [
+    {
+      "calculatedEmissionId": "cmt2ip0py000511osbhvaf5xy",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "12420.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "9660.0000",
+        "percentageDelta": "77.78%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0pj000311osfbua5k5v",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "9315.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "6555.0000",
+        "percentageDelta": "70.37%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0ob000111osvknsvwqj",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "40365.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "37605.0000",
+        "percentageDelta": "93.16%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0ss000911osjrraqzvy",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "10620.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "7860.0000",
+        "percentageDelta": "74.01%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0sn000711osfp7z5kva",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "46020.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "43260.0000",
+        "percentageDelta": "94.00%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0sy000b11oshu5orvia",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "14160.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "11400.0000",
+        "percentageDelta": "80.51%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0te000f11os317fxvvc",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "11760.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "9000.0000",
+        "percentageDelta": "76.53%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0t4000d11osr2p0e9uc",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "50960.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "48200.0000",
+        "percentageDelta": "94.58%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0tl000h11os397earml",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "15680.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "12920.0000",
+        "percentageDelta": "82.40%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0tz000l11osoyt3u7gu",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "12630.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "9870.0000",
+        "percentageDelta": "78.15%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0tr000j11ospy91rofx",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "54730.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "51970.0000",
+        "percentageDelta": "94.96%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0u5000n11os56bgrsij",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "16840.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "14080.0000",
+        "percentageDelta": "83.61%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0uh000p11os1rmgh021",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "58435.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "55675.0000",
+        "percentageDelta": "95.28%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0ur000r11os5zg65u8a",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "13485.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "10725.0000",
+        "percentageDelta": "79.53%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0uy000t11os5nlfur9y",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "17980.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "15220.0000",
+        "percentageDelta": "84.65%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmrxglin60004i7wm615kx2z7",
+      "documentId": "cmrxglin60004i7wm615kx2z7",
+      "documentFileName": "official_sample_utility_bill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 11:59:54.786000",
+      "extractedDataId": "cmrxgljcb0004hqricv0rjlcm",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 LITERS × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxhxvhg000y1h3fve208enj",
+      "documentId": "cmrxhxvhg000y1h3fve208enj",
+      "documentFileName": "official_sample_utility_bill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 12:37:30.916000",
+      "extractedDataId": "cmrxhxvv80004oh1ud2n5wtz6",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "co2e = 202 LITERS * 2.6878 kgCO2e/LITERS",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxj50rt0002ct5li9xiaqq8",
+      "documentId": "cmrxj50rt0002ct5li9xiaqq8",
+      "documentFileName": "sample_scope2_electricity_bill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 13:11:03.977000",
+      "extractedDataId": "cmrxj50vw003goh1utpeiax6w",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 KWH (converted to 0 LITERS) × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxe4s76000sworvhni6wwwg",
+      "documentId": "cmrxe4s76000sworvhni6wwwg",
+      "documentFileName": "jan.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 10:50:54.786000",
+      "extractedDataId": "cmrxjy9mo000112d9arf1lrnh",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "co2e = 6200 LITERS * 2.6878 kgCO2e/LITERS",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxe627s000zworv13o3z1zx",
+      "documentId": "cmrxe627s000zworv13o3z1zx",
+      "documentFileName": "Sample_Shipment_Test_Data.docx",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 10:51:54.424000",
+      "extractedDataId": "cmrxjy9po000e12d9zvz2ktj4",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "co2e = 6200 LITERS * 2.6878 kgCO2e/LITERS",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxeewjh0016worvle8kelas",
+      "documentId": "cmrxeewjh0016worvle8kelas",
+      "documentFileName": "Sahil_Borhade_2026.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 10:58:46.973000",
+      "extractedDataId": "cmrxjy9vt001h12d9868rugkc",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "co2e = 6200 LITERS * 2.6878 kgCO2e/LITERS",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxva9yb0001oj5ytbaw83ug",
+      "documentId": "cmrxv2psj0002a4la5ccifaow",
+      "documentFileName": "sample_scope2_electricity_bill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 18:45:11.827000",
+      "extractedDataId": "cmrxv2qo20004tl59quxtndqu",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 KWH (converted to 0 LITERS) × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxvdrv2000prfy6jq8vke0q",
+      "documentId": "cmrxvdrs4000jrfy65b8v6vi5",
+      "documentFileName": "sample_scope2_electricity_bill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 18:53:47.620000",
+      "extractedDataId": "cmrxvdrw6000stl59sskq23an",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 KWH (converted to 0 LITERS) × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmrxxm4iu000anriaqe5jkv41",
+      "documentId": "cmrxxm4df0004nriazonhb1n4",
+      "documentFileName": "sample_scope3_freight_bol.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-23 19:56:16.418000",
+      "extractedDataId": "cmrxxm57l00041ix6oy0llxhd",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 LITERS × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "2760.0000",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmryl47y000193wuwca8t82ey",
+      "documentId": "cmryl47w200133wuwiz7h37eo",
+      "documentFileName": "scope3_air_freight_airwaybill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-24 06:54:11.955000",
+      "extractedDataId": "cmryl47y8001qyp2emcuyogr5",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 LITERS × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "2760.0000",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmryojnfy00271100o4idtd5l",
+      "documentId": "cmryojnb300211100hun8pzvs",
+      "documentFileName": "scope1_natural_gas_utility.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-07-24 08:30:10.622000",
+      "extractedDataId": "cmryojnn3001j13nvt6s3wizu",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "0.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "0 LITERS × 2.6878 kgCO₂e/LITERS = 0 kg CO₂e (0.0000 t CO₂e)",
+        "co2e": "0.0",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "0.0",
+        "percentageDelta": "0.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0wc000z11os8jo4rvfq",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "12000.0",
+        "unit": "TONNE_KM",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "18841.52",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "16081.5200",
+        "percentageDelta": "85.35%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0vq000v11os9gjuq7k3",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "2500.0",
+        "unit": "LITRES",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "QTY_X_FACTOR",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "61234.95",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "58474.9500",
+        "percentageDelta": "95.49%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt2ip0w5000x11os4nnnl9pu",
+      "documentId": "cmsvpktai0012tb11xivbuzkx",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:15:28.458000",
+      "extractedDataId": "cmsvpktgo0018tb11w7ggm7xl",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "18000.0",
+        "unit": "KWH",
+        "factorId": "cmrxg0utq0000102u31iiurvh",
+        "factorCategory": "MOBILE_COMBUSTION",
+        "factorSubCategory": "PETROL",
+        "factorValue": "2.3148",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "ELEC_LOCATION",
+        "formula": "NOT AVAILABLE IN DATABASE",
+        "co2e": "14131.14",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "11371.1400",
+        "percentageDelta": "80.47%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt1uer3t001i131pjn30srzc",
+      "documentId": "cmt1ueqxx000y131pe86lo3jm",
+      "documentFileName": "scope3_purchased_goods_steel.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-20 18:17:20.613000",
+      "extractedDataId": "cmt1uer270014131pailoqblk",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "34131.6",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "28,500 KG (converted to 34,131.6 LITERS) × 2.6878 kgCO₂e/LITERS = 91,738.915 kg CO₂e (91.7389 t CO₂e)",
+        "co2e": "91738.9145",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "91738.9145",
+        "percentageDelta": "100.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmt39u9t30017vr4hymq2nalu",
+      "documentId": "cmt39u9mt000nvr4hqgmnepqa",
+      "documentFileName": "scope3_air_freight_airwaybill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-21 18:17:05.093000",
+      "extractedDataId": "cmt39u9qf000tvr4h9iatva53",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "22080.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "22,080 LITERS × 2.6878 kgCO₂e/LITERS = 59,346.624 kg CO₂e (59.3466 t CO₂e)",
+        "co2e": "59346.624",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "56586.6240",
+        "percentageDelta": "95.35%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt3bqw2w000uf6tjv49ycxsq",
+      "documentId": "cmt3bqvvy000af6tjm6x5xfai",
+      "documentFileName": "scope3_air_freight_airwaybill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-21 19:10:26.541000",
+      "extractedDataId": "cmt3bqw0y000gf6tjcm1xmu8m",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "22080.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "22,080 LITERS × 2.6878 kgCO₂e/LITERS = 59,346.624 kg CO₂e (59.3466 t CO₂e)",
+        "co2e": "59346.624",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "56586.6240",
+        "percentageDelta": "95.35%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt3btimy0033f6tjiraylii7",
+      "documentId": "cmt3btiis002jf6tjtt5jp0mt",
+      "documentFileName": "scope3_purchased_goods_steel.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-21 19:12:29.188000",
+      "extractedDataId": "cmt3btikk002pf6tj624nemg9",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "34131.6",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "28,500 KG (converted to 34,131.6 LITERS) × 2.6878 kgCO₂e/LITERS = 91,738.915 kg CO₂e (91.7389 t CO₂e)",
+        "co2e": "91738.9145",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "91738.9145",
+        "percentageDelta": "100.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmt3fli4n000os4hzc0rdjwyt",
+      "documentId": "cmt3flhwf0004s4hzyg70s8t2",
+      "documentFileName": "scope3_ocean_intermodal_freight.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-21 20:58:13.598000",
+      "extractedDataId": "cmt3fli1m000as4hzoml068er",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "473200.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "4,73,200 LITERS × 2.6878 kgCO₂e/LITERS = 12,71,866.96 kg CO₂e (1271.8670 t CO₂e)",
+        "co2e": "1271866.96",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "1269106.9600",
+        "percentageDelta": "99.78%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmt9v1349001fn1qotsm49bja",
+      "documentId": "cmsvpok2a004ktb11eiirzmnq",
+      "documentFileName": "scope3_purchased_goods_steel.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-16 11:18:23.122000",
+      "extractedDataId": "cmsvpok5o004qtb11hbd480fu",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "34131.6",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "28,500 KG (converted to 34,131.6 LITERS) × 2.6878 kgCO₂e/LITERS = 91,738.915 kg CO₂e (91.7389 t CO₂e)",
+        "co2e": "91738.9145",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "UNKNOWN",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "strategy": "QTY_X_FACTOR",
+        "formula": "CALCULATION_BLOCKED: INSUFFICIENT EVIDENCE / REQUIRES HUMAN REVIEW",
+        "co2e": "0",
+        "validationOutcome": "NEEDS_REVIEW"
+      },
+      "independentCalculation": {
+        "co2e": "0",
+        "delta": "91738.9145",
+        "percentageDelta": "100.00%"
+      },
+      "classification": "REQUIRES_HUMAN_REVIEW",
+      "reason": "Legacy calculation exhibits dimensional or categorization ambiguity; requires explicit human review rather than automatic recalculation."
+    },
+    {
+      "calculatedEmissionId": "cmtb6yb650022zo56ik3treof",
+      "documentId": "cmtb6y9vp001ezo565micld2l",
+      "documentFileName": "scope3_air_freight_airwaybill.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-27 07:18:22.596000",
+      "extractedDataId": "cmtb6ya06001kzo56g8i88j8i",
+      "extractionModel": "tesseract-v5+langchain",
+      "historical": {
+        "quantity": "22080.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "22,080 LITERS × 2.6878 kgCO₂e/LITERS = 59,346.624 kg CO₂e (59.3466 t CO₂e)",
+        "co2e": "59346.624",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "56586.6240",
+        "percentageDelta": "95.35%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    },
+    {
+      "calculatedEmissionId": "cmtblf3ty000yrwouxpqgsqkg",
+      "documentId": "cmtblf36t0004rwoutearpad1",
+      "documentFileName": "complex_scope3_freight_bol.pdf",
+      "documentStatus": "APPROVED",
+      "documentCreatedAt": "2026-08-27 14:03:21.701000",
+      "extractedDataId": "cmtblf3cp000crwou80mdzrx2",
+      "extractionModel": "mistral-vision+langgraph",
+      "historical": {
+        "quantity": "21000.0",
+        "unit": "LITERS",
+        "factorId": "cmrxg0uvd000a102uhf8jf87a",
+        "factorCategory": "BUSINESS_TRAVEL",
+        "factorSubCategory": "DIESEL",
+        "factorValue": "2.6878",
+        "factorUnit": "LITERS",
+        "factorSourceSet": "DEFRA_2023",
+        "factorVersion": 1,
+        "strategy": "DISTANCE_FACTOR",
+        "formula": "21,000 LITERS × 2.6878 kgCO₂e/LITERS = 56,443.8 kg CO₂e (56.4438 t CO₂e)",
+        "co2e": "56443.8",
+        "validationStatus": "VERIFIED"
+      },
+      "current": {
+        "factorId": "cmrx89eng001blkmmz44m8dg7",
+        "factorValue": "0.0920",
+        "factorUnit": "TONNE_KM",
+        "strategy": "WEIGHT_DISTANCE_FACTOR",
+        "formula": "20 Tonnes × 1,500 Km = 30,000 Tonne-Km × 0.0920 kgCO₂e/Tonne-Km = 2,760.00 kg CO₂e (2.7600 t CO₂e)",
+        "co2e": "2760.0000",
+        "validationOutcome": "VERIFIED"
+      },
+      "independentCalculation": {
+        "co2e": "2760.0000",
+        "delta": "53683.8000",
+        "percentageDelta": "95.11%"
+      },
+      "classification": "DETERMINISTICALLY_REPROCESSABLE",
+      "reason": "Legacy calculation mutated 21,000 Tonne-Km into Litres of Diesel with 2.6878 kgCO2e/L. Correct multi-line payload is 20 Tonnes x 1,500 Km = 30,000 Tonne-Km x 0.0920 GLEC freight factor = 2,760.00 kgCO2e."
+    }
+  ],
+  "databaseIntegrity": {
+    "countsBefore": {
+      "documents": 116,
+      "extracted_data": 337,
+      "activity_records": 3,
+      "emission_factors": 255,
+      "calculation_logs": 371,
+      "calculated_emissions": 154,
+      "document_fingerprints": 2,
+      "ml_predictions": 6,
+      "kb_chunks": 69
+    },
+    "countsAfter": {
+      "documents": 116,
+      "extracted_data": 337,
+      "activity_records": 3,
+      "emission_factors": 255,
+      "calculation_logs": 371,
+      "calculated_emissions": 154,
+      "document_fingerprints": 2,
+      "ml_predictions": 6,
+      "kb_chunks": 69
+    },
+    "unchanged": true
+  }
+}

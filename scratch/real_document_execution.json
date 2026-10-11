@@ -1,0 +1,91 @@
+{
+  "executionDate": "2026-08-27T19:59:47.631Z",
+  "mode": "REAL_FRONTEND_API_SEQUENCE",
+  "documentId": "cmtby5gk0001usjmrqaakhp8f",
+  "fileName": "complex_scope3_freight_bol.pdf",
+  "fileSize": 9448,
+  "calcResult": null,
+  "auditTrail": {
+    "document": {
+      "id": "cmtby5gk0001usjmrqaakhp8f",
+      "fileName": "complex_scope3_freight_bol.pdf",
+      "fileSize": 9448,
+      "mimeType": "application/pdf",
+      "status": "EXTRACTING",
+      "uploadedAt": "2026-08-27T19:59:47.472Z",
+      "assignedCategory": "Downstream Transport & Distribution",
+      "categoryCode": "DOWNSTREAM_TRANSPORT"
+    },
+    "ocrAndExtraction": {
+      "modelVersion": "native_pdf_stream",
+      "extractionStatus": "NOT_RUN",
+      "extractedFields": {},
+      "confidenceScores": {}
+    },
+    "activitySemantics": {},
+    "emissionFactorProvenance": null,
+    "calculationExecution": {
+      "formulaUsed": "N/A",
+      "formulaVersion": "v1.0",
+      "co2eTonnes": null
+    },
+    "validationAndLedger": {
+      "validationStatus": "PENDING",
+      "overallConfidence": 1,
+      "reviewReasons": [],
+      "isLedgerVerified": false
+    }
+  },
+  "pipeline": [
+    {
+      "stage": "LOGIN",
+      "status": "FAILED",
+      "detail": "All password attempts failed. Trying signup..."
+    },
+    {
+      "stage": "LOGIN",
+      "status": "PASS",
+      "detail": "Logged in with previously created test user"
+    },
+    {
+      "stage": "CATEGORIES",
+      "status": "PASS",
+      "detail": "Found 10 categories. Selected: Downstream Transport & Distribution (cmrx89emi0011lkmmm4eeewpj)"
+    },
+    {
+      "stage": "SITES",
+      "status": "PASS",
+      "detail": "Found 1 sites. Selected: Test Logistics Hub (cmtby_site_001)"
+    },
+    {
+      "stage": "PERIODS",
+      "status": "PASS",
+      "detail": "Found open reporting period: CY 2026"
+    },
+    {
+      "stage": "UPLOAD_URL",
+      "status": "PASS",
+      "detail": "Presigned URL generated. S3 key: uploads/cmtby0prr001hsjmrvdar849v/1787860787457_complex_scope3_freight_bol.pdf"
+    },
+    {
+      "stage": "REGISTER",
+      "status": "PASS",
+      "detail": "Document registered. ID: cmtby5gk0001usjmrqaakhp8f, Status: UPLOADED"
+    },
+    {
+      "stage": "CALCULATION",
+      "status": "WARN",
+      "detail": "HTTP 200 — {\"success\":true,\"data\":null,\"meta\":{\"requestId\":\"af0e35db-a4c2-4184-adbe-9ba2605d8d62\"}}"
+    },
+    {
+      "stage": "DOC_DETAILS",
+      "status": "PASS",
+      "detail": "Document details fetched. Status: CALCULATION_BLOCKED, FileName: complex_scope3_freight_bol.pdf"
+    },
+    {
+      "stage": "AUDIT_API",
+      "status": "PASS",
+      "detail": "Audit trail fetched. Document: complex_scope3_freight_bol.pdf"
+    }
+  ]
+}

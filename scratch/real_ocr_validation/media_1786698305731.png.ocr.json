@@ -1,0 +1,13 @@
+{
+  "filename": "media_1786698305731.png",
+  "fileSize": 42068,
+  "sha256": "f5a28668009bbf717fc198e3890f27a46359ca050af2c0a7ae22391651fb2b8b",
+  "mimeType": "image/png",
+  "isScannedImage": true,
+  "selectableText": false,
+  "ocrProvider": "MistralVisionOcrProvider (pixtral-12b-2409)",
+  "apiEndpoint": "https://api.mistral.ai/v1/chat/completions",
+  "ocrStatus": "SUCCESS",
+  "confidence": 0.95,
+  "rawOcrOutput": "This site can’t be reached\n\nlocalhost refused to connect.\n\nTry:\n    Checking the connection\n    Checking the proxy and the firewall\n\nERR_CONNECTION_REFUSED\n\nReload    Details"
+}

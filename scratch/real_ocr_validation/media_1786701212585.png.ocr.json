@@ -1,0 +1,13 @@
+{
+  "filename": "media_1786701212585.png",
+  "fileSize": 331598,
+  "sha256": "bcc57c9b50932a07d22345708f3c3cfc61732fd1986d4660fcfe666715b03ec1",
+  "mimeType": "image/png",
+  "isScannedImage": true,
+  "selectableText": false,
+  "ocrProvider": "MistralVisionOcrProvider (pixtral-12b-2409)",
+  "apiEndpoint": "https://api.mistral.ai/v1/chat/completions",
+  "ocrStatus": "SUCCESS",
+  "confidence": 0.95,
+  "rawOcrOutput": "Here is the legible text extracted from the image:\n\n---\nML Carbon Emission Forecast Engine\nLive forecast engine • Model: XGBOOST (v4)\nREAL-TIME\n\nConfidence: High (70%)\nRecalculate\n\nCurrent Period Actual\n94,208 kg CO₂e\n\nPredicted Target (Sep 2026)\n94,208 kg CO₂e\n\nProjected Trajectory\n→ Stable Trajectory\n\nEmissions Trend & 6-Month Projection Graph\nActual History —— Forecast Curve\n\nWhy this prediction? Model Feature Drivers\n---"
+}

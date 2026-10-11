@@ -1,0 +1,13 @@
+{
+  "filename": "media_1786699025933.png",
+  "fileSize": 317414,
+  "sha256": "84b54a0bb022364cb4ab1241ab2b657f1ce335787a5e8ff5dd09685460d8d6e3",
+  "mimeType": "image/png",
+  "isScannedImage": true,
+  "selectableText": false,
+  "ocrProvider": "MistralVisionOcrProvider (pixtral-12b-2409)",
+  "apiEndpoint": "https://api.mistral.ai/v1/chat/completions",
+  "ocrStatus": "SUCCESS",
+  "confidence": 0.95,
+  "rawOcrOutput": "ML Carbon Emission Forecast\nPredicted next-period target • Model: BASELINE_TREND (v3)\n\nConfidence: High (100%)\n\nCurrent Period Actual\n15,148 kg CO₂e\n\nPredicted Target (Sep 2026)\n15,148 kg CO₂e\n\nProjected Trajectory\n→ Stable Trend\n\nWhy this prediction? Top Model Feature Drivers\n\nKey drivers influencing this XGBoost forecast:\n- Historical 1/3/6-month autoregressive emissions lags\n- Fuel combustion seasonality & transport volume mix\n- Linear trend slope derived from 18-month history"
+}

@@ -13,8 +13,8 @@
 | Phase 7 | Module 6: Validation & Human Review (3 layers) | ✅ Completed | Layer 1/2 rule validation, Layer 3 AI validation, review queue |
 | Phase 8 | Module 7: Carbon Accounting Engine | ✅ Completed | Deterministic emission factor resolution & CO2e formula calculation |
 | Phase 9 | Module 8: Dashboard & Analytics | ⬜ Not Started | Emissions aggregate queries, KPI widgets, Recharts visualization |
-| Phase 10 | Module 9: ML Forecasting Service | ⬜ Not Started | Python FastAPI XGBoost training & inference pipeline |
-| Phase 11 | Module 10: RAG Sustainability Copilot | ⬜ Not Started | pgvector vector store ingestion, RAG retrieval chain |
+| Phase 10 | Module 9: ML Forecasting Service | ✅ Completed | Python FastAPI XGBoost training & inference pipeline |
+| Phase 11 | Module 10: RAG Sustainability Copilot | ✅ Completed | pgvector vector store ingestion, hybrid structured + vector retrieval chain, citation validation |
 | Phase 12 | Module 11: Compliance Agent (AI Drafting) | ⬜ Not Started | LangGraph compliance drafting graph & narrative generation |
 | Phase 13 | Module 12: Compliance Reporting (Export/Versioning) | ⬜ Not Started | PDF/Excel report rendering & document versioning |
 | Phase 14 | Module 13: Admin Console (Super Admin) | ⬜ Not Started | Super Admin dashboard, tenant management, feature flag UI |
