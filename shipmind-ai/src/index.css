@@ -114,3 +114,36 @@
     text-wrap: balance;
   }
 }
+
+/* ── BRSR Document Print CSS ─────────────────────────────────────────────── */
+@media print {
+  .brsr-no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .brsr-workspace {
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .brsr-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .brsr-page-footer {
+    position: static !important;
+    margin-top: 24px !important;
+  }
+}

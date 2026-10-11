@@ -32,15 +32,28 @@ import TeamRoles from "../pages/app/TeamRoles";
 import IntelligenceSystem from "../pages/app/IntelligenceSystem";
 import Support from "../pages/app/Support";
 import Account from "../pages/app/Account";
+import BrsrReportWorkspace from "../pages/app/BrsrReportWorkspace";
+import BrsrReportBuilder from "../pages/app/BrsrReportBuilder";
+import BrsrReportPreview from "../pages/app/BrsrReportPreview";
 
-/** Wrap a JSX element in ProtectedRoute (redirects to /login if not authenticated) */
-function P(element: JSX.Element) {
+// Logistics & Freight Manifests
+import ShipmentListPage from "../pages/app/logistics/ShipmentListPage";
+import CreateShipmentPage from "../pages/app/logistics/CreateShipmentPage";
+import ShipmentDetailPage from "../pages/app/logistics/ShipmentDetailPage";
+import OptimizationResultPage from "../pages/app/logistics/OptimizationResultPage";
+import ScenarioComparisonPage from "../pages/app/logistics/ScenarioComparisonPage";
+
+import RouteErrorBoundary from "../components/shared/RouteErrorBoundary";
+import React from "react";
+
+/** Wrap a React element in ProtectedRoute (redirects to /login if not authenticated) */
+function P(element: React.ReactNode) {
   return <ProtectedRoute>{element}</ProtectedRoute>;
 }
 
 export const router = createBrowserRouter([
   // Marketing (public)
-  { path: "/", element: <Home /> },
+  { path: "/", element: <Home />, errorElement: <RouteErrorBoundary /> },
   { path: "/about", element: <About /> },
   { path: "/contact", element: <Contact /> },
   { path: "/pricing", element: <Pricing /> },
@@ -73,8 +86,21 @@ export const router = createBrowserRouter([
   { path: "/app/support", element: P(<Support />) },
   { path: "/app/account", element: P(<Account />) },
 
+  // BRSR Compliance Reporting
+  { path: "/app/reports/brsr", element: P(<BrsrReportWorkspace />) },
+  { path: "/app/reports/brsr/:id", element: P(<BrsrReportBuilder />) },
+  { path: "/app/reports/brsr/:id/preview", element: P(<BrsrReportPreview />) },
+
+  // Logistics & Freight Manifests
+  { path: "/app/shipments", element: P(<ShipmentListPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/app/shipments/new", element: P(<CreateShipmentPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/app/shipments/:id", element: P(<ShipmentDetailPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/app/shipments/:shipmentId/scenarios", element: P(<ScenarioComparisonPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/app/shipments/:shipmentId/optimization/:optimizationId", element: P(<OptimizationResultPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/app/logistics", element: P(<ShipmentListPage />), errorElement: <RouteErrorBoundary /> },
+  { path: "/logistics", element: P(<ShipmentListPage />), errorElement: <RouteErrorBoundary /> },
+
   // Sidebar mapped routes
-  { path: "/app/shipments", element: P(<DocumentLibrary />) },
   { path: "/app/fleet", element: P(<EnterpriseDashboard />) },
 
   // Catch-all

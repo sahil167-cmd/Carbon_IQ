@@ -49,7 +49,7 @@ export default function About() {
               Automating the world's <br />supply chain network.
             </h1>
             <p className="text-[18px] leading-7 text-on-surface-variant max-w-xl">
-              Logistics is the heartbeat of global commerce, yet it remains fragmented and reactive. ShipMind AI was born from a singular vision: to build the autonomous operating system for trade, turning complex global movement into a seamless, predictive experience.
+              Logistics is the heartbeat of global commerce, yet it remains fragmented and reactive. CarbonIQ was born from a singular vision: to build the autonomous operating system for trade, turning complex global movement into a seamless, predictive experience.
             </p>
           </div>
           <div className="lg:col-span-5 relative mt-12 lg:mt-0">

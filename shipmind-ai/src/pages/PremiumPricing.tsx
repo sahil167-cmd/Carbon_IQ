@@ -57,7 +57,7 @@ export default function PremiumPricing() {
         <div className="mb-16">
           <h2 className="text-[40px] font-semibold tracking-[-0.03em] mb-4 text-center">Premium Capabilities</h2>
           <p className="text-[18px] text-on-surface-variant text-center max-w-2xl mx-auto mb-12">
-            Unlock the full power of ShipMind AI with capabilities designed for global enterprises.
+            Unlock the full power of CarbonIQ with capabilities designed for global enterprises.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {premiumFeatures.map((f) => (

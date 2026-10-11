@@ -47,6 +47,35 @@ const statusConfig: Record<string, { label: string; className: string }> = {
     label: "Extraction Failed",
     className: "bg-red-50 text-red-700 border border-red-200 font-bold",
   },
+  // Logistics ShipmentStatus values
+  DRAFT: {
+    label: "Draft",
+    className: "bg-slate-100 text-slate-700 border border-slate-200 font-medium",
+  },
+  PLANNED: {
+    label: "Planned",
+    className: "bg-blue-50 text-blue-700 border border-blue-200 font-semibold",
+  },
+  OPTIMIZED: {
+    label: "Optimized",
+    className: "bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold",
+  },
+  DISPATCHED: {
+    label: "Dispatched",
+    className: "bg-amber-50 text-amber-700 border border-amber-200 font-semibold",
+  },
+  IN_TRANSIT: {
+    label: "In Transit",
+    className: "bg-cyan-50 text-cyan-700 border border-cyan-200 font-semibold",
+  },
+  DELIVERED: {
+    label: "Delivered",
+    className: "bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold",
+  },
+  CANCELLED: {
+    label: "Cancelled",
+    className: "bg-rose-50 text-rose-700 border border-rose-200 font-semibold",
+  },
   // Legacy UI strings
   Processed: {
     label: "Processed",

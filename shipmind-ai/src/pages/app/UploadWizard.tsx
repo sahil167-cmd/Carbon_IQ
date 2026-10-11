@@ -110,13 +110,24 @@ export default function UploadWizard() {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const orgId = user.organizationId || "cmrxbi5240001n0se3f57e323";
 
+      const lowerName = fileName.toLowerCase();
+      const detectedMimeType = lowerName.endsWith('.png')
+        ? 'image/png'
+        : lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg')
+        ? 'image/jpeg'
+        : lowerName.endsWith('.csv')
+        ? 'text/csv'
+        : lowerName.endsWith('.xlsx')
+        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        : 'application/pdf';
+
       // 1. Get presigned URL
       const urlRes = await apiPost<Array<{ s3Key: string; uploadUrl: string }>>("/api/v1/documents/upload-url", {
         files: [
           {
             fileName,
             fileSize: 1024 * 1024,
-            mimeType: "application/pdf",
+            mimeType: detectedMimeType,
           },
         ],
       });
@@ -130,7 +141,7 @@ export default function UploadWizard() {
         categoryId: selectedCategoryId,
         fileName,
         fileSize: 1024 * 1024,
-        mimeType: "application/pdf",
+        mimeType: detectedMimeType,
         s3Key,
       });
 

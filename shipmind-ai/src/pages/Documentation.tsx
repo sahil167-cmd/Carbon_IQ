@@ -41,7 +41,7 @@ export default function Documentation() {
         <div className="text-center mb-16">
           <h1 className="text-[72px] leading-[1.1] font-bold tracking-[-0.04em] mb-6">Documentation</h1>
           <p className="text-[18px] leading-7 text-on-surface-variant max-w-2xl mx-auto mb-8">
-            Everything you need to integrate ShipMind AI into your logistics operations.
+            Everything you need to integrate CarbonIQ into your carbon accounting workflow.
           </p>
           <div className="relative max-w-xl mx-auto">
             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
@@ -79,7 +79,7 @@ export default function Documentation() {
           <div className="relative z-10">
             <h2 className="text-[40px] font-semibold tracking-[-0.03em] mb-4">Need help getting started?</h2>
             <p className="text-on-primary/70 max-w-xl mx-auto mb-8">
-              Our solutions engineers are ready to help you configure and launch ShipMind AI in your environment.
+              Our solutions engineers are ready to help you configure and launch CarbonIQ in your environment.
             </p>
             <Link to="/contact" className="bg-secondary text-white px-8 py-4 rounded-xl font-bold text-[15px] hover:opacity-90 transition-all inline-block">
               Talk to an Engineer

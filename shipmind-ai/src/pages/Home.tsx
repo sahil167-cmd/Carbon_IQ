@@ -63,7 +63,7 @@ export default function Home() {
             <div className="relative z-10 p-2 glass border border-white rounded-[24px] shadow-2xl">
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTqo1ucxitbE5nhJTG2QRZwlh1TPMeef3EQoz_YUAqpReLi3ho24N-5Whmd84Lf68addvSjlgviNOvbpH_qtGOMJjfzIIIqn4tQIxtAEUWYcs1-IVGR7_VWc0vnRgRh2SDtjTviqB_kZ7HRDzpKqwGLtR3DwhLj48K33Dx5TKNDcbBdt-MxgKOfkuamgFF_Il2kEVqru9TCV1xL_awuY95gI5Ugrz_CBguLNGg4V1C1PwbBpcl30blSAZfV7w8CllV"
-                alt="ShipMind AI Interface"
+                alt="CarbonIQ Interface"
                 className="rounded-[20px] w-full h-auto"
               />
               <div className="absolute -bottom-10 -left-10 p-6 glass border border-white/50 rounded-[20px] ambient-shadow max-w-[280px] hidden md:block">
@@ -276,7 +276,7 @@ export default function Home() {
                 Ready to modernize your logistics?
               </h2>
               <p className="text-[18px] leading-7 text-on-primary-container max-w-2xl mx-auto mb-12">
-                Join over 500+ global shippers and freight forwarders using ShipMind AI to eliminate manual data entry and gain predictive visibility.
+                Join over 500+ global enterprises using CarbonIQ to eliminate manual data entry and gain audit-ready emissions visibility.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Link

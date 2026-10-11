@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import SideNav from "./SideNav";
 import AppHeader from "./AppHeader";
 import Footer from "./Footer";
+import CopilotPanel from "../copilot/CopilotPanel";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -20,6 +21,7 @@ export default function AppLayout({ children, title, subtitle }: AppLayoutProps)
         </div>
         <Footer />
       </main>
+      <CopilotPanel />
     </div>
   );
 }

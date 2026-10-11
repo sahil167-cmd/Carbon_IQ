@@ -7,7 +7,7 @@ const integrations = [
   { name: "Salesforce", category: "CRM", icon: "support_agent", desc: "Connect shipment data to customer records and opportunities." },
   { name: "Slack", category: "Communication", icon: "chat", desc: "Instant alerts for delays, flags, and key milestones." },
   { name: "Microsoft Teams", category: "Communication", icon: "groups", desc: "Shipment notifications delivered directly to team channels." },
-  { name: "Power BI", category: "Analytics", icon: "bar_chart", desc: "Push ShipMind data into custom Power BI dashboards." },
+  { name: "Power BI", category: "Analytics", icon: "bar_chart", desc: "Push CarbonIQ data into custom Power BI dashboards." },
   { name: "Tableau", category: "Analytics", icon: "insights", desc: "Live data connector for advanced logistics visualization." },
   { name: "DHL API", category: "Carrier", icon: "local_shipping", desc: "Direct tracking and rate quoting via DHL API." },
   { name: "FedEx", category: "Carrier", icon: "local_shipping", desc: "Integrated tracking, bookings, and label generation." },
@@ -24,7 +24,7 @@ export default function Integrations() {
         <div className="text-center mb-16">
           <h1 className="text-[72px] leading-[1.1] font-bold tracking-[-0.04em] mb-6">Integrations</h1>
           <p className="text-[18px] leading-7 text-on-surface-variant max-w-2xl mx-auto">
-            Connect ShipMind AI with your existing tools to create a unified logistics intelligence stack.
+            Connect CarbonIQ with your existing tools to create a unified logistics intelligence stack.
           </p>
         </div>
 

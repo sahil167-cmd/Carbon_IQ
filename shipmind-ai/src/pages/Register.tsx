@@ -79,7 +79,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
             <span className="material-symbols-outlined text-secondary-fixed" style={{ fontVariationSettings: "'FILL' 1" }}>
               cloud_done
             </span>
-            ShipMind AI / Carbon OS
+            CarbonIQ
           </Link>
         </div>
         <div className="relative z-10 max-w-xl flex flex-col gap-12 animate-slide-up">
@@ -88,7 +88,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-secondary-fixed animate-pulse" />
                 <span className="text-[13px] text-white/60 tracking-widest uppercase">
-                  Carbon OS Backend Engine Connected
+                  CarbonIQ Backend Engine Connected
                 </span>
               </div>
               <span className="text-[13px] text-secondary-fixed font-bold">100% Deterministic</span>
@@ -115,7 +115,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
               {isLogin ? "Welcome back" : "Create your account"}
             </h1>
             <p className="text-[15px] text-on-surface-variant">
-              {isLogin ? "Login to your Carbon OS dashboard to manage emissions." : "Join enterprise teams calculating emissions with zero AI hallucination."}
+              {isLogin ? "Login to your CarbonIQ dashboard to manage emissions." : "Join enterprise teams calculating emissions with zero AI hallucination."}
             </p>
           </div>
 

@@ -71,7 +71,7 @@ export default function AIInsights() {
           <div>
             <h2 className="text-[40px] font-semibold leading-none tracking-[-0.03em] text-primary">AI Insights</h2>
             <p className="text-[15px] text-on-surface-variant mt-2">
-              Real-time predictive intelligence from the ShipMind AI engine.
+              Real-time predictive intelligence from the CarbonIQ engine.
             </p>
           </div>
           <div className="flex items-center gap-3">

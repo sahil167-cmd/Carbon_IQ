@@ -33,7 +33,7 @@ function processQueue(error: unknown, token: string | null = null) {
 }
 
 /**
- * Carbon OS API Client
+ * CarbonIQ API Client
  * Configured axios instance with:
  * - JWT Authorization token injection on every request
  * - Automatic silent token refresh on 401
@@ -116,7 +116,7 @@ apiClient.interceptors.response.use(
     // Standard error formatting
     if (!error.response) {
       return Promise.reject(
-        new Error('Cannot reach Carbon OS API backend. Ensure apps/core-api is running.'),
+        new Error('Cannot reach CarbonIQ API backend. Ensure apps/core-api is running.'),
       );
     }
 
@@ -147,6 +147,12 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
   return res.data.data;
 }
 
+export async function apiPut<T>(path: string, body?: unknown): Promise<T> {
+  const res = await apiClient.put<ApiResponse<T>>(path, body);
+  if (!res.data.success) throw new Error((res.data as unknown as ApiErrorResponse).error.message);
+  return res.data.data;
+}
+
 export async function apiPatch<T>(path: string, body?: unknown): Promise<T> {
   const res = await apiClient.patch<ApiResponse<T>>(path, body);
   if (!res.data.success) throw new Error((res.data as unknown as ApiErrorResponse).error.message);
@@ -165,6 +171,21 @@ export async function apiUpload<T>(path: string, formData: FormData): Promise<T>
   });
   if (!res.data.success) throw new Error((res.data as unknown as ApiErrorResponse).error.message);
   return res.data.data;
+}
+
+export async function apiDownloadBlob(path: string, defaultFilename: string = 'document.pdf'): Promise<void> {
+  const res = await apiClient.get(path, {
+    responseType: 'blob',
+  });
+  const blob = new Blob([res.data], { type: 'application/pdf' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', defaultFilename.endsWith('.pdf') ? defaultFilename : `${defaultFilename}.pdf`);
+  document.body.appendChild(link);
+  link.click();
+  link.parentNode?.removeChild(link);
+  window.URL.revokeObjectURL(url);
 }
 
 export { apiClient };

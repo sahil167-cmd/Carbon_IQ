@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import KPICard from "../../components/shared/KPICard";
 import StatusBadge from "../../components/shared/StatusBadge";
+import ForecastCard from "../../components/forecast/ForecastCard";
 import { apiGet } from "../../lib/api-client";
 
 interface DocItem {
@@ -134,6 +135,9 @@ export default function Dashboard() {
             <KPICard key={k.label} {...k} />
           ))}
         </section>
+
+        {/* ML Carbon Emission Forecast Card */}
+        <ForecastCard />
 
         {/* Main Activity History Table */}
         <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-[20px] overflow-hidden ambient-shadow">

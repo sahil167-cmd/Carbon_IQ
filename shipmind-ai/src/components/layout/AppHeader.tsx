@@ -11,6 +11,22 @@ export default function AppHeader({ title = "Dashboard", subtitle = "Shipment In
   const unreadCount = useUnreadCount();
   const { data: healthData, isSuccess: isBackendOnline } = useHealthCheck();
 
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "{}");
+    } catch {
+      return {};
+    }
+  })();
+
+  const fullName = user.fullName || "Sahil Borhade";
+  const nameParts = fullName.trim().split(" ");
+  const initials = (
+    nameParts.length >= 2
+      ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+      : fullName.slice(0, 2) || "SB"
+  ).toUpperCase();
+
   return (
     <header className="fixed top-0 right-0 left-64 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 z-40 px-6 h-16 flex items-center justify-between shadow-sm">
       <div className="flex items-center gap-4">
@@ -53,9 +69,10 @@ export default function AppHeader({ title = "Dashboard", subtitle = "Shipment In
 
           <Link
             to="/app/account"
-            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs"
+            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-xs hover:opacity-90 transition-all shadow-sm"
+            title={`${user?.fullName || 'User'} (Account Settings)`}
           >
-            JS
+            {initials}
           </Link>
         </div>
       </div>

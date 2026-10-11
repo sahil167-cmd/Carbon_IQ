@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import StatusBadge from "../../components/shared/StatusBadge";
 import { apiGet, apiPost, API_BASE_URL } from "../../lib/api-client";
+import { ImpactVisualizationButton } from "../../components/ImpactVisualization/ImpactVisualizationButton";
+import { ImpactVisualizationModal } from "../../components/ImpactVisualization/ImpactVisualizationModal";
 
 interface DocumentData {
   id: string;
@@ -45,6 +47,7 @@ export default function DocumentDetails() {
   const [loading, setLoading] = useState(true);
   const [calculating, setCalculating] = useState(false);
   const [calcError, setCalcError] = useState("");
+  const [isVisualizationOpen, setIsVisualizationOpen] = useState(false);
 
   const loadAllDetails = async () => {
     if (!id) return;
@@ -130,7 +133,7 @@ export default function DocumentDetails() {
       ? {
           activityVolume: { value: `${emission.activityValue} ${emission.activityUnit}`, confidence: 0.96 },
           appliedFactor: {
-            value: `${emission.emissionFactor?.factorValue ?? 0.385} kgCO2e/${emission.activityUnit}`,
+            value: `${emission.emissionFactor?.factorValue ?? 0.385} kgCO2e/${emission.emissionFactor?.unit || emission.activityUnit}`,
             confidence: 0.98,
           },
           calculationMethod: { value: emission.calculationMethod, confidence: 0.99 },
@@ -219,7 +222,12 @@ export default function DocumentDetails() {
                 )}
               </div>
 
-              {!emission && (
+              {emission ? (
+                <ImpactVisualizationButton
+                  co2eKg={emission.co2e}
+                  onClick={() => setIsVisualizationOpen(true)}
+                />
+              ) : (
                 <button
                   onClick={handleTriggerCalculation}
                   disabled={calculating}
@@ -237,30 +245,69 @@ export default function DocumentDetails() {
               )}
             </div>
 
-            {/* Emission Metrics Grid */}
+            {/* Emission Metrics Grid & Formula Breakdown */}
             {emission && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-                  <span className="text-white/60 block mb-1">GHG Protocol Scope</span>
-                  <span className="text-base font-bold text-emerald-300">{emission.scope}</span>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <span className="text-white/60 block mb-1">GHG Protocol Scope</span>
+                    <span className="text-base font-bold text-emerald-300">{emission.scope}</span>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <span className="text-white/60 block mb-1">Activity Volume</span>
+                    <span className="text-base font-bold text-white">
+                      {emission.activityValue.toLocaleString()} {emission.activityUnit}
+                    </span>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <span className="text-white/60 block mb-1">Emission Factor</span>
+                    <span className="text-base font-bold text-white">
+                      {emission.emissionFactor?.factorValue ?? 0.385} kgCO₂e/{emission.emissionFactor?.unit || emission.activityUnit}
+                    </span>
+                  </div>
+                  <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
+                    <span className="text-white/60 block mb-1">Emissions in Metric Tonnes</span>
+                    <span className="text-base font-bold text-emerald-400">
+                      {(emission.co2e / 1000).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} t CO₂e
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-                  <span className="text-white/60 block mb-1">Activity Volume</span>
-                  <span className="text-base font-bold text-white">
-                    {emission.activityValue} {emission.activityUnit}
-                  </span>
-                </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-                  <span className="text-white/60 block mb-1">Emission Factor</span>
-                  <span className="text-base font-bold text-white">
-                    {emission.emissionFactor?.factorValue ?? 0.385} kgCO2e/{emission.activityUnit}
-                  </span>
-                </div>
-                <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
-                  <span className="text-white/60 block mb-1">Formula Applied</span>
-                  <span className="text-xs font-mono text-emerald-200 block truncate">
-                    {emission.formulaUsed || emission.calculationLogs?.[0]?.formulaUsed || "co2e = Activity * Factor"}
-                  </span>
+
+                {/* Audit-Grade Formula Calculation Breakdown Panel */}
+                <div className="bg-emerald-950/80 border border-emerald-500/30 p-5 rounded-2xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-emerald-400 text-lg">functions</span>
+                      <h4 className="font-bold text-sm text-emerald-200 tracking-wide uppercase">Audit-Grade Calculation Formula Breakdown</h4>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
+                      DETERMINISTIC GHG ENGINE
+                    </span>
+                  </div>
+
+                  <div className="bg-black/40 border border-emerald-500/20 p-4 rounded-xl font-mono text-sm text-emerald-300 space-y-2 overflow-x-auto">
+                    <div className="text-xs text-emerald-400/70 font-sans font-semibold">Applied Equation:</div>
+                    <div className="text-base font-bold text-white whitespace-pre-wrap leading-relaxed">
+                      {emission.formulaUsed || emission.calculationLogs?.[0]?.formulaUsed || `${emission.activityValue} ${emission.activityUnit} × ${emission.emissionFactor?.factorValue || 0.385} kgCO₂e/${emission.activityUnit} = ${emission.co2e.toLocaleString()} kg CO₂e (${(emission.co2e/1000).toFixed(4)} t CO₂e)`}
+                    </div>
+                  </div>
+
+                  {emission.scope === "SCOPE_2" && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
+                      <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+                        <span className="text-emerald-300/80 font-bold block mb-1">Location-Based Scope 2:</span>
+                        <span className="text-sm font-extrabold text-white">
+                          {(emission.co2eLocation ?? emission.co2e).toLocaleString()} kg CO₂e
+                        </span>
+                      </div>
+                      <div className="bg-white/5 border border-white/10 p-3 rounded-xl">
+                        <span className="text-emerald-300/80 font-bold block mb-1">Market-Based Scope 2 (REC Verification):</span>
+                        <span className="text-sm font-extrabold text-white">
+                          {(emission.co2eMarket ?? emission.co2e).toLocaleString()} kg CO₂e
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -305,6 +352,13 @@ export default function DocumentDetails() {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Interactive 3D Impact Visualization Modal */}
+      <ImpactVisualizationModal
+        isOpen={isVisualizationOpen}
+        onClose={() => setIsVisualizationOpen(false)}
+        co2eKg={emission?.co2e || 0}
+      />
     </AppLayout>
   );
 }

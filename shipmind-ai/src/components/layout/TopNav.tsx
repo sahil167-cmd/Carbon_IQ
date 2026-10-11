@@ -15,7 +15,7 @@ export default function TopNav() {
     <nav className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
       <div className="flex justify-between items-center px-16 py-4 max-w-[1280px] mx-auto h-20">
         <Link to="/" className="text-2xl font-bold tracking-tight text-primary">
-          ShipMind AI
+          CarbonIQ
         </Link>
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (

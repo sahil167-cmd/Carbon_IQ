@@ -2,8 +2,8 @@ import { useState } from "react";
 import MarketingLayout from "../components/layout/MarketingLayout";
 
 const contactChannels = [
-  { label: "Partnerships", email: "partners@shipmind.ai" },
-  { label: "General Inquiries", email: "hello@shipmind.ai" },
+  { label: "Partnerships", email: "partners@carboniq.ai" },
+  { label: "General Inquiries", email: "hello@carboniq.ai" },
 ];
 
 const recognitions = ["TECHLEADER", "LOGISTIX", "FORBES AI", "GLOBECHAIN"];
