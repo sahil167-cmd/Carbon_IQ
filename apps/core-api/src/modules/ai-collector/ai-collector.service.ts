@@ -6,14 +6,19 @@ import { DocumentRepository } from '../document/document.repository';
 import { OrganizationRepository } from '../organization/organization.repository';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { ConfigService } from '../../services/config.service';
+import { CopilotRepository } from '../copilot/copilot.repository';
+import { IngestionService } from '../copilot/ingestion/ingestion.service';
 import { ExtractionGraph } from './extraction-graph';
 import { ExtractedDataDTO } from './ai-collector.types';
 import { PatchExtractedFieldInput } from './ai-collector.validator';
 import { ExtractionJobStatus, DocumentStatus, AiFeature } from '@prisma/client';
 import { env } from '../../config/env.schema';
 import { NotFoundError, ValidationError, UnprocessableError } from '../../core/errors/app.error';
-import { AI_JOB_NAMES } from '@carbon-os/shared-types';
+import { AI_JOB_NAMES } from '@carbon-iq/shared-types';
 import { aiQueue } from '../../queues/queue.init';
+import { DuplicateService } from '../document/duplicate.service';
+import { PlausibilityValidator } from '../validation/plausibility.validator';
+import { HistoricalAnomalyDetector } from '../validation/anomaly-detector';
 import { createLogger } from '../../core/logging/logger';
 
 const logger = createLogger('AiCollectorService');
@@ -77,20 +82,29 @@ export class AiCollectorService {
     }
 
     if (!fileBuffer || fileBuffer.length === 0) {
-      const localFilePath = path.join(process.cwd(), doc.fileName);
-      if (fs.existsSync(localFilePath)) {
-        fileBuffer = fs.readFileSync(localFilePath);
-        logger.info({ documentId, localFilePath }, 'Successfully read binary PDF from local workspace disk');
-      } else {
-        // Category specific fallback text if file absent
-        const isElectricity = doc.category.code.includes('ELECTRICITY');
-        const isFreight = doc.category.code.includes('TRANSPORT');
-        const fallbackText = isElectricity
-          ? `INVOICE # ComEd-9942 METER: MTR-99420-IL TOTAL GRID ENERGY CONSUMED: 24,850 KWH TOTAL AMOUNT DUE: $4,807.50 DATE: 2026-01-31`
-          : isFreight
-          ? `BILL OF LADING # MAEU-88492019 CONTAINER WEIGHT: 18,500 KG ROUTE DISTANCE: 8,900 KM TONNE KM: 164,650 TKM TOTAL: $12,800`
-          : `INVOICE # INV-2026-9942 BULK DIESEL FUEL QUANTITY: 6,200 LITERS TOTAL AMOUNT: $17,980.00 DATE: 2026-01-15`;
-        fileBuffer = Buffer.from(fallbackText, 'utf-8');
+      // Look for the exact document across local workspace paths
+      const pathsToTry = [
+        path.join(process.cwd(), doc.fileName),
+        path.resolve(process.cwd(), '..', doc.fileName),
+        path.resolve(process.cwd(), '../..', doc.fileName),
+        path.join(process.cwd(), 'scratch', doc.fileName),
+        path.resolve(process.cwd(), '..', 'scratch', doc.fileName),
+        path.resolve(process.cwd(), '../../scratch', doc.fileName),
+        path.join(process.cwd(), doc.s3Key),
+        path.resolve(process.cwd(), '..', doc.s3Key),
+        path.resolve(process.cwd(), '../../', doc.s3Key),
+      ];
+
+      for (const p of pathsToTry) {
+        if (fs.existsSync(p)) {
+          fileBuffer = fs.readFileSync(p);
+          logger.info({ documentId, filePath: p, fileName: doc.fileName }, 'Successfully read binary PDF from local workspace disk');
+          break;
+        }
+      }
+
+      if (!fileBuffer || fileBuffer.length === 0) {
+        throw new UnprocessableError(`Document file buffer could not be loaded from S3 or disk: ${doc.fileName}`);
       }
     }
 
@@ -103,8 +117,32 @@ export class AiCollectorService {
       mimeType: doc.mimeType,
     });
 
-    const isSuccess = graphResult.status === ExtractionJobStatus.SUCCESS;
-    const finalDocStatus = isSuccess ? DocumentStatus.EXTRACTED : DocumentStatus.EXTRACTION_FAILED;
+    // Update document category in DB if evidence-based classification detected a distinct category
+    if (graphResult.classifiedCategory && graphResult.classifiedCategory !== doc.category.code) {
+      const detectedCat = await this.docRepo.findCategoryByCode(graphResult.classifiedCategory);
+      if (detectedCat && detectedCat.id !== doc.categoryId) {
+        await this.docRepo.updateDocumentCategory(doc.id, detectedCat.id);
+        logger.info({ documentId: doc.id, previousCategory: doc.category.code, newCategory: detectedCat.code }, 'Document category updated based on evidence classification');
+      }
+    }
+
+    const prisma = this.repo['prisma'];
+
+    // 1. SHA-256 Fingerprinting & Duplicate Check
+    const dupService = new DuplicateService(prisma);
+    const dupResult = await dupService.checkForDuplicates({
+      organizationId: orgId,
+      documentId: doc.id,
+      fileBuffer,
+    });
+
+    const isSuccess = graphResult.status === ExtractionJobStatus.SUCCESS && !dupResult.isDuplicate;
+    let finalDocStatus: DocumentStatus = isSuccess ? DocumentStatus.EXTRACTED : DocumentStatus.EXTRACTION_FAILED;
+
+    if (dupResult.isDuplicate) {
+      finalDocStatus = DocumentStatus.NEEDS_REVIEW;
+      logger.warn({ documentId: doc.id, reason: dupResult.reason }, 'Duplicate document upload flagged');
+    }
 
     const currentVersion = await this.repo.getLatestExtractionVersion(documentId);
     const newVersion = currentVersion + 1;
@@ -114,15 +152,70 @@ export class AiCollectorService {
       extractionVersion: newVersion,
       fieldsJson: graphResult.extractedFields ?? {},
       fieldConfidenceJson: graphResult.extractedFields ?? {},
-      modelVersion: 'tesseract-v5+langchain',
+      modelVersion: 'mistral-vision+langgraph',
       status: isSuccess ? ExtractionJobStatus.SUCCESS : ExtractionJobStatus.FAILED,
     });
+
+    // 2. Insert ActivityRecord row into activity_records DB table
+    const fields = graphResult.extractedFields ?? {};
+    const qtyVal = Number(fields.quantity?.value ?? fields.kwhConsumed?.value ?? fields.distanceKm?.value ?? 0);
+    const unitVal = String(fields.unit?.value ?? (fields.kwhConsumed ? 'KWH' : 'LITERS')).toUpperCase();
+
+    if (qtyVal > 0) {
+      try {
+        await prisma.activityRecord.create({
+          data: {
+            documentId: doc.id,
+            organizationId: orgId,
+            lineItemIndex: 0,
+            activityType: graphResult.classifiedCategory || doc.category.code,
+            scope: graphResult.detectedScope || 'SCOPE_2',
+            quantity: qtyVal,
+            unit: unitVal,
+            normalizedQuantity: qtyVal,
+            normalizedUnit: unitVal,
+            supplier: String(fields.vendorName?.value ?? doc.fileName),
+            confidence: Number(graphResult.ocrConfidence ?? 0.95),
+            provenanceJson: fields as any,
+            status: 'EXTRACTED',
+          },
+        });
+        logger.info({ documentId: doc.id, qtyVal, unitVal }, 'ActivityRecord created in database');
+      } catch (actErr: any) {
+        logger.warn({ error: actErr.message }, 'Failed to insert ActivityRecord (continuing)');
+      }
+    }
+
+    // 3. Plausibility & Anomaly Validation Gate
+    const plausibility = new PlausibilityValidator();
+    const anomalyDetector = new HistoricalAnomalyDetector(prisma);
+
+    const pIssues = plausibility.validatePlausibility({
+      category: graphResult.classifiedCategory || doc.category.code,
+      activityValue: qtyVal,
+      activityUnit: unitVal,
+      co2eKg: qtyVal * 1.5,
+    });
+
+    const aIssues = await anomalyDetector.detectAnomalies({
+      organizationId: orgId,
+      siteId: doc.siteId,
+      category: graphResult.classifiedCategory || doc.category.code,
+      activityValue: qtyVal,
+      activityUnit: unitVal,
+      co2eKg: qtyVal * 1.5,
+    });
+
+    if (pIssues.length > 0 || aIssues.length > 0) {
+      finalDocStatus = DocumentStatus.NEEDS_REVIEW;
+      logger.warn({ documentId: doc.id, pIssues, aIssues }, 'Document flagged for human review due to plausibility/anomaly issues');
+    }
 
     // Transition Document Status in DB
     await this.docRepo.updateDocumentStatus(
       doc.id,
       finalDocStatus,
-      isSuccess ? 'AI extraction pipeline completed' : (graphResult.error ?? 'Extraction failed'),
+      isSuccess ? 'AI extraction pipeline completed' : (dupResult.reason ?? graphResult.error ?? 'Extraction failed'),
       'aiWorker',
     );
 
@@ -143,6 +236,47 @@ export class AiCollectorService {
       { documentId: doc.id, newVersion, status: finalDocStatus, latencyMs },
       'ExtractedData persisted and Document status updated',
     );
+
+    // Automatically trigger deterministic Carbon Accounting Calculation pipeline
+    if (isSuccess && qtyVal > 0) {
+      try {
+        const { CarbonEngineService } = await import('../carbon-engine/carbon-engine.service');
+        const { CarbonEngineRepository } = await import('../carbon-engine/carbon-engine.repository');
+        const { NotificationService } = await import('../../services/notification.service');
+
+        const calcRepo = new CarbonEngineRepository(prisma, orgId);
+        const notifService = new NotificationService(prisma);
+        const engine = new CarbonEngineService(calcRepo, this.docRepo, this.repo, this.orgRepo, notifService);
+
+        const calcResult = await engine.calculateApprovedRecord(doc.id, orgId);
+        if (calcResult) {
+          logger.info({ documentId: doc.id, co2e: calcResult.co2e, scope: calcResult.scope }, 'Automatic post-extraction calculation completed');
+        }
+      } catch (calcErr: any) {
+        logger.warn({ documentId: doc.id, error: calcErr.message }, 'Automatic post-extraction calculation attempt finished');
+      }
+    }
+
+    // Automatically index document text into RAG knowledge base (kb_documents & kb_chunks)
+    setImmediate(async () => {
+      try {
+        const prisma = this.repo['prisma'];
+        const copilotRepo = new CopilotRepository(prisma, orgId);
+        const ingestion = new IngestionService(copilotRepo);
+        if (fileBuffer && fileBuffer.length > 0) {
+          await ingestion.ingestDocument({
+            buffer: fileBuffer,
+            filename: doc.fileName,
+            mimeType: doc.mimeType,
+            organizationId: orgId,
+            sourceDocumentId: doc.id,
+          });
+          logger.info({ documentId: doc.id }, 'RAG knowledge base auto-indexing completed');
+        }
+      } catch (err: any) {
+        logger.warn({ documentId: doc.id, error: err.message }, 'Automatic RAG corpus indexing skipped/completed');
+      }
+    });
 
     return {
       id: extractedData.id,
@@ -173,20 +307,7 @@ export class AiCollectorService {
     }
 
     if (!data) {
-      const defaultFields = {
-        quantity: { value: 6200, unit: 'LITERS', confidence: 0.96, needsReview: false },
-        fuelType: { value: 'DIESEL', confidence: 0.96, needsReview: false },
-      };
-      return {
-        id: `ext-${documentId}`,
-        documentId,
-        extractionVersion: 1,
-        fields: defaultFields,
-        fieldsJson: defaultFields,
-        modelVersion: 'v1.0.0',
-        status: 'SUCCESS' as any,
-        createdAt: new Date(),
-      };
+      throw new NotFoundError('ExtractedData for document ' + documentId);
     }
 
     return {

@@ -16,9 +16,13 @@ import {
 import { DocumentStatus, ReportingPeriodStatus, DocumentSource } from '@prisma/client';
 import { env } from '../../config/env.schema';
 import { NotFoundError, ConflictError, ValidationError, ForbiddenError } from '../../core/errors/app.error';
-import { ERROR_CODES, AI_JOB_NAMES } from '@carbon-os/shared-types';
+import { ERROR_CODES, AI_JOB_NAMES } from '@carbon-iq/shared-types';
 import { aiQueue } from '../../queues/queue.init';
 import { OrganizationRepository } from '../organization/organization.repository';
+import { AiCollectorRepository } from '../ai-collector/ai-collector.repository';
+import { AiCollectorService } from '../ai-collector/ai-collector.service';
+import { FeatureFlagService } from '../../services/feature-flag.service';
+import { ConfigService } from '../../services/config.service';
 import { createLogger } from '../../core/logging/logger';
 
 const logger = createLogger('DocumentService');
@@ -138,6 +142,21 @@ export class DocumentService {
       logger.error({ documentId: doc.id, error: err.message }, 'Failed to enqueue extraction job');
       // Non-fatal — status remains UPLOADED, user can retry
     }
+
+    // Direct Extraction Execution Fallback for immediate processing
+    setImmediate(async () => {
+      try {
+        const prisma = this.repo['prisma'];
+        const aiRepo = new AiCollectorRepository(prisma, orgId);
+        const flagService = new FeatureFlagService(prisma);
+        const configService = new ConfigService(prisma);
+        const aiCollector = new AiCollectorService(aiRepo, this.repo, this.orgRepo, flagService, configService);
+        await aiCollector.processDocumentExtraction(doc.id, orgId);
+        logger.info({ documentId: doc.id }, 'Direct document extraction completed');
+      } catch (err: any) {
+        logger.warn({ documentId: doc.id, error: err.message }, 'Direct document extraction attempt completed');
+      }
+    });
 
     await this.orgRepo.logAuditAction({
       userId,

@@ -19,7 +19,7 @@ import {
   ReviewActionType,
 } from '@prisma/client';
 import { NotFoundError, ValidationError, ConflictError } from '../../core/errors/app.error';
-import { AI_JOB_NAMES, CALC_JOB_NAMES } from '@carbon-os/shared-types';
+import { AI_JOB_NAMES, CALC_JOB_NAMES } from '@carbon-iq/shared-types';
 import { aiQueue, calcQueue } from '../../queues/queue.init';
 import { createLogger } from '../../core/logging/logger';
 
@@ -143,15 +143,53 @@ export class ValidationService {
   // ===========================================================================
   // 3. Human Review Actions: Approve / Reject / Bulk Approve (FWS §8)
   // ===========================================================================
-  async approveDocument(userId: string, documentId: string, reason?: string): Promise<void> {
+  async approveDocument(userId: string, documentId: string, reason?: string, corrections?: Record<string, any>): Promise<void> {
     const doc = await this.docRepo.findDocumentById(documentId);
     if (!doc) throw new NotFoundError('Document');
 
-    // Rule: Layer 1 HARD_BLOCK errors cannot be approved as-is (FWS §7.5)
+    if (corrections && Object.keys(corrections).length > 0) {
+      await this.docRepo.updateDocumentManualData(documentId, corrections);
+    }
+
+    // Anti-Greenwashing & Plausibility Validation Gate
+    if (corrections && corrections.quantity !== undefined) {
+      const newQty = Number(corrections.quantity);
+      if (isNaN(newQty) || newQty <= 0) {
+        throw new ValidationError('Activity quantity must be strictly greater than zero.');
+      }
+
+      const extracted = await this.aiRepo.findLatestExtractedData(documentId);
+      const extData = (extracted?.fieldsJson as Record<string, any>) || {};
+      const rawOcrQty = Number(extData.quantity?.value ?? extData.quantity ?? extData.weightKg?.value ?? extData.weightKg ?? extData.kwhConsumed?.value ?? extData.kwhConsumed ?? 0);
+
+      if (rawOcrQty > 0) {
+        const floor = rawOcrQty * 0.20; // 80% maximum reduction limit
+        if (newQty < floor) {
+          throw new ValidationError(
+            `Compliance Violation: Activity quantity (${newQty.toLocaleString()}) cannot be reduced below the verified physical floor of ${floor.toLocaleString()} (-80% limit). Reductions beyond 80% are blocked to prevent fraudulent under-reporting.`,
+          );
+        }
+
+        const warningThreshold = rawOcrQty * 0.85; // 15% reduction threshold
+        if (newQty < warningThreshold && (!reason || reason.trim().length < 10)) {
+          throw new ValidationError(
+            'Auditor Justification Required: Reducing quantity by more than 15% below the verified document baseline requires a documented justification (minimum 10 characters).',
+          );
+        }
+      }
+    }
+
+    // Rule: Layer 1 HARD_BLOCK errors cannot be approved as-is without correction (FWS §7.5)
     const results = await this.repo.getValidationResultsForDocument(documentId);
     const allIssues = results.flatMap((r) => (r.issuesJson as unknown as ValidationIssue[]) || []);
 
-    const hasHardBlock = allIssues.some((issue) => issue.severity === 'HARD_BLOCK');
+    const hasHardBlock = allIssues.some((issue) => {
+      if (corrections && issue.field && corrections[issue.field] !== undefined) {
+        return false; // Field was explicitly corrected by human reviewer
+      }
+      return issue.severity === 'HARD_BLOCK';
+    });
+
     if (hasHardBlock) {
       throw new ValidationError(
         'Records with hard-block validation errors cannot be approved. Edit the invalid fields first.',

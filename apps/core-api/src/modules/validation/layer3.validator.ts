@@ -1,6 +1,14 @@
 import { ValidationIssue } from './validation.types';
-import { ValidationLayer, Layer3Label } from '@prisma/client';
+import { ValidationLayer } from '@prisma/client';
 import { createLogger } from '../../core/logging/logger';
+
+export const Layer3Label = {
+  OK: 'OK' as const,
+  SUSPICIOUS: 'SUSPICIOUS' as const,
+  LIKELY_ERROR: 'LIKELY_ERROR' as const,
+  MISSING_INFO: 'MISSING_INFO' as const,
+};
+export type Layer3Label = keyof typeof Layer3Label;
 
 const logger = createLogger('Layer3AiValidator');
 

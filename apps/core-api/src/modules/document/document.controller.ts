@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { DocumentService } from './document.service';
+import { NotFoundError } from '../../core/errors/app.error';
+
 import { successResponse, paginatedResponse } from '../../utils/response.util';
 import {
   RequestUploadUrlsInput,

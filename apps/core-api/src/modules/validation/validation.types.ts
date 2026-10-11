@@ -2,7 +2,6 @@ import {
   ValidationLayer,
   ValidationStatus,
   ReviewActionType,
-  Layer3Label,
   DocumentStatus,
 } from '@prisma/client';
 

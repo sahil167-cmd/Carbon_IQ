@@ -3,6 +3,7 @@ import { DocumentStatus } from '@prisma/client';
 
 export const approveDocumentSchema = z.object({
   reason: z.string().max(250).optional(),
+  corrections: z.record(z.any()).optional(),
 });
 
 export const rejectDocumentSchema = z.object({

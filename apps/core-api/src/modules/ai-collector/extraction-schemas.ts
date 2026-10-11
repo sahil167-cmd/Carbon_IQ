@@ -33,6 +33,18 @@ export const fuelExtractionSchema = z.object({
   invoiceNumber: z.string().optional(),
 });
 
+export const purchasedGoodsExtractionSchema = z.object({
+  materialType: z.string().optional(),
+  material: z.string().optional(),
+  productDescription: z.string().optional(),
+  supplier: z.string().optional(),
+  quantity: z.number().positive('Quantity must be positive'),
+  weightKg: z.number().positive().optional(),
+  unit: z.string().min(1, 'Unit is required'),
+  invoiceNumber: z.string().optional(),
+  purchaseDate: z.string().optional(),
+});
+
 export const wasteExtractionSchema = z.object({
   wasteType: z.string().min(1, 'wasteType is required'),
   quantity: z.number().positive('Waste quantity must be positive'),
@@ -44,12 +56,14 @@ export const wasteExtractionSchema = z.object({
 export type ShipmentExtraction = z.infer<typeof shipmentExtractionSchema>;
 export type ElectricityExtraction = z.infer<typeof electricityExtractionSchema>;
 export type FuelExtraction = z.infer<typeof fuelExtractionSchema>;
+export type PurchasedGoodsExtraction = z.infer<typeof purchasedGoodsExtractionSchema>;
 export type WasteExtraction = z.infer<typeof wasteExtractionSchema>;
 
 export function getCategorySchema(categoryCode: string): z.ZodSchema {
   switch (categoryCode) {
     case 'UPSTREAM_TRANSPORT':
     case 'DOWNSTREAM_TRANSPORT':
+    case 'ROAD_FREIGHT':
       return shipmentExtractionSchema;
     case 'ELECTRICITY':
     case 'RENEWABLE_ENERGY':
@@ -57,6 +71,8 @@ export function getCategorySchema(categoryCode: string): z.ZodSchema {
     case 'STATIONARY_COMBUSTION':
     case 'MOBILE_COMBUSTION':
       return fuelExtractionSchema;
+    case 'PURCHASED_GOODS':
+      return purchasedGoodsExtractionSchema;
     case 'WASTE_MANAGEMENT':
       return wasteExtractionSchema;
     default:

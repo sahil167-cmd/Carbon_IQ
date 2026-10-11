@@ -31,7 +31,8 @@ export class DocumentRepository extends TenantScopedRepository {
   }
 
   // ── Document Operations ─────────────────────────────────────────────────────
-  async findDocumentById(id: string): Promise<Document | null> {
+  async findDocumentById(id: string): Promise<any> {
+
     return this.prisma.document.findFirst({
       where: this.scopedWhere({ id }),
       include: {
@@ -157,6 +158,23 @@ export class DocumentRepository extends TenantScopedRepository {
     });
   }
 
+  async updateDocumentManualData(documentId: string, manualData: Record<string, any>): Promise<Document> {
+    const existing = await this.prisma.document.findUnique({ where: { id: documentId } });
+    const currentManual = (existing?.manualData as Record<string, any>) || {};
+    const merged = { ...currentManual, ...manualData };
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: { manualData: merged },
+    });
+  }
+
+  async updateDocumentCategory(documentId: string, categoryId: string): Promise<Document> {
+    return this.prisma.document.update({
+      where: { id: documentId },
+      data: { categoryId },
+    });
+  }
+
   async listDocuments(
     filters: {
       siteId?: string;
@@ -199,6 +217,7 @@ export class DocumentRepository extends TenantScopedRepository {
       where: this.scopedWhere({ id }),
     });
   }
+
 
   async updateReportingPeriodStatus(
     id: string,

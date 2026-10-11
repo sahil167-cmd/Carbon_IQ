@@ -44,9 +44,9 @@ export class ValidationController {
   approve = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user!.id;
     const { id: documentId } = req.params;
-    const { reason } = req.body as ApproveDocumentInput;
+    const { reason, corrections } = req.body as ApproveDocumentInput;
 
-    await this.validationService.approveDocument(userId, documentId, reason);
+    await this.validationService.approveDocument(userId, documentId, reason, corrections);
 
     res.json(
       successResponse(
