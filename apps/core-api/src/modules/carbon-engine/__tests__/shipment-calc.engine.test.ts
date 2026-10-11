@@ -16,7 +16,8 @@ describe('ShipmentCalcEngine (Deterministic Core)', () => {
 
       expect(result.scope).toBe(ScopeType.SCOPE_1);
       expect(result.activityValue).toBe(378.541); // 100 * 3.78541 Liters
-      expect(result.co2e).toBe(1014.49, 2); // 378.541 * 2.68 = 1014.48988 -> 1014.49 kgCO2e
+      expect(result.co2e).toBeCloseTo(1014.49, 2); // 378.541 * 2.68 = 1014.48988 -> 1014.49 kgCO2e
+
     });
   });
 

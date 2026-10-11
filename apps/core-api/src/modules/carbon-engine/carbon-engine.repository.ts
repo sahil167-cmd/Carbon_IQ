@@ -5,7 +5,9 @@ import {
   EmissionsAggregate,
   EmissionFactor,
   ScopeType,
+  ActivityTypeMapping,
 } from '@prisma/client';
+import { Decimal } from 'decimal.js';
 import { TenantScopedRepository } from '../../core/repository/tenant-scoped.repository';
 
 export class CarbonEngineRepository extends TenantScopedRepository {
@@ -16,7 +18,7 @@ export class CarbonEngineRepository extends TenantScopedRepository {
   // ── Calculated Emissions Operations ─────────────────────────────────────────
   async findCalculatedEmissionsByDocumentId(documentId: string): Promise<CalculatedEmissions | null> {
     return this.prisma.calculatedEmissions.findFirst({
-      where: { documentId },
+      where: this.scopedWhere({ documentId }),
       include: {
         emissionFactor: true,
         calculationLogs: { orderBy: { createdAt: 'desc' } },
@@ -52,6 +54,7 @@ export class CarbonEngineRepository extends TenantScopedRepository {
     inputSnapshot: unknown;
     factorVersion: number;
     formulaUsed: string;
+    formulaVersion?: string;
     triggeredBy?: string;
   }): Promise<CalculatedEmissions> {
     return this.prisma.$transaction(async (tx) => {
@@ -61,10 +64,10 @@ export class CarbonEngineRepository extends TenantScopedRepository {
       const co2eMkt = data.co2eMarket && !isNaN(data.co2eMarket) ? data.co2eMarket : null;
 
       const existing = await tx.calculatedEmissions.findFirst({
-        where: { documentId: data.documentId },
+        where: this.scopedWhere({ documentId: data.documentId }),
       });
 
-      let calculated;
+      let calculated: CalculatedEmissions;
       if (existing) {
         calculated = await tx.calculatedEmissions.update({
           where: { id: existing.id },
@@ -105,7 +108,7 @@ export class CarbonEngineRepository extends TenantScopedRepository {
           documentId: data.documentId,
           inputSnapshot: data.inputSnapshot as any,
           factorVersion: data.factorVersion,
-          formulaVersion: 'v1.0-GLEC-GHG',
+          formulaVersion: data.formulaVersion || 'v1.0-GLEC-GHG',
           formulaUsed: data.formulaUsed,
           triggeredBy: data.triggeredBy ?? 'calcWorker',
         },
@@ -114,11 +117,11 @@ export class CarbonEngineRepository extends TenantScopedRepository {
       // Refresh EmissionsAggregate rollup totals
       await this.refreshEmissionsAggregate(tx, data.organizationId, data.siteId, data.reportingPeriodId);
 
-      return calculated;
+      return Object.assign(calculated, { formulaUsed: data.formulaUsed });
     });
   }
 
-  // ── Rollup Aggregate Calculations ─────────────────────────────────────────
+  // ── Rollup Aggregate Calculations (Fixed-precision math) ──────────────────────
   private async refreshEmissionsAggregate(
     tx: any,
     organizationId: string,
@@ -129,23 +132,24 @@ export class CarbonEngineRepository extends TenantScopedRepository {
       where: { organizationId, siteId, reportingPeriodId },
     });
 
-    let scope1Total = 0;
-    let scope2LocationTotal = 0;
-    let scope2MarketTotal = 0;
-    let scope3Total = 0;
+    let scope1Total = new Decimal(0);
+    let scope2LocationTotal = new Decimal(0);
+    let scope2MarketTotal = new Decimal(0);
+    let scope3Total = new Decimal(0);
 
     for (const calc of allCalculations) {
+      const co2e = new Decimal(calc.co2e);
       if (calc.scope === ScopeType.SCOPE_1) {
-        scope1Total += calc.co2e;
+        scope1Total = scope1Total.add(co2e);
       } else if (calc.scope === ScopeType.SCOPE_2) {
-        scope2LocationTotal += calc.co2eLocation ?? calc.co2e;
-        scope2MarketTotal += calc.co2eMarket ?? calc.co2e;
+        scope2LocationTotal = scope2LocationTotal.add(new Decimal(calc.co2eLocation ?? calc.co2e));
+        scope2MarketTotal = scope2MarketTotal.add(new Decimal(calc.co2eMarket ?? calc.co2e));
       } else if (calc.scope === ScopeType.SCOPE_3) {
-        scope3Total += calc.co2e;
+        scope3Total = scope3Total.add(co2e);
       }
     }
 
-    const grandTotal = Number((scope1Total + scope2LocationTotal + scope3Total).toFixed(4));
+    const grandTotal = scope1Total.add(scope2LocationTotal).add(scope3Total);
 
     return tx.emissionsAggregate.upsert({
       where: {
@@ -156,21 +160,21 @@ export class CarbonEngineRepository extends TenantScopedRepository {
         },
       },
       update: {
-        scope1Total: Number(scope1Total.toFixed(4)),
-        scope2LocationTotal: Number(scope2LocationTotal.toFixed(4)),
-        scope2MarketTotal: Number(scope2MarketTotal.toFixed(4)),
-        scope3Total: Number(scope3Total.toFixed(4)),
-        grandTotal,
+        scope1Total: scope1Total.toNumber(),
+        scope2LocationTotal: scope2LocationTotal.toNumber(),
+        scope2MarketTotal: scope2MarketTotal.toNumber(),
+        scope3Total: scope3Total.toNumber(),
+        grandTotal: grandTotal.toNumber(),
       },
       create: {
         organizationId,
         siteId,
         reportingPeriodId,
-        scope1Total: Number(scope1Total.toFixed(4)),
-        scope2LocationTotal: Number(scope2LocationTotal.toFixed(4)),
-        scope2MarketTotal: Number(scope2MarketTotal.toFixed(4)),
-        scope3Total: Number(scope3Total.toFixed(4)),
-        grandTotal,
+        scope1Total: scope1Total.toNumber(),
+        scope2LocationTotal: scope2LocationTotal.toNumber(),
+        scope2MarketTotal: scope2MarketTotal.toNumber(),
+        scope3Total: scope3Total.toNumber(),
+        grandTotal: grandTotal.toNumber(),
       },
     });
   }
@@ -214,6 +218,41 @@ export class CarbonEngineRepository extends TenantScopedRepository {
         sourceSet,
         version: nextVersion,
         createdBy: data.createdBy,
+      },
+    });
+  }
+
+  // ── Activity Type Mappings Operations ──────────────────────────────────────
+  async findActivityTypeMapping(categoryCode: string): Promise<ActivityTypeMapping | null> {
+    return this.prisma.activityTypeMapping.findUnique({
+      where: { categoryCode },
+    });
+  }
+
+  async saveActivityTypeMapping(data: {
+    categoryCode: string;
+    emissionCategory: string;
+    subCategoryFieldName?: string | null;
+    fallbackSubCategory: string;
+    strategyKey: string;
+    sourceCitation: string;
+  }): Promise<ActivityTypeMapping> {
+    return this.prisma.activityTypeMapping.upsert({
+      where: { categoryCode: data.categoryCode },
+      update: {
+        emissionCategory: data.emissionCategory,
+        subCategoryFieldName: data.subCategoryFieldName ?? null,
+        fallbackSubCategory: data.fallbackSubCategory,
+        strategyKey: data.strategyKey,
+        sourceCitation: data.sourceCitation,
+      },
+      create: {
+        categoryCode: data.categoryCode,
+        emissionCategory: data.emissionCategory,
+        subCategoryFieldName: data.subCategoryFieldName ?? null,
+        fallbackSubCategory: data.fallbackSubCategory,
+        strategyKey: data.strategyKey,
+        sourceCitation: data.sourceCitation,
       },
     });
   }

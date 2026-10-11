@@ -45,6 +45,7 @@ export interface CalculationResultDTO {
   activityValue: number;
   activityUnit: string;
   calculationMethod: string;
+  formulaUsed?: string;
   createdAt: Date;
 }
 

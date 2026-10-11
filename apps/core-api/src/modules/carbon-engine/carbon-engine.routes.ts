@@ -38,6 +38,15 @@ emissionsRouter.get(
   asyncHandler(controller.getCalculationDetails),
 );
 
+emissionsRouter.post(
+  '/:id/recalculate',
+  authenticate,
+  authorize([UserRole.ORG_ADMIN]),
+  validate(recalculatePeriodSchema),
+  asyncHandler(controller.recalculatePeriod),
+);
+
+
 // ── Emission Factors Routers (/api/v1/emission-factors & /api/v1/admin/emission-factors) ──
 export const factorRouter = Router();
 
@@ -67,3 +76,16 @@ internalCalcRouter.post(
   validate(internalCalcSchema),
   asyncHandler(controller.triggerInternalCalc),
 );
+
+// ── Carbon Engine Audit Router (/api/v1/carbon/audit/:documentId) ───────────
+import { CarbonAuditController } from './carbon-audit.controller';
+const auditController = new CarbonAuditController(prisma);
+
+export const carbonAuditRouter = Router();
+carbonAuditRouter.get(
+  '/audit/:documentId',
+  authenticate,
+  authorize([UserRole.ORG_ADMIN, UserRole.ORG_MEMBER]),
+  asyncHandler(auditController.getAuditTrail),
+);
+
