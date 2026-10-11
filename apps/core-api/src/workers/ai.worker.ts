@@ -17,7 +17,7 @@
  */
 import 'dotenv/config'; // Load env before anything else
 import { Worker, Job } from 'bullmq';
-import { QUEUE_NAMES, AI_JOB_NAMES, AiJobName } from '@carbon-os/shared-types';
+import { QUEUE_NAMES, AI_JOB_NAMES, AiJobName } from '@carbon-iq/shared-types';
 import { workerConnection } from '../queues/queue.init';
 import { createLogger } from '../core/logging/logger';
 
@@ -26,7 +26,7 @@ const logger = createLogger('aiWorker');
 /** Route job to the correct handler by name */
 async function handleJob(job: Job): Promise<void> {
   const jobName = job.name as AiJobName;
-  const { jobId } = job;
+  const jobId = job.id;
   const childLogger = logger.child({ jobId, jobName, queue: QUEUE_NAMES.AI });
 
   childLogger.info('AI job received');

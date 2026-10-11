@@ -17,7 +17,7 @@
  */
 import 'dotenv/config';
 import { Worker, Job } from 'bullmq';
-import { QUEUE_NAMES, CALC_JOB_NAMES, CalcJobName } from '@carbon-os/shared-types';
+import { QUEUE_NAMES, CALC_JOB_NAMES, CalcJobName } from '@carbon-iq/shared-types';
 import { workerConnection } from '../queues/queue.init';
 import { createLogger } from '../core/logging/logger';
 
@@ -25,7 +25,7 @@ const logger = createLogger('calcWorker');
 
 async function handleJob(job: Job): Promise<void> {
   const jobName = job.name as CalcJobName;
-  const { jobId } = job;
+  const jobId = job.id;
   const childLogger = logger.child({ jobId, jobName, queue: QUEUE_NAMES.CALC });
 
   childLogger.info('Calc job received');

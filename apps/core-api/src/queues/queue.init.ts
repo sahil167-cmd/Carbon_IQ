@@ -1,6 +1,6 @@
 import { Queue, Worker, QueueEvents } from 'bullmq';
 import IORedis from 'ioredis';
-import { QUEUE_NAMES } from '@carbon-os/shared-types';
+import { QUEUE_NAMES } from '@carbon-iq/shared-types';
 import { env } from '../config/env.schema';
 import { createLogger } from '../core/logging/logger';
 
