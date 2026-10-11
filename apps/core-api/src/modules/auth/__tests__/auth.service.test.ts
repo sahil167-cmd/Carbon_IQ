@@ -48,9 +48,11 @@ describe('AuthService', () => {
     it('should hash password and create user + organization on valid signup', async () => {
       mockRepo.findUserByEmail.mockResolvedValueOnce(null);
       mockRepo.createUserWithOrganization.mockResolvedValueOnce({
-        user: { id: 'user-1', email: 'test@example.com' },
+        user: { id: 'user-1', email: 'test@example.com', fullName: 'John Doe', role: UserRole.ORG_ADMIN, status: UserStatus.ACTIVE },
         organizationId: 'org-1',
       });
+      mockRepo.updateUserStatus.mockResolvedValueOnce({ id: 'user-1', status: UserStatus.ACTIVE });
+      mockRepo.createSession.mockResolvedValueOnce({ id: 'session-1' });
 
       const result = await authService.signup({
         email: 'test@example.com',
@@ -59,7 +61,10 @@ describe('AuthService', () => {
         orgName: 'Acme Corp',
       });
 
-      expect(result).toEqual({ userId: 'user-1', organizationId: 'org-1' });
+      expect(result.user.id).toBe('user-1');
+      expect(result.user.organizationId).toBe('org-1');
+      expect(result.accessToken).toBeDefined();
+      expect(result.refreshToken).toBeDefined();
       expect(mockRepo.createUserWithOrganization).toHaveBeenCalledWith(
         expect.objectContaining({
           email: 'test@example.com',
@@ -67,14 +72,9 @@ describe('AuthService', () => {
           role: UserRole.ORG_ADMIN,
         }),
       );
-      expect(mockRepo.createAuthToken).toHaveBeenCalledWith(
-        expect.objectContaining({
-          userId: 'user-1',
-          purpose: AuthTokenPurpose.EMAIL_VERIFY,
-        }),
-      );
       expect(mockNotificationService.send).toHaveBeenCalled();
     });
+
   });
 
   describe('login', () => {

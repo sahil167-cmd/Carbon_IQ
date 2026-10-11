@@ -17,6 +17,20 @@ export class AuthRepository extends TenantScopedRepository {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
+  async createUser(data: {
+    email: string;
+    passwordHash: string;
+    fullName: string;
+    role: UserRole;
+    status: UserStatus;
+    organizationId: string;
+    emailVerifiedAt?: Date;
+  }): Promise<User> {
+    return this.prisma.user.create({ data });
+  }
+
+
+
   async createUserWithOrganization(data: {
     email: string;
     passwordHash: string;

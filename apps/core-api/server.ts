@@ -32,7 +32,7 @@ async function start(): Promise<void> {
         metrics: `http://localhost:${env.PORT}/metrics`,
         bullBoard: env.NODE_ENV !== 'production' ? `http://localhost:${env.PORT}/admin/queues` : 'disabled',
       },
-      '🚀 Carbon OS core-api started',
+      '🚀 CarbonIQ core-api started',
     );
   });
 

@@ -21,7 +21,7 @@ export function generateOpenApiSpec(endpoints: OpenApiEndpointMeta[]) {
   return {
     openapi: '3.0.3',
     info: {
-      title: 'Carbon OS API Spec',
+      title: 'CarbonIQ API Spec',
       version: '1.0.0',
       description: 'AI-Powered Carbon Accounting & ESG Compliance Platform API',
     },

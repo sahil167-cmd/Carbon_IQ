@@ -20,6 +20,7 @@ export class OrganizationRepository extends TenantScopedRepository {
     entityId: string;
     newValue?: any;
     oldValue?: any;
+    reason?: string;
   }): Promise<void> {
     try {
       await (this.prisma as any).auditLog?.create({
@@ -31,12 +32,14 @@ export class OrganizationRepository extends TenantScopedRepository {
           entityId: data.entityId,
           newValue: data.newValue ?? undefined,
           oldValue: data.oldValue ?? undefined,
+          reason: data.reason ?? undefined,
         },
       });
     } catch {
       // Non-blocking audit log
     }
   }
+
 
   async listIndustries(): Promise<Industry[]> {
     return (this.prisma as any).industry?.findMany() ?? [];

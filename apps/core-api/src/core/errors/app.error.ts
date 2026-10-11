@@ -1,4 +1,4 @@
-import { ErrorCode, ERROR_CODES } from '@carbon-os/shared-types';
+import { ErrorCode, ERROR_CODES } from '@carbon-iq/shared-types';
 
 /**
  * Application error hierarchy.

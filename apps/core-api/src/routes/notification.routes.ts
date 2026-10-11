@@ -34,7 +34,8 @@ router.get(
     const userId: string = user?.id ?? 'stub-user-id';
     const organizationId: string = user?.organizationId ?? 'stub-org-id';
 
-    const query = req.query as { page: number; limit: number };
+    const query = req.query as unknown as { page: number; limit: number };
+
     const { page, limit } = query;
 
     const { notifications, total } = await notificationService.getForUser(

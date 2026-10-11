@@ -10,13 +10,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@carbon-os/shared-types": ["../../packages/shared-types/src/index.ts"]
+      "@carbon-iq/shared-types": ["../../packages/shared-types/dist/index"]
     }
   },
   "include": ["src/**/*"],

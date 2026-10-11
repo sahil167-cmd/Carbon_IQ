@@ -42,7 +42,16 @@ import {
   factorRouter,
   adminFactorRouter,
   internalCalcRouter,
+  carbonAuditRouter,
 } from './modules/carbon-engine/carbon-engine.routes';
+import {
+  forecastRouter,
+  internalMlRouter,
+  adminMlRouter,
+} from './modules/forecast/forecast.routes';
+import copilotRouter from './modules/copilot/copilot.routes';
+import brsrRouter from './modules/brsr/brsr.routes';
+import logisticsRouter from './modules/logistics/presentation/logistics.routes';
 
 /**
  * Express Application Factory
@@ -117,7 +126,8 @@ export function createApp(): Application {
     bullBoardServerAdapter.setBasePath('/admin/queues');
 
     createBullBoard({
-      queues: [new BullMQAdapter(aiQueue), new BullMQAdapter(calcQueue)],
+      queues: [new BullMQAdapter(aiQueue) as any, new BullMQAdapter(calcQueue) as any],
+
       serverAdapter: bullBoardServerAdapter,
     });
 
@@ -142,11 +152,18 @@ export function createApp(): Application {
   app.use('/api/v1/emission-factors', factorRouter);
   app.use('/api/v1/admin/emission-factors', adminFactorRouter);
   app.use('/api/v1/internal/calc', internalCalcRouter);
+  app.use('/api/v1/carbon', carbonAuditRouter);
   app.use('/api/v1/document-categories', categoryRouter);
   app.use('/api/v1/activity-data', activityDataRouter);
   app.use('/api/v1/reporting-periods', periodRouter);
   app.use('/api/v1/internal/ai', internalAiRouter);
   app.use('/api/v1/notifications', notificationRouter);
+  app.use('/api/v1/forecast', forecastRouter);
+  app.use('/api/v1/internal/ml', internalMlRouter);
+  app.use('/api/v1/admin/ml-models', adminMlRouter);
+  app.use('/api/v1/copilot', copilotRouter);
+  app.use('/api/v1/brsr', brsrRouter);
+  app.use('/api/v1/logistics', logisticsRouter);
 
   // Future modules mount here (Phase 2+):
   // app.use('/api/v1/auth', authRouter);

@@ -59,7 +59,7 @@ const envSchema = z.object({
     .refine((n) => n > 0 && n < 65536, 'SMTP_PORT must be a valid port'),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASS: z.string().optional().default(''),
-  SMTP_FROM: z.string().default('Carbon OS <noreply@carbon-os.local>'),
+  SMTP_FROM: z.string().default('CarbonIQ <noreply@carboniq.local>'),
 
   // ── LLM ────────────────────────────────────────────────────────────────────
   LLM_BASE_URL: z.string().url('LLM_BASE_URL must be a valid URL').optional().default('https://api.openai.com/v1'),
@@ -74,6 +74,10 @@ const envSchema = z.object({
 
   // ── Observability ──────────────────────────────────────────────────────────
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional().default(''),
+
+  // ── Logistics / Routing ───────────────────────────────────────────────────
+  OPENROUTESERVICE_API_KEY: z.string().optional().default(''),
+  OPENROUTESERVICE_BASE_URL: z.string().url('OPENROUTESERVICE_BASE_URL must be a valid URL').optional().default('https://api.heigit.org'),
 });
 
 export type Env = z.infer<typeof envSchema>;

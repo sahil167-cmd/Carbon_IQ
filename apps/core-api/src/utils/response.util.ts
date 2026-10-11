@@ -1,4 +1,4 @@
-import { ApiSuccessResponse, ApiErrorResponse, ApiMeta } from '@carbon-os/shared-types';
+import { ApiSuccessResponse, ApiErrorResponse, ApiMeta } from '@carbon-iq/shared-types';
 
 /**
  * Success Response Builder

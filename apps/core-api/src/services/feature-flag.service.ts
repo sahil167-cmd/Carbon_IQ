@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { createLogger } from '../core/logging/logger';
 import { UnprocessableError } from '../core/errors/app.error';
-import { ERROR_CODES } from '@carbon-os/shared-types';
+import { ERROR_CODES } from '@carbon-iq/shared-types';
 
 const logger = createLogger('FeatureFlagService');
 

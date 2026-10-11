@@ -4,12 +4,14 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/__tests__/**/*.test.ts', '**/*.spec.ts'],
   moduleNameMapper: {
-    '^@carbon-os/shared-types$': '<rootDir>/../../packages/shared-types/src/index.ts',
+    '^@carbon-iq/shared-types$': '<rootDir>/../../packages/shared-types/src/index.ts',
   },
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  setupFiles: ['<rootDir>/jest.setup.js'],
   collectCoverageFrom: [
+
     'src/**/*.ts',
     '!src/**/*.d.ts',
     '!src/server.ts',

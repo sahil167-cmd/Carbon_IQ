@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { collectDefaultMetrics, Registry, Counter, Histogram, Gauge } from 'prom-client';
 import { aiQueue, calcQueue } from '../queues/queue.init';
-import { QUEUE_NAMES } from '@carbon-os/shared-types';
+import { QUEUE_NAMES } from '@carbon-iq/shared-types';
 
 const router = Router();
 
