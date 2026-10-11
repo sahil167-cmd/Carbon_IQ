@@ -1,0 +1,9 @@
+{
+  "name": "@carbon-iq/ml-service",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "python main.py",
+    "start": "python main.py"
+  }
+}
