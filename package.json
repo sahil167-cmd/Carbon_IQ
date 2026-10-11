@@ -1,24 +1,31 @@
 {
-  "name": "carbon-os",
+  "name": "carbon-iq",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev:api": "pnpm --filter @carbon-os/core-api dev",
-    "dev:web": "pnpm --filter @carbon-os/web dev",
-    "dev:ml": "pnpm --filter @carbon-os/ml-service dev",
-    "db:generate": "pnpm --filter @carbon-os/db generate",
-    "db:migrate": "pnpm --filter @carbon-os/db migrate:dev",
-    "db:migrate:deploy": "pnpm --filter @carbon-os/db migrate:deploy",
-    "db:seed": "pnpm --filter @carbon-os/db seed",
-    "db:studio": "pnpm --filter @carbon-os/db studio",
+    "start": "node scripts/doctor.js && concurrently -n \"api,web,ml,calc\" -c \"blue.bold,green.bold,magenta.bold,yellow.bold\" \"pnpm dev:api\" \"pnpm dev:web\" \"pnpm dev:ml\" \"pnpm worker:calc\"",
+    "dev": "concurrently -n \"api,web,ml,calc\" -c \"blue.bold,green.bold,magenta.bold,yellow.bold\" \"pnpm dev:api\" \"pnpm dev:web\" \"pnpm dev:ml\" \"pnpm worker:calc\"",
+    "dev:all": "concurrently -n \"api,web,ml,calc\" -c \"blue.bold,green.bold,magenta.bold,yellow.bold\" \"pnpm dev:api\" \"pnpm dev:web\" \"pnpm dev:ml\" \"pnpm worker:calc\"",
+    "doctor": "node scripts/doctor.js",
+    "kill-ports": "powershell -ExecutionPolicy Bypass -File scripts/kill-ports.ps1",
+    "dev:api": "pnpm --filter @carbon-iq/core-api dev",
+    "dev:web": "pnpm --filter @carbon-iq/web dev",
+    "dev:ml": "pnpm --filter @carbon-iq/ml-service dev",
+    "db:generate": "pnpm --filter @carbon-iq/db generate",
+    "db:migrate": "pnpm --filter @carbon-iq/db migrate:dev",
+    "db:migrate:deploy": "pnpm --filter @carbon-iq/db migrate:deploy",
+    "db:seed": "pnpm --filter @carbon-iq/db seed",
+    "db:seed-ml": "pnpm --filter @carbon-iq/db seed-ml",
+    "db:studio": "pnpm --filter @carbon-iq/db studio",
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "worker:ai": "pnpm --filter @carbon-os/core-api worker:ai",
-    "worker:calc": "pnpm --filter @carbon-os/core-api worker:calc"
+    "worker:ai": "pnpm --filter @carbon-iq/core-api worker:ai",
+    "worker:calc": "pnpm --filter @carbon-iq/core-api worker:calc"
   },
   "devDependencies": {
+    "concurrently": "^10.0.5",
     "typescript": "^5.4.5"
   },
   "engines": {
