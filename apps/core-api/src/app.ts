@@ -62,6 +62,21 @@ import logisticsRouter from './modules/logistics/presentation/logistics.routes';
 export function createApp(): Application {
   const app = express();
 
+  // Build CORS & frame-ancestors origin list from validated env
+  const corsOrigins: string[] = env.WEB_ORIGIN
+    ? env.WEB_ORIGIN.split(',').map((o: string) => o.trim()).filter(Boolean)
+    : [];
+
+  const frameAncestors: string[] = [
+    "'self'",
+    'http://localhost:5174',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://*.vercel.app',
+    'https://vercel.app',
+    ...corsOrigins,
+  ];
+
   // ── Security middleware ──────────────────────────────────────────────────────
   app.use(
     helmet({
@@ -69,17 +84,12 @@ export function createApp(): Application {
       contentSecurityPolicy: {
         directives: {
           ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-          'frame-ancestors': ["'self'", 'http://localhost:5174', 'http://localhost:3000', 'http://localhost:5173'],
+          'frame-ancestors': frameAncestors,
         },
       },
       frameguard: false,
     }),
   );
-
-  // Build CORS origin list from validated env
-  const corsOrigins: string[] = env.WEB_ORIGIN
-    ? env.WEB_ORIGIN.split(',').map((o: string) => o.trim()).filter(Boolean)
-    : [];
 
   app.use(
     cors({

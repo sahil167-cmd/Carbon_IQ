@@ -150,6 +150,9 @@ export class DocumentController {
     });
     if (!doc) throw new NotFoundError('Document');
 
+    res.removeHeader('X-Frame-Options');
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.vercel.app https://vercel.app http://localhost:5173 http://localhost:5174 http://localhost:3000 *");
+
     const fs = require('fs');
     const path = require('path');
     const localFilePath = path.join(process.cwd(), doc.fileName);
