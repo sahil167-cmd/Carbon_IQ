@@ -1,14 +1,3 @@
-// =============================================================================
-// Carbon OS — Prisma Schema
-// Database: PostgreSQL 16 with pgvector extension
-// ORM: Prisma 5.x
-//
-// Migration naming convention: YYYYMMDDHHMM_verb_noun
-// (e.g. 202607231900_add_carbon_accounting_engine_models)
-//
-// Every PR that changes this schema must include a one-line rollback note.
-// =============================================================================
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
@@ -17,12 +6,830 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [pgvector(map: "vector")]
+  extensions = [vector]
 }
 
-// =============================================================================
-// ENUMS
-// =============================================================================
+/// Multi-tenant root entity.
+model Organization {
+  id                   String                @id @default(cuid())
+  name                 String
+  legalName            String?
+  industryId           String?
+  country              String?
+  address              String?
+  logoUrl              String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  aiLogs               AiLog[]
+  auditLogs            AuditLog[]
+  calculatedEmissions  CalculatedEmissions[]
+  cargo_items          cargo_items[]
+  documents            Document[]
+  emissionsAggregates  EmissionsAggregate[]
+  featureFlags         FeatureFlag[]
+  invites              Invite[]
+  notifications        Notification[]
+  optimization_runs    optimization_runs[]
+  organizationSettings OrganizationSetting?
+  industry             Industry?             @relation(fields: [industryId], references: [id])
+  reportingPeriods     ReportingPeriod[]
+  sessions             Session[]
+  shipments            shipments[]
+  sites                Site[]
+  users                User[]
+  vehicle_types        vehicle_types[]
+  vehicles             vehicles[]
+
+  @@map("organizations")
+}
+
+/// Facility / Site Entity
+model Site {
+  id                  String                @id @default(cuid())
+  organizationId      String
+  name                String
+  type                SiteType
+  status              SiteStatus            @default(ACTIVE)
+  address             String?
+  city                String?
+  state               String?
+  country             String
+  productionCapacity  Float?
+  capacityUnit        String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  calculatedEmissions CalculatedEmissions[]
+  documents           Document[]
+  emissionsAggregates EmissionsAggregate[]
+  shipment_stops      shipment_stops[]
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicles            vehicles[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, status])
+  @@map("sites")
+}
+
+/// Fiscal & Calendar Reporting Periods
+model ReportingPeriod {
+  id                  String                @id @default(cuid())
+  organizationId      String
+  name                String
+  startDate           DateTime
+  endDate             DateTime
+  status              ReportingPeriodStatus @default(OPEN)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  calculatedEmissions CalculatedEmissions[]
+  documents           Document[]
+  emissionsAggregates EmissionsAggregate[]
+  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("reporting_periods")
+}
+
+/// Controlled GHG Document Taxonomy Categories
+model DocumentCategory {
+  id                String     @id @default(cuid())
+  code              String     @unique
+  name              String
+  scope             ScopeType
+  description       String
+  requiredByDefault Boolean    @default(false)
+  acceptedMimeTypes String[]
+  createdAt         DateTime   @default(now())
+  documents         Document[]
+
+  @@map("document_categories")
+}
+
+/// Uploaded Activity Document Entity
+model Document {
+  id                  String                  @id @default(cuid())
+  organizationId      String
+  siteId              String
+  reportingPeriodId   String
+  categoryId          String
+  uploadedById        String
+  fileName            String
+  fileSize            Int
+  mimeType            String
+  s3Key               String
+  source              DocumentSource          @default(UPLOAD)
+  status              DocumentStatus          @default(UPLOADED)
+  manualData          Json?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  calculatedEmissions CalculatedEmissions[]
+  calculationLogs     CalculationLog[]
+  statusHistory       DocumentStatusHistory[]
+  category            DocumentCategory        @relation(fields: [categoryId], references: [id])
+  organization        Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  reportingPeriod     ReportingPeriod         @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+  site                Site                    @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  uploadedBy          User                    @relation(fields: [uploadedById], references: [id])
+  extractedData       ExtractedData[]
+  extractionJobs      ExtractionJob[]
+  reviewActions       ReviewAction[]
+  validationResults   ValidationResult[]
+
+  @@index([organizationId, siteId, reportingPeriodId])
+  @@index([status])
+  @@map("documents")
+}
+
+/// Document Status State Machine Audit History
+model DocumentStatusHistory {
+  id          String          @id @default(cuid())
+  documentId  String
+  fromStatus  DocumentStatus?
+  toStatus    DocumentStatus
+  reason      String?
+  changedById String?
+  createdAt   DateTime        @default(now())
+  document    Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("document_status_history")
+}
+
+/// Extracted Structured Data (Versioned with Optimistic Lock version)
+model ExtractedData {
+  id                  String              @id @default(cuid())
+  documentId          String
+  extractionVersion   Int                 @default(1)
+  version             Int                 @default(1)
+  fieldsJson          Json
+  fieldConfidenceJson Json
+  modelVersion        String              @default("tesseract-v5+langchain")
+  status              ExtractionJobStatus @default(SUCCESS)
+  createdAt           DateTime            @default(now())
+  document            Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([extractionVersion])
+  @@map("extracted_data")
+}
+
+/// AI Extraction Pipeline Jobs Tracking
+model ExtractionJob {
+  id           String              @id @default(cuid())
+  documentId   String
+  status       ExtractionJobStatus @default(PENDING)
+  attemptCount Int                 @default(0)
+  lastError    String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  createdAt    DateTime            @default(now())
+  document     Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("extraction_jobs")
+}
+
+/// Validation Rules Catalog
+model ValidationRule {
+  id          String          @id @default(cuid())
+  ruleCode    String          @unique
+  name        String
+  description String
+  layer       ValidationLayer
+  configJson  Json?
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+
+  @@map("validation_rules")
+}
+
+/// Validation Results
+model ValidationResult {
+  id              String           @id @default(cuid())
+  documentId      String
+  layer           ValidationLayer
+  status          ValidationStatus @default(PASS)
+  issuesJson      Json
+  explanationText String?
+  createdAt       DateTime         @default(now())
+  document        Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([layer])
+  @@map("validation_results")
+}
+
+/// Human Review Audit Actions
+model ReviewAction {
+  id                 String           @id @default(cuid())
+  documentId         String
+  action             ReviewActionType
+  performedById      String
+  reason             String?
+  previousValuesJson Json?
+  createdAt          DateTime         @default(now())
+  document           Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  performedBy        User             @relation(fields: [performedById], references: [id])
+
+  @@index([documentId])
+  @@index([performedById])
+  @@map("review_actions")
+}
+
+/// Controlled Emission Factors Library (SUPER_ADMIN additive versioning)
+model EmissionFactor {
+  id                  String                @id @default(cuid())
+  category            String
+  subCategory         String
+  region              String                @default("GLOBAL")
+  factorValue         Float
+  unit                String
+  co2eUnit            String                @default("kgCO2e")
+  sourceSet           String                @default("GLEC_2023")
+  version             Int                   @default(1)
+  effectiveFrom       DateTime              @default(now())
+  effectiveTo         DateTime?
+  createdBy           String                @default("SYSTEM")
+  createdAt           DateTime              @default(now())
+  calculatedEmissions CalculatedEmissions[]
+
+  @@unique([category, subCategory, region, sourceSet, version])
+  @@index([category, subCategory, region])
+  @@map("emission_factors")
+}
+
+/// Unit Conversion Scaling Matrix
+model UnitConversion {
+  id               String   @id @default(cuid())
+  fromUnit         String
+  toUnit           String
+  conversionFactor Float
+  createdAt        DateTime @default(now())
+
+  @@unique([fromUnit, toUnit])
+  @@map("unit_conversions")
+}
+
+/// Deterministic Output: Calculated CO2e Emissions
+model CalculatedEmissions {
+  id                String           @id @default(cuid())
+  organizationId    String
+  siteId            String
+  reportingPeriodId String
+  documentId        String
+  emissionFactorId  String
+  scope             ScopeType
+  co2e              Float
+  co2eLocation      Float?
+  co2eMarket        Float?
+  co2               Float?
+  ch4               Float?
+  n2o               Float?
+  activityValue     Float
+  activityUnit      String
+  calculationMethod String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  document          Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  emissionFactor    EmissionFactor   @relation(fields: [emissionFactorId], references: [id])
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  reportingPeriod   ReportingPeriod  @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+  site              Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  calculationLogs   CalculationLog[]
+  route_plans       route_plans[]
+
+  @@index([organizationId, siteId, reportingPeriodId])
+  @@index([scope])
+  @@map("calculated_emissions")
+}
+
+/// Immutable Formula & Input Audit Trail Log (PRD §7.11)
+model CalculationLog {
+  id                    String              @id @default(cuid())
+  calculatedEmissionsId String
+  documentId            String
+  inputSnapshot         Json
+  factorVersion         Int
+  formulaVersion        String              @default("v1.0-GLEC-GHG")
+  formulaUsed           String
+  triggeredBy           String
+  createdAt             DateTime            @default(now())
+  calculatedEmissions   CalculatedEmissions @relation(fields: [calculatedEmissionsId], references: [id], onDelete: Cascade)
+  document              Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([calculatedEmissionsId])
+  @@index([documentId])
+  @@map("calculation_logs")
+}
+
+/// Rollup Aggregates per Org, Site, and Reporting Period
+model EmissionsAggregate {
+  id                  String          @id @default(cuid())
+  organizationId      String
+  siteId              String
+  reportingPeriodId   String
+  scope1Total         Float           @default(0)
+  scope2LocationTotal Float           @default(0)
+  scope2MarketTotal   Float           @default(0)
+  scope3Total         Float           @default(0)
+  grandTotal          Float           @default(0)
+  updatedAt           DateTime        @updatedAt
+  organization        Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  reportingPeriod     ReportingPeriod @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
+  site                Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, siteId, reportingPeriodId])
+  @@map("emissions_aggregates")
+}
+
+/// AI Engine Usage & Cost Tracking Audit Log
+model AiLog {
+  id             String        @id @default(cuid())
+  feature        AiFeature
+  organizationId String?
+  inputRef       String?
+  promptText     String?
+  responseText   String?
+  tokensUsed     Int?
+  latencyMs      Int?
+  costEstimate   Float?
+  createdAt      DateTime      @default(now())
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([feature])
+  @@map("ai_logs")
+}
+
+/// Organization Preferences & Settings
+model OrganizationSetting {
+  id                      String       @id @default(cuid())
+  organizationId          String       @unique
+  unitSystem              String       @default("METRIC")
+  currency                String       @default("USD")
+  defaultFramework        String       @default("BRSR")
+  reportingYearStartMonth Int          @default(1)
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  organization            Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_settings")
+}
+
+/// Controlled Industry Catalog
+model Industry {
+  id                     String                  @id @default(cuid())
+  code                   String                  @unique
+  name                   String
+  description            String?
+  createdAt              DateTime                @default(now())
+  emissionFactorMappings IndustryFactorMapping[]
+  organizations          Organization[]
+
+  @@map("industries")
+}
+
+/// Industry to Emission Factor Set Mappings
+model IndustryFactorMapping {
+  id                String   @id @default(cuid())
+  industryId        String
+  emissionFactorSet String
+  scopeCategory     String?
+  createdAt         DateTime @default(now())
+  industry          Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
+
+  @@index([industryId])
+  @@map("industry_factor_mappings")
+}
+
+/// Platform users.
+model User {
+  id                String         @id @default(cuid())
+  email             String         @unique
+  passwordHash      String
+  fullName          String
+  role              UserRole       @default(ORG_MEMBER)
+  status            UserStatus     @default(PENDING_VERIFICATION)
+  organizationId    String?
+  emailVerifiedAt   DateTime?
+  lastLoginAt       DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  auditLogs         AuditLog[]
+  authTokens        AuthToken[]
+  documentsUploaded Document[]
+  invitesCreated    Invite[]       @relation("InvitedByUser")
+  notifications     Notification[]
+  reviewActions     ReviewAction[]
+  sessions          Session[]
+  shipments         shipments[]
+  organization      Organization?  @relation(fields: [organizationId], references: [id])
+
+  @@index([email])
+  @@index([organizationId])
+  @@map("users")
+}
+
+/// Refresh token sessions.
+model Session {
+  id               String        @id @default(cuid())
+  userId           String
+  organizationId   String?
+  refreshTokenHash String        @unique
+  deviceInfo       String?
+  ipAddress        String?
+  expiresAt        DateTime
+  isRevoked        Boolean       @default(false)
+  revokedAt        DateTime?
+  createdAt        DateTime      @default(now())
+  organization     Organization? @relation(fields: [organizationId], references: [id])
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refreshTokenHash])
+  @@map("sessions")
+}
+
+/// Verification and Reset Tokens
+model AuthToken {
+  id        String           @id @default(cuid())
+  userId    String
+  tokenHash String           @unique
+  purpose   AuthTokenPurpose
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("auth_tokens")
+}
+
+/// Organization Teammate Invites
+model Invite {
+  id             String       @id @default(cuid())
+  organizationId String
+  email          String
+  invitedById    String
+  tokenHash      String       @unique
+  role           UserRole     @default(ORG_MEMBER)
+  status         InviteStatus @default(PENDING)
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  invitedBy      User         @relation("InvitedByUser", fields: [invitedById], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([tokenHash])
+  @@map("invites")
+}
+
+/// Named feature flags.
+model FeatureFlag {
+  id             String           @id @default(cuid())
+  key            String           @unique
+  description    String
+  isEnabled      Boolean          @default(true)
+  scope          FeatureFlagScope @default(GLOBAL)
+  organizationId String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  organization   Organization?    @relation(fields: [organizationId], references: [id])
+
+  @@index([key])
+  @@index([organizationId])
+  @@map("feature_flags")
+}
+
+/// Business-tunable config key/value store.
+model ConfigEntry {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  valueJson   Json
+  description String
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@map("config_entries")
+}
+
+/// In-app notification record.
+model Notification {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String?
+  type           NotificationType
+  message        String
+  isRead         Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  organization   Organization?    @relation(fields: [organizationId], references: [id])
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([organizationId])
+  @@map("notifications")
+}
+
+/// Platform-wide audit trail.
+model AuditLog {
+  id             String        @id @default(cuid())
+  userId         String?
+  organizationId String?
+  action         String
+  entityType     String?
+  entityId       String?
+  oldValue       Json?
+  newValue       Json?
+  ipAddress      String?
+  userAgent      String?
+  reason         String?
+  createdAt      DateTime      @default(now())
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  user           User?         @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model activity_type_mappings {
+  id                   String   @id
+  categoryCode         String   @unique
+  emissionCategory     String
+  subCategoryFieldName String?
+  fallbackSubCategory  String
+  strategyKey          String
+  sourceCitation       String
+  createdAt            DateTime @default(now())
+}
+
+model cargo_items {
+  id                                                       String          @id
+  organizationId                                           String
+  shipmentId                                               String
+  sku                                                      String?
+  description                                              String
+  packageType                                              String?
+  quantity                                                 Int             @default(1)
+  length                                                   Decimal         @db.Decimal(10, 2)
+  width                                                    Decimal         @db.Decimal(10, 2)
+  height                                                   Decimal         @db.Decimal(10, 2)
+  dimensionUnit                                            DimensionUnit   @default(CM)
+  unitWeight                                               Decimal         @db.Decimal(10, 3)
+  totalWeight                                              Decimal         @db.Decimal(12, 3)
+  weightUnit                                               WeightUnit      @default(KG)
+  unitVolume                                               Decimal?        @db.Decimal(10, 4)
+  totalVolume                                              Decimal?        @db.Decimal(12, 4)
+  volumeUnit                                               VolumeUnit      @default(M3)
+  isStackable                                              Boolean         @default(true)
+  maxStackWeight                                           Decimal?        @db.Decimal(10, 2)
+  maxStackTiers                                            Int?
+  isFragile                                                Boolean         @default(false)
+  allowRotationHorizontal                                  Boolean         @default(true)
+  allowRotationVertical                                    Boolean         @default(false)
+  allowedOrientations                                      String[]        @default(["DEFAULT"])
+  loadingPriority                                          Int             @default(1)
+  unloadingSequence                                        Int             @default(1)
+  pickupStopId                                             String?
+  dropoffStopId                                            String?
+  createdAt                                                DateTime        @default(now())
+  updatedAt                                                DateTime
+  shipment_stops_cargo_items_dropoffStopIdToshipment_stops shipment_stops? @relation("cargo_items_dropoffStopIdToshipment_stops", fields: [dropoffStopId], references: [id])
+  organizations                                            Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shipment_stops_cargo_items_pickupStopIdToshipment_stops  shipment_stops? @relation("cargo_items_pickupStopIdToshipment_stops", fields: [pickupStopId], references: [id])
+  shipments                                                shipments       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([dropoffStopId])
+  @@index([organizationId])
+  @@index([pickupStopId])
+  @@index([shipmentId])
+}
+
+model load_plans {
+  id                   String            @id
+  optimizationRunId    String
+  vehicleSequence      Int               @default(1)
+  vehicleTypeId        String?
+  vehicleId            String?
+  loadedWeightKg       Decimal           @db.Decimal(12, 3)
+  loadedVolumeM3       Decimal           @db.Decimal(12, 4)
+  weightUtilizationPct Decimal           @db.Decimal(5, 2)
+  volumeUtilizationPct Decimal           @db.Decimal(5, 2)
+  centerOfGravityX     Decimal?          @db.Decimal(6, 2)
+  centerOfGravityY     Decimal?          @db.Decimal(6, 2)
+  centerOfGravityZ     Decimal?          @db.Decimal(6, 2)
+  axleLoadFrontKg      Decimal?          @db.Decimal(10, 2)
+  axleLoadRearKg       Decimal?          @db.Decimal(10, 2)
+  placementsJson       Json
+  createdAt            DateTime          @default(now())
+  optimization_runs    optimization_runs @relation(fields: [optimizationRunId], references: [id], onDelete: Cascade)
+  vehicles             vehicles?         @relation(fields: [vehicleId], references: [id])
+  vehicle_types        vehicle_types?    @relation(fields: [vehicleTypeId], references: [id])
+  route_plans          route_plans?
+
+  @@index([optimizationRunId])
+  @@index([vehicleId])
+  @@index([vehicleTypeId])
+}
+
+model optimization_runs {
+  id                          String             @id
+  organizationId              String
+  shipmentId                  String
+  scenarioName                String             @default("Scenario 1")
+  runNumber                   Int                @default(1)
+  status                      OptimizationStatus @default(PENDING)
+  algorithmVersion            String             @default("v1-3d-binpack")
+  parametersJson              Json?
+  baselineTruckCount          Int?
+  optimizedTruckCount         Int?
+  baselineDistanceKm          Decimal?           @db.Decimal(10, 2)
+  optimizedDistanceKm         Decimal?           @db.Decimal(10, 2)
+  baselineDurationMins        Decimal?           @db.Decimal(10, 2)
+  optimizedDurationMins       Decimal?           @db.Decimal(10, 2)
+  totalLoadedWeightKg         Decimal?           @db.Decimal(12, 3)
+  totalLoadedVolumeM3         Decimal?           @db.Decimal(12, 4)
+  overallVolumeUtilizationPct Decimal?           @db.Decimal(5, 2)
+  overallWeightUtilizationPct Decimal?           @db.Decimal(5, 2)
+  unassignedItemsCount        Int?               @default(0)
+  violationsCount             Int?               @default(0)
+  violationsJson              Json?
+  executionTimeMs             Int?
+  errorMessage                String?
+  createdAt                   DateTime           @default(now())
+  updatedAt                   DateTime
+  load_plans                  load_plans[]
+  organizations               Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shipments                   shipments          @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([shipmentId, status])
+}
+
+model route_plans {
+  id                    String               @id
+  loadPlanId            String               @unique
+  routingProvider       String?
+  distanceKm            Decimal              @db.Decimal(10, 2)
+  durationMinutes       Decimal              @db.Decimal(10, 2)
+  encodedPolyline       String?
+  routeGeometryJson     Json?
+  tollRoadsIncluded     Boolean?             @default(false)
+  fuelEstimateLiters    Decimal?             @db.Decimal(10, 2)
+  calculatedEmissionsId String?
+  createdAt             DateTime             @default(now())
+  calculated_emissions  CalculatedEmissions? @relation(fields: [calculatedEmissionsId], references: [id])
+  load_plans            load_plans           @relation(fields: [loadPlanId], references: [id], onDelete: Cascade)
+
+  @@index([calculatedEmissionsId])
+  @@index([loadPlanId])
+}
+
+model shipment_stops {
+  id                                                    String        @id
+  shipmentId                                            String
+  stopSequence                                          Int
+  stopType                                              StopType      @default(PICKUP)
+  siteId                                                String?
+  facilityName                                          String?
+  addressLine1                                          String
+  addressLine2                                          String?
+  city                                                  String?
+  state                                                 String?
+  postalCode                                            String?
+  country                                               String
+  latitude                                              Decimal?      @db.Decimal(10, 7)
+  longitude                                             Decimal?      @db.Decimal(10, 7)
+  timeWindowStart                                       DateTime?
+  timeWindowEnd                                         DateTime?
+  actualArrival                                         DateTime?
+  actualDeparture                                       DateTime?
+  specialInstructions                                   String?
+  createdAt                                             DateTime      @default(now())
+  updatedAt                                             DateTime
+  cargo_items_cargo_items_dropoffStopIdToshipment_stops cargo_items[] @relation("cargo_items_dropoffStopIdToshipment_stops")
+  cargo_items_cargo_items_pickupStopIdToshipment_stops  cargo_items[] @relation("cargo_items_pickupStopIdToshipment_stops")
+  shipments                                             shipments     @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  sites                                                 Site?         @relation(fields: [siteId], references: [id])
+
+  @@unique([shipmentId, stopSequence])
+  @@index([shipmentId])
+  @@index([siteId])
+}
+
+model shipments {
+  id                  String              @id
+  organizationId      String
+  shipmentNumber      String
+  status              ShipmentStatus      @default(DRAFT)
+  referenceNumber     String?
+  description         String?
+  totalWeight         Decimal             @default(0) @db.Decimal(12, 3)
+  weightUnit          WeightUnit          @default(KG)
+  totalVolume         Decimal             @default(0) @db.Decimal(12, 4)
+  volumeUnit          VolumeUnit          @default(M3)
+  totalItemsCount     Int                 @default(0)
+  plannedPickupDate   DateTime?
+  plannedDeliveryDate DateTime?
+  actualPickupDate    DateTime?
+  actualDeliveryDate  DateTime?
+  metadata            Json?
+  createdById         String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime
+  cargo_items         cargo_items[]
+  optimization_runs   optimization_runs[]
+  shipment_stops      shipment_stops[]
+  users               User?               @relation(fields: [createdById], references: [id])
+  organizations       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, shipmentNumber])
+  @@index([organizationId, status])
+  @@index([plannedPickupDate])
+}
+
+model vehicle_types {
+  id                 String          @id
+  organizationId     String?
+  name               String
+  category           String?
+  bodyType           VehicleBodyType
+  fuelType           VehicleFuelType
+  emissionStandard   String?
+  internalLength     Decimal?        @db.Decimal(10, 2)
+  internalWidth      Decimal?        @db.Decimal(10, 2)
+  internalHeight     Decimal?        @db.Decimal(10, 2)
+  dimensionUnit      DimensionUnit   @default(CM)
+  doorWidth          Decimal?        @db.Decimal(10, 2)
+  doorHeight         Decimal?        @db.Decimal(10, 2)
+  maxPayload         Decimal         @db.Decimal(12, 3)
+  grossVehicleWeight Decimal?        @db.Decimal(12, 3)
+  tareWeight         Decimal?        @db.Decimal(12, 3)
+  weightUnit         WeightUnit      @default(KG)
+  volumetricCapacity Decimal?        @db.Decimal(12, 4)
+  volumeUnit         VolumeUnit      @default(M3)
+  axleCount          Int?
+  axleConfiguration  String?
+  maxAxleWeightFront Decimal?        @db.Decimal(10, 3)
+  maxAxleWeightRear  Decimal?        @db.Decimal(10, 3)
+  isRefrigerated     Boolean         @default(false)
+  temperatureMin     Decimal?        @db.Decimal(5, 2)
+  temperatureMax     Decimal?        @db.Decimal(5, 2)
+  metadata           Json?
+  isActive           Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime
+  externalHeight     Decimal?        @db.Decimal(10, 2)
+  externalLength     Decimal?        @db.Decimal(10, 2)
+  externalWidth      Decimal?        @db.Decimal(10, 2)
+  make               String?
+  model              String?
+  notes              String?
+  sourceName         String?
+  sourceUrl          String?
+  variant            String?
+  verificationStatus String          @default("UNVERIFIED")
+  verifiedAt         DateTime?
+  sourceType         String?
+  verifiedBy         String?
+  load_plans         load_plans[]
+  organizations      Organization?   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicles           vehicles[]
+
+  @@index([bodyType])
+  @@index([fuelType])
+  @@index([organizationId])
+}
+
+model vehicles {
+  id                 String        @id
+  organizationId     String
+  vehicleTypeId      String
+  registrationNumber String
+  fleetNumber        String?
+  homeSiteId         String?
+  status             String        @default("ACTIVE")
+  yearOfManufacture  Int?
+  currentOdometerKm  Decimal?      @db.Decimal(12, 2)
+  notes              String?
+  isActive           Boolean       @default(true)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime
+  load_plans         load_plans[]
+  sites              Site?         @relation(fields: [homeSiteId], references: [id])
+  organizations      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicle_types      vehicle_types @relation(fields: [vehicleTypeId], references: [id])
+
+  @@unique([organizationId, registrationNumber])
+  @@index([organizationId, status])
+  @@index([vehicleTypeId])
+}
 
 enum UserRole {
   SUPER_ADMIN
@@ -148,584 +955,67 @@ enum Layer3Label {
   MISSING_INFO
 }
 
-// =============================================================================
-// IDENTITY, ORGANIZATION, SITE, DOCUMENT, AI, VALIDATION & CARBON ENGINE DOMAIN
-// (Module 7 — Carbon Accounting Engine)
-// =============================================================================
-
-/// Multi-tenant root entity.
-model Organization {
-  id         String   @id @default(cuid())
-  name       String
-  legalName  String?
-  industryId String?
-  country    String? // ISO 3166-1 alpha-2
-  address    String?
-  logoUrl    String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
-  industry             Industry?            @relation(fields: [industryId], references: [id])
-  organizationSettings OrganizationSetting?
-  reportingPeriods     ReportingPeriod[]
-  sites                Site[]
-  documents            Document[]
-  users                User[]
-  sessions             Session[]
-  featureFlags         FeatureFlag[]
-  notifications        Notification[]
-  auditLogs            AuditLog[]
-  aiLogs               AiLog[]
-  invites              Invite[]
-  calculatedEmissions  CalculatedEmissions[]
-  emissionsAggregates  EmissionsAggregate[]
-
-  @@map("organizations")
+enum DimensionUnit {
+  CM
+  M
+  MM
+  INCH
 }
 
-/// Facility / Site Entity
-model Site {
-  id                 String     @id @default(cuid())
-  organizationId     String
-  name               String
-  type               SiteType
-  status             SiteStatus @default(ACTIVE)
-  address            String?
-  city               String?
-  state              String?
-  country            String
-  productionCapacity Float?
-  capacityUnit       String?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-
-  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  documents           Document[]
-  calculatedEmissions CalculatedEmissions[]
-  emissionsAggregates EmissionsAggregate[]
-
-  @@unique([organizationId, name])
-  @@index([organizationId, status])
-  @@map("sites")
+enum OptimizationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
 }
 
-/// Fiscal & Calendar Reporting Periods
-model ReportingPeriod {
-  id             String                @id @default(cuid())
-  organizationId String
-  name           String
-  startDate      DateTime
-  endDate        DateTime
-  status         ReportingPeriodStatus @default(OPEN)
-  createdAt      DateTime              @default(now())
-  updatedAt      DateTime              @updatedAt
-
-  organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  documents           Document[]
-  calculatedEmissions CalculatedEmissions[]
-  emissionsAggregates EmissionsAggregate[]
-
-  @@index([organizationId])
-  @@index([status])
-  @@map("reporting_periods")
+enum ShipmentStatus {
+  DRAFT
+  PLANNED
+  OPTIMIZED
+  DISPATCHED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
 }
 
-/// Controlled GHG Document Taxonomy Categories
-model DocumentCategory {
-  id                String    @id @default(cuid())
-  code              String    @unique
-  name              String
-  scope             ScopeType
-  description       String
-  requiredByDefault Boolean   @default(false)
-  acceptedMimeTypes String[]
-  createdAt         DateTime  @default(now())
-
-  documents Document[]
-
-  @@map("document_categories")
+enum StopType {
+  PICKUP
+  DROPOFF
+  TRANSIT_WAYPOINT
 }
 
-/// Uploaded Activity Document Entity
-model Document {
-  id                String         @id @default(cuid())
-  organizationId    String
-  siteId            String
-  reportingPeriodId String
-  categoryId        String
-  uploadedById      String
-  fileName          String
-  fileSize          Int
-  mimeType          String
-  s3Key             String
-  source            DocumentSource @default(UPLOAD)
-  status            DocumentStatus @default(UPLOADED)
-  manualData        Json?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-
-  organization        Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  site                Site                    @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  reportingPeriod     ReportingPeriod         @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
-  category            DocumentCategory        @relation(fields: [categoryId], references: [id])
-  uploadedBy          User                    @relation(fields: [uploadedById], references: [id])
-  statusHistory       DocumentStatusHistory[]
-  extractedData       ExtractedData[]
-  extractionJobs      ExtractionJob[]
-  validationResults   ValidationResult[]
-  reviewActions       ReviewAction[]
-  calculatedEmissions CalculatedEmissions[]
-  calculationLogs     CalculationLog[]
-
-  @@index([organizationId, siteId, reportingPeriodId])
-  @@index([status])
-  @@map("documents")
+enum VehicleBodyType {
+  BOX_TRUCK
+  CURTAIN_SIDE
+  FLATBED
+  REFRIGERATED
+  CONTAINER_CARRIER
+  TANKER
+  OPEN_BODY
 }
 
-/// Document Status State Machine Audit History
-model DocumentStatusHistory {
-  id          String          @id @default(cuid())
-  documentId  String
-  fromStatus  DocumentStatus?
-  toStatus    DocumentStatus
-  reason      String?
-  changedById String?
-  createdAt   DateTime        @default(now())
-
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId])
-  @@map("document_status_history")
+enum VehicleFuelType {
+  DIESEL
+  PETROL
+  CNG
+  LNG
+  ELECTRIC
+  HYBRID
+  BIO_DIESEL
+  HYDROGEN
 }
 
-/// Extracted Structured Data (Versioned with Optimistic Lock version)
-model ExtractedData {
-  id                  String              @id @default(cuid())
-  documentId          String
-  extractionVersion   Int                 @default(1)
-  version             Int                 @default(1)
-  fieldsJson          Json
-  fieldConfidenceJson Json
-  modelVersion        String              @default("tesseract-v5+langchain")
-  status              ExtractionJobStatus @default(SUCCESS)
-  createdAt           DateTime            @default(now())
-
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId])
-  @@index([extractionVersion])
-  @@map("extracted_data")
+enum VolumeUnit {
+  M3
+  CM3
+  LITER
+  CFT
 }
 
-/// AI Extraction Pipeline Jobs Tracking
-model ExtractionJob {
-  id           String              @id @default(cuid())
-  documentId   String
-  status       ExtractionJobStatus @default(PENDING)
-  attemptCount Int                 @default(0)
-  lastError    String?
-  startedAt    DateTime?
-  completedAt  DateTime?
-  createdAt    DateTime            @default(now())
-
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId])
-  @@map("extraction_jobs")
-}
-
-/// Validation Rules Catalog
-model ValidationRule {
-  id          String          @id @default(cuid())
-  ruleCode    String          @unique
-  name        String
-  description String
-  layer       ValidationLayer
-  configJson  Json?
-  isActive    Boolean         @default(true)
-  createdAt   DateTime        @default(now())
-
-  @@map("validation_rules")
-}
-
-/// Validation Results
-model ValidationResult {
-  id              String           @id @default(cuid())
-  documentId      String
-  layer           ValidationLayer
-  status          ValidationStatus @default(PASS)
-  issuesJson      Json
-  explanationText String?
-  createdAt       DateTime         @default(now())
-
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([documentId])
-  @@index([layer])
-  @@map("validation_results")
-}
-
-/// Human Review Audit Actions
-model ReviewAction {
-  id                 String           @id @default(cuid())
-  documentId         String
-  action             ReviewActionType
-  performedById      String
-  reason             String?
-  previousValuesJson Json?
-  createdAt          DateTime         @default(now())
-
-  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  performedBy User     @relation(fields: [performedById], references: [id])
-
-  @@index([documentId])
-  @@index([performedById])
-  @@map("review_actions")
-}
-
-// =============================================================================
-// DETERMINISTIC CARBON ACCOUNTING ENGINE MODELS (FWS §9 & PRD §7)
-// =============================================================================
-
-/// Controlled Emission Factors Library (SUPER_ADMIN additive versioning)
-model EmissionFactor {
-  id            String    @id @default(cuid())
-  category      String    // e.g. "STATIONARY_COMBUSTION", "ELECTRICITY"
-  subCategory   String    // e.g. "DIESEL", "GRID_US_EAST"
-  region        String    @default("GLOBAL") // Country/Region ISO
-  factorValue   Float     // kg CO2e per unit
-  unit          String    // e.g. "LITERS", "KWH", "TONNE_KM"
-  co2eUnit      String    @default("kgCO2e")
-  sourceSet     String    @default("GLEC_2023") // "GLEC_2023", "GHG_PROTOCOL_2023", "DEFRA_2023"
-  version       Int       @default(1)
-  effectiveFrom DateTime  @default(now())
-  effectiveTo   DateTime?
-  createdBy     String    @default("SYSTEM")
-  createdAt     DateTime  @default(now())
-
-  calculatedEmissions CalculatedEmissions[]
-
-  @@unique([category, subCategory, region, sourceSet, version])
-  @@index([category, subCategory, region])
-  @@map("emission_factors")
-}
-
-/// Unit Conversion Scaling Matrix
-model UnitConversion {
-  id               String   @id @default(cuid())
-  fromUnit         String
-  toUnit           String
-  conversionFactor Float
-  createdAt        DateTime @default(now())
-
-  @@unique([fromUnit, toUnit])
-  @@map("unit_conversions")
-}
-
-/// Deterministic Output: Calculated CO2e Emissions
-model CalculatedEmissions {
-  id                String    @id @default(cuid())
-  organizationId   String
-  siteId           String
-  reportingPeriodId String
-  documentId        String
-  emissionFactorId  String
-  scope             ScopeType
-  co2e              Float     // Total kgCO2e
-  co2eLocation      Float?    // Location-based for Scope 2
-  co2eMarket        Float?    // Market-based for Scope 2
-  co2               Float?
-  ch4               Float?
-  n2o               Float?
-  activityValue     Float
-  activityUnit      String
-  calculationMethod String
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  site            Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  reportingPeriod ReportingPeriod @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
-  document        Document        @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  emissionFactor  EmissionFactor  @relation(fields: [emissionFactorId], references: [id], onDelete: Restrict)
-  calculationLogs CalculationLog[]
-
-  @@index([organizationId, siteId, reportingPeriodId])
-  @@index([scope])
-  @@map("calculated_emissions")
-}
-
-/// Immutable Formula & Input Audit Trail Log (PRD §7.11)
-model CalculationLog {
-  id                    String   @id @default(cuid())
-  calculatedEmissionsId String
-  documentId            String
-  inputSnapshot         Json     // Complete JSON snapshot of activity input
-  factorVersion         Int
-  formulaVersion        String   @default("v1.0-GLEC-GHG")
-  formulaUsed           String
-  triggeredBy           String
-  createdAt             DateTime @default(now())
-
-  calculatedEmissions CalculatedEmissions @relation(fields: [calculatedEmissionsId], references: [id], onDelete: Cascade)
-  document            Document            @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([calculatedEmissionsId])
-  @@index([documentId])
-  @@map("calculation_logs")
-}
-
-/// Rollup Aggregates per Org, Site, and Reporting Period
-model EmissionsAggregate {
-  id                  String   @id @default(cuid())
-  organizationId      String
-  siteId              String
-  reportingPeriodId    String
-  scope1Total         Float    @default(0)
-  scope2LocationTotal Float    @default(0)
-  scope2MarketTotal   Float    @default(0)
-  scope3Total         Float    @default(0)
-  grandTotal          Float    @default(0)
-  updatedAt           DateTime @updatedAt
-
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  site            Site            @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  reportingPeriod ReportingPeriod @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
-
-  @@unique([organizationId, siteId, reportingPeriodId])
-  @@map("emissions_aggregates")
-}
-
-/// AI Engine Usage & Cost Tracking Audit Log
-model AiLog {
-  id             String    @id @default(cuid())
-  feature        AiFeature
-  organizationId String?
-  inputRef       String?
-  promptText     String?
-  responseText   String?
-  tokensUsed     Int?
-  latencyMs      Int?
-  costEstimate   Float?
-  createdAt      DateTime  @default(now())
-
-  organization Organization? @relation(fields: [organizationId], references: [id])
-
-  @@index([organizationId])
-  @@index([feature])
-  @@map("ai_logs")
-}
-
-/// Organization Preferences & Settings
-model OrganizationSetting {
-  id                      String   @id @default(cuid())
-  organizationId          String   @unique
-  unitSystem              String   @default("METRIC")
-  currency                String   @default("USD")
-  defaultFramework        String   @default("BRSR")
-  reportingYearStartMonth Int      @default(1)
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@map("organization_settings")
-}
-
-/// Controlled Industry Catalog
-model Industry {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-
-  organizations          Organization[]
-  emissionFactorMappings IndustryFactorMapping[]
-
-  @@map("industries")
-}
-
-/// Industry to Emission Factor Set Mappings
-model IndustryFactorMapping {
-  id                String   @id @default(cuid())
-  industryId        String
-  emissionFactorSet String
-  scopeCategory     String?
-  createdAt         DateTime @default(now())
-
-  industry Industry @relation(fields: [industryId], references: [id], onDelete: Cascade)
-
-  @@index([industryId])
-  @@map("industry_factor_mappings")
-}
-
-/// Platform users.
-model User {
-  id              String     @id @default(cuid())
-  email           String     @unique
-  passwordHash    String
-  fullName        String
-  role            UserRole   @default(ORG_MEMBER)
-  status          UserStatus @default(PENDING_VERIFICATION)
-  organizationId  String?
-  emailVerifiedAt DateTime?
-  lastLoginAt     DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  organization      Organization?  @relation(fields: [organizationId], references: [id])
-  sessions          Session[]
-  notifications     Notification[]
-  auditLogs         AuditLog[]
-  authTokens        AuthToken[]
-  invitesCreated    Invite[]       @relation("InvitedByUser")
-  documentsUploaded Document[]
-  reviewActions     ReviewAction[]
-
-  @@index([email])
-  @@index([organizationId])
-  @@map("users")
-}
-
-/// Refresh token sessions.
-model Session {
-  id               String    @id @default(cuid())
-  userId           String
-  organizationId   String?
-  refreshTokenHash String    @unique
-  deviceInfo       String?
-  ipAddress        String?
-  expiresAt        DateTime
-  isRevoked        Boolean   @default(false)
-  revokedAt        DateTime?
-  createdAt        DateTime  @default(now())
-
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization Organization? @relation(fields: [organizationId], references: [id])
-
-  @@index([userId])
-  @@index([refreshTokenHash])
-  @@map("sessions")
-}
-
-/// Verification and Reset Tokens
-model AuthToken {
-  id        String           @id @default(cuid())
-  userId    String
-  tokenHash String           @unique
-  purpose   AuthTokenPurpose
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime         @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([tokenHash])
-  @@map("auth_tokens")
-}
-
-/// Organization Teammate Invites
-model Invite {
-  id             String       @id @default(cuid())
-  organizationId String
-  email          String
-  invitedById    String
-  tokenHash      String       @unique
-  role           UserRole     @default(ORG_MEMBER)
-  status         InviteStatus @default(PENDING)
-  expiresAt      DateTime
-  createdAt      DateTime     @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  invitedBy    User         @relation("InvitedByUser", fields: [invitedById], references: [id])
-
-  @@index([organizationId])
-  @@index([email])
-  @@index([tokenHash])
-  @@map("invites")
-}
-
-// =============================================================================
-// PLATFORM SERVICES
-// =============================================================================
-
-/// Named feature flags.
-model FeatureFlag {
-  id             String           @id @default(cuid())
-  key            String           @unique
-  description    String
-  isEnabled      Boolean          @default(true)
-  scope          FeatureFlagScope @default(GLOBAL)
-  organizationId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  organization Organization? @relation(fields: [organizationId], references: [id])
-
-  @@index([key])
-  @@index([organizationId])
-  @@map("feature_flags")
-}
-
-/// Business-tunable config key/value store.
-model ConfigEntry {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  valueJson   Json
-  description String
-  updatedBy   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([key])
-  @@map("config_entries")
-}
-
-/// In-app notification record.
-model Notification {
-  id             String           @id @default(cuid())
-  userId         String
-  organizationId String?
-  type           NotificationType
-  message        String
-  isRead         Boolean          @default(false)
-  createdAt      DateTime         @default(now())
-
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization Organization? @relation(fields: [organizationId], references: [id])
-
-  @@index([userId, isRead])
-  @@index([organizationId])
-  @@map("notifications")
-}
-
-/// Platform-wide audit trail.
-model AuditLog {
-  id             String   @id @default(cuid())
-  userId         String?
-  organizationId String?
-  action         String
-  entityType     String?
-  entityId       String?
-  oldValue       Json?
-  newValue       Json?
-  ipAddress      String?
-  userAgent      String?
-  reason         String?
-  createdAt      DateTime @default(now())
-
-  user         User?         @relation(fields: [userId], references: [id])
-  organization Organization? @relation(fields: [organizationId], references: [id])
-
-  @@index([userId])
-  @@index([organizationId])
-  @@index([entityType, entityId])
-  @@index([createdAt])
-  @@map("audit_logs")
+enum WeightUnit {
+  KG
+  TONNE
+  G
+  LBS
 }

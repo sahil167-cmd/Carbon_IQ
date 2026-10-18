@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
-const { PrismaClient } = require('./node_modules/@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const TRUCKS = [
@@ -154,8 +154,9 @@ const TRUCKS = [
 
 async function seed() {
   console.log('Seeding 11 authentic Indian Container Trucks into VehicleType table...');
+  const vehicleTypeModel = prisma.vehicleType || prisma.vehicle_types;
   for (const t of TRUCKS) {
-    await prisma.vehicleType.upsert({
+    await vehicleTypeModel.upsert({
       where: { id: t.id },
       update: {
         name: t.name,
@@ -175,6 +176,7 @@ async function seed() {
         volumeUnit: 'M3',
         verificationStatus: 'VERIFIED',
         isActive: true,
+        updatedAt: new Date(),
       },
       create: {
         id: t.id,
@@ -195,6 +197,7 @@ async function seed() {
         volumeUnit: 'M3',
         verificationStatus: 'VERIFIED',
         isActive: true,
+        updatedAt: new Date(),
       },
     });
     console.log(`✓ Upserted ${t.id}: ${t.name}`);

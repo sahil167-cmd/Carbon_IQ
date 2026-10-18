@@ -5,7 +5,7 @@ import { createLogger } from '../../../core/logging/logger';
 const logger = createLogger('Embedder');
 
 /**
- * Universal Embedder — Generates vector embeddings using Mistral AI or OpenAI.
+ * Universal Embedder — Generates vector embeddings using Google Gemini, Mistral AI, or OpenAI.
  * Automatically adapts dimensions and parameters based on the active provider.
  */
 
@@ -33,9 +33,16 @@ function isMistral(): boolean {
   return url.includes('mistral.ai');
 }
 
+function isGemini(): boolean {
+  const url = (env.LLM_BASE_URL || '').toLowerCase();
+  return url.includes('generativelanguage.googleapis.com');
+}
+
 export function getEmbeddingModel(): string {
   if (process.env.EMBEDDING_MODEL) return process.env.EMBEDDING_MODEL;
-  return isMistral() ? 'mistral-embed' : 'text-embedding-3-small';
+  if (isMistral()) return 'mistral-embed';
+  if (isGemini()) return 'text-embedding-004';
+  return 'text-embedding-3-small';
 }
 
 function normalizeToTargetDimensions(vec: number[]): number[] {
@@ -95,7 +102,7 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
         model,
         input: batch,
       };
-      if (!isMistral()) {
+      if (!isMistral() && !isGemini()) {
         payload.dimensions = TARGET_DIMENSIONS;
       }
 

@@ -87,46 +87,46 @@ export class MistralVisionOcrProvider {
       }
     }
 
-    // 3. Scanned PDF or Image — Check for Mistral Vision API
-    const mistralApiKey = process.env.MISTRAL_API_KEY || process.env.LLM_API_KEY;
-    if (mistralApiKey && (isImage || isPdf)) {
+    // 3. Scanned PDF or Image — Google Gemini Vision OCR (free tier, replaces Mistral)
+    const geminiApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    if (geminiApiKey && (isImage || isPdf)) {
       try {
-        logger.info('Calling Mistral Vision API for scanned image/document OCR');
+        logger.info('Calling Google Gemini Vision API for scanned image/document OCR');
         const base64Data = fileBuffer.toString('base64');
-        const mediaType = isPdf ? 'application/pdf' : mimeType;
-        const dataUrl = `data:${mediaType};base64,${base64Data}`;
+        // Gemini supports image/* and application/pdf inline data
+        const geminiMimeType = isPdf ? 'application/pdf' : mimeType;
 
-        const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${mistralApiKey}`,
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: 'Extract all legible text from this document verbatim. Preserve all line items, quantities, units, dates, invoice numbers, origin, destination, and cargo weights exactly as written. Do not summarize or invent missing values.',
+                    },
+                    {
+                      inline_data: {
+                        mime_type: geminiMimeType,
+                        data: base64Data,
+                      },
+                    },
+                  ],
+                },
+              ],
+              generationConfig: { temperature: 0.0 },
+            }),
           },
-          body: JSON.stringify({
-            model: 'pixtral-12b-2409',
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  {
-                    type: 'text',
-                    text: 'Extract all legible text from this document verbatim. Preserve all line items, quantities, units, dates, invoice numbers, origin, destination, and cargo weights exactly as written. Do not summarize or invent missing values.',
-                  },
-                  {
-                    type: 'image_url',
-                    image_url: { url: dataUrl },
-                  },
-                ],
-              },
-            ],
-            temperature: 0.0,
-          }),
-        });
+        );
 
         if (response.ok) {
           const resJson: any = await response.json();
-          const extractedText = resJson.choices?.[0]?.message?.content || '';
-          logger.info({ textLength: extractedText.length }, 'Mistral Vision API OCR succeeded');
+          const extractedText =
+            resJson.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          logger.info({ textLength: extractedText.length }, 'Gemini Vision OCR succeeded');
           return {
             rawText: extractedText.trim(),
             confidence: 0.95,
@@ -135,10 +135,10 @@ export class MistralVisionOcrProvider {
           };
         } else {
           const errText = await response.text();
-          logger.warn({ status: response.status, errText }, 'Mistral Vision API call returned non-200');
+          logger.warn({ status: response.status, errText }, 'Gemini Vision OCR API returned non-200');
         }
       } catch (apiErr: any) {
-        logger.error({ error: apiErr.message }, 'Mistral Vision API call failed (falling back to local stream decoder)');
+        logger.error({ error: (apiErr as Error).message }, 'Gemini Vision OCR API call failed (falling back to local stream decoder)');
       }
     }
 

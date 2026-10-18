@@ -97,7 +97,7 @@ export class CopilotService {
           organization_id: organizationId,
           user_id: userId,
           database_url: env.DATABASE_URL,
-          mistral_api_key: env.LLM_API_KEY,
+          llm_api_key: env.LLM_API_KEY,
           conversation_history: conversationHistory,
         }),
       });

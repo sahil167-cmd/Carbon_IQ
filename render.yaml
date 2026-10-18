@@ -5,7 +5,7 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: pnpm install && pnpm db:generate && pnpm --filter @carbon-iq/core-api build
+    buildCommand: pnpm install && pnpm --filter @carbon-os/db generate && pnpm --filter @carbon-iq/core-api build
     startCommand: node apps/core-api/dist/server.js
     envVars:
       - key: NODE_ENV
@@ -14,8 +14,25 @@ services:
         sync: false
       - key: REDIS_URL
         sync: false
-      - key: JWT_SECRET
+      - key: JWT_ACCESS_SECRET
         generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: LLM_BASE_URL
+        value: "https://generativelanguage.googleapis.com/v1beta/openai"
+      - key: LLM_MODEL
+        value: "gemini-1.5-flash"
+      - key: EMBEDDING_MODEL
+        value: "text-embedding-004"
+      - key: LLM_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ML_SERVICE_URL
+        fromService:
+          name: carbon-iq-ml-service
+          type: web
+          property: host
       - key: CORS_ORIGIN
         value: "*"
 
@@ -29,8 +46,10 @@ services:
     startCommand: cd apps/ml-service && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.9
+        value: "3.11.9"
       - key: DATABASE_URL
         sync: false
-      - key: MISTRAL_API_KEY
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: LLM_API_KEY
         sync: false
