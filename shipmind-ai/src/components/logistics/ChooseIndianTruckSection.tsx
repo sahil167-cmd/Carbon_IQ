@@ -313,8 +313,8 @@ export default function ChooseIndianTruckSection({
             heightMm,
             maxPayloadGrams: selectedTruck.payloadKg * 1000,
             category: selectedTruck.category,
-          } as any,
-        },
+          },
+        } as any,
         persistOptimizationRun: true,
       };
 
@@ -443,7 +443,7 @@ export default function ChooseIndianTruckSection({
         className="flex items-stretch gap-5 overflow-x-auto pb-4 pt-1 snap-x scrollbar-none"
         style={{ scrollSnapType: 'x mandatory' }}
       >
-        {trucks.map((truck, idx) => {
+        {trucks.map((truck) => {
           const isSelected = truck.id === selectedId;
           const isRecommended = truck.id === recommendedTruck.id;
 
@@ -457,7 +457,7 @@ export default function ChooseIndianTruckSection({
                   : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
               }`}
             >
-              {/* Card Header: Name + "Available" pill */}
+              {/* Card Header: Name + "Available" / "Recommended" pill */}
               <div>
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -469,10 +469,17 @@ export default function ChooseIndianTruckSection({
                     </div>
                   </div>
 
-                  <span className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Available
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    {isRecommended && (
+                      <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black tracking-wide uppercase text-amber-800 bg-amber-50 border border-amber-200">
+                        Best Fit
+                      </span>
+                    )}
+                    <span className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Available
+                    </span>
+                  </div>
                 </div>
 
                 {/* 3D Photorealistic Truck Image Render */}

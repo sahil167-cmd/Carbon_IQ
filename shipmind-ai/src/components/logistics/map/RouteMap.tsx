@@ -6,8 +6,6 @@ import {
   AlertCircle,
   Navigation,
   Clock,
-  Truck,
-  Activity,
 } from 'lucide-react';
 import type { RouteResult, ShipmentStop } from '../../../types/logistics';
 import {

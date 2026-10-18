@@ -174,7 +174,7 @@ export default function CargoModal({
     setWidth(preset.widthCm);
     setHeight(preset.heightCm);
     setUnitWeight(preset.suggestedWeightKg);
-    setPackageType(preset.category === 'PALLET_CRATES' ? 'PALLET' : 'BOX');
+    setPackageType(preset.category === 'HEAVY_DUTY' ? 'PALLET' : 'BOX');
   };
 
   return (

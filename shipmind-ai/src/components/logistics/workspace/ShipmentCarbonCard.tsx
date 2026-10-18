@@ -117,7 +117,6 @@ export default function ShipmentCarbonCard({
     totalCargoWeightKg,
     totalTonneKm,
     provenance,
-    calculationStatus,
   } = carbonResult;
 
   // ── Physical Realism Calibration & Tonne-Km Math ──

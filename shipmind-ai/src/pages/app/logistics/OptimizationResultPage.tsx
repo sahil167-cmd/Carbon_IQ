@@ -16,7 +16,6 @@ import {
   BoxSelect,
   Navigation,
   Info,
-  Sliders,
   Leaf,
 } from 'lucide-react';
 import AppLayout from '../../../components/layout/AppLayout';
@@ -82,7 +81,7 @@ export default function OptimizationResultPage() {
 
   const fetchRouteData = useCallback(async (targetShipmentId: string, optId?: string) => {
     setRouteLoading(true);
-    setRouteError(null);
+    setRouteError('');
     try {
       const [routeRes, trafficRes] = await Promise.all([
         LogisticsService.getShipmentRoute(targetShipmentId).catch(() => null),

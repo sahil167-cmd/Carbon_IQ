@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Box, Package, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Check, Box, Package } from 'lucide-react';
 
 export type PackagingCategory =
   | 'ALL'
@@ -23,6 +23,7 @@ export interface PackagingBoxPreset {
   description: string;
   tag?: string;
   imageUrl?: string;
+  isPopular?: boolean;
 }
 
 export const PACKAGING_BOX_PRESETS: PackagingBoxPreset[] = [
@@ -213,7 +214,7 @@ export const PackagingBoxTypePicker: React.FC<PackagingBoxTypePickerProps> = ({
   selectedPresetId = 'fefco_0201',
   selectedMaterial = 'KRAFT_BROWN',
   onSelect,
-  compact = false,
+  compact: _compact = false,
 }) => {
   const [activeCategory, setActiveCategory] = useState<PackagingCategory>('ALL');
   const [material, setMaterial] = useState<BoxMaterial>(selectedMaterial);

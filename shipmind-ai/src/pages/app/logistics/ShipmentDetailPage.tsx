@@ -17,7 +17,6 @@ import {
   Calendar,
   Layers,
   Activity,
-  Sliders,
 } from 'lucide-react';
 import AppLayout from '../../../components/layout/AppLayout';
 import StatusBadge from '../../../components/shared/StatusBadge';
