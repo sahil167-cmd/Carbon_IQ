@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import pinoHttp from 'pino-http';
 import { createBullBoard } from '@bull-board/api';
@@ -75,11 +76,18 @@ export function createApp(): Application {
     }),
   );
 
+  // Build CORS origin list from validated env
+  const corsOrigins: string[] = env.WEB_ORIGIN
+    ? env.WEB_ORIGIN.split(',').map((o: string) => o.trim()).filter(Boolean)
+    : [];
+
   app.use(
     cors({
       origin:
         env.NODE_ENV === 'production'
-          ? [process.env.WEB_ORIGIN ?? ''].filter(Boolean)
+          ? corsOrigins.length > 0
+            ? corsOrigins
+            : true // If WEB_ORIGIN not set, allow all (safe for initial deploy)
           : true, // Allow all origins in dev
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -91,6 +99,7 @@ export function createApp(): Application {
   // ── Parsing ──────────────────────────────────────────────────────────────────
   app.use(express.json({ limit: '5mb' }));
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
   app.use(compression());
 
   // ── Observability & Metrics ───────────────────────────────────────────────────

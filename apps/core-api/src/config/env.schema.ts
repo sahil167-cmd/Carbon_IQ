@@ -93,6 +93,9 @@ const envSchema = z.object({
   // ── Observability ──────────────────────────────────────────────────────────
   OTEL_EXPORTER_OTLP_ENDPOINT: z.string().optional().default(''),
 
+  // ── Web Origin (CORS) ─────────────────────────────────────────────────────
+  WEB_ORIGIN: z.string().optional().default(''),
+
   // ── Logistics / Routing ───────────────────────────────────────────────────
   OPENROUTESERVICE_API_KEY: z.string().optional().default(''),
   OPENROUTESERVICE_BASE_URL: z

@@ -15,6 +15,15 @@ import {
 
 const COOKIE_NAME = 'refreshToken';
 
+// Cross-origin cookie settings: Vercel frontend + Render backend = different domains
+const cookieOptions = () => ({
+  httpOnly: true,
+  secure: env.NODE_ENV === 'production',
+  sameSite: (env.NODE_ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax' | 'strict',
+  maxAge: env.JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000,
+  path: '/api/v1/auth',
+});
+
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -24,13 +33,7 @@ export class AuthController {
     const result = await this.authService.signup(input);
 
     // Set HttpOnly refresh token cookie (same as login)
-    res.cookie(COOKIE_NAME, result.refreshToken, {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: env.JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000,
-      path: '/api/v1/auth/refresh',
-    });
+    res.cookie(COOKIE_NAME, result.refreshToken, cookieOptions());
 
     res.status(201).json(
       successResponse(
@@ -77,13 +80,7 @@ export class AuthController {
     );
 
     // Set HttpOnly, Secure, SameSite=Strict refresh token cookie
-    res.cookie(COOKIE_NAME, result.refreshToken, {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: env.JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000,
-      path: '/api/v1/auth/refresh',
-    });
+    res.cookie(COOKIE_NAME, result.refreshToken, cookieOptions());
 
     res.json(
       successResponse(
@@ -115,13 +112,7 @@ export class AuthController {
     );
 
     // Set rotated cookie
-    res.cookie(COOKIE_NAME, result.refreshToken, {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: env.JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000,
-      path: '/api/v1/auth/refresh',
-    });
+    res.cookie(COOKIE_NAME, result.refreshToken, cookieOptions());
 
     res.json(
       successResponse(
@@ -136,7 +127,7 @@ export class AuthController {
     const refreshToken = (req.cookies as Record<string, string>)?.[COOKIE_NAME];
     await this.authService.logout(refreshToken);
 
-    res.clearCookie(COOKIE_NAME, { path: '/api/v1/auth/refresh' });
+    res.clearCookie(COOKIE_NAME, { path: '/api/v1/auth' });
     res.json(successResponse({ message: 'Logged out successfully' }, { requestId: req.requestId }));
   };
 
@@ -144,7 +135,7 @@ export class AuthController {
     const userId = req.user!.id;
     await this.authService.logoutAll(userId);
 
-    res.clearCookie(COOKIE_NAME, { path: '/api/v1/auth/refresh' });
+    res.clearCookie(COOKIE_NAME, { path: '/api/v1/auth' });
     res.json(successResponse({ message: 'Logged out of all devices successfully' }, { requestId: req.requestId }));
   };
 
