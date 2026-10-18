@@ -18,9 +18,9 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid PostgreSQL connection string'),
   DATABASE_URL_READONLY: z
     .string()
-    .url('DATABASE_URL_READONLY must be a valid PostgreSQL connection string')
     .optional()
-    .default(''),
+    .default('')
+    .transform((v) => (v && v.trim().length > 0 ? v.trim() : '')),
 
   // ── Redis ──────────────────────────────────────────────────────────────────
   REDIS_URL: z.string().url('REDIS_URL must be a valid Redis connection string'),
@@ -40,7 +40,11 @@ const envSchema = z.object({
     .refine((n) => n > 0, 'JWT_REFRESH_EXPIRES_DAYS must be positive'),
 
   // ── S3 / MinIO ─────────────────────────────────────────────────────────────
-  S3_ENDPOINT: z.string().url('S3_ENDPOINT must be a valid URL').optional().default(''),
+  S3_ENDPOINT: z
+    .string()
+    .optional()
+    .default('')
+    .transform((v) => (v && v.trim().length > 0 ? v.trim() : '')),
   S3_BUCKET: z.string().default('carbon-os-dev'),
   S3_ACCESS_KEY: z.string().optional().default(''),
   S3_SECRET_KEY: z.string().optional().default(''),
@@ -62,12 +66,26 @@ const envSchema = z.object({
   SMTP_FROM: z.string().default('CarbonIQ <noreply@carboniq.local>'),
 
   // ── LLM ────────────────────────────────────────────────────────────────────
-  LLM_BASE_URL: z.string().url('LLM_BASE_URL must be a valid URL').optional().default('https://api.openai.com/v1'),
+  LLM_BASE_URL: z
+    .string()
+    .optional()
+    .default('https://api.openai.com/v1')
+    .transform((val) => (val && val.trim().length > 0 ? val.trim() : 'https://api.openai.com/v1')),
   LLM_API_KEY: z.string().optional().default(''),
   LLM_MODEL: z.string().default('gpt-4o'),
 
   // ── ML Service ─────────────────────────────────────────────────────────────
-  ML_SERVICE_URL: z.string().url('ML_SERVICE_URL must be a valid URL').default('http://localhost:8000'),
+  ML_SERVICE_URL: z
+    .string()
+    .optional()
+    .default('http://localhost:8000')
+    .transform((val) => {
+      if (!val || !val.trim()) return 'http://localhost:8000';
+      const trimmed = val.trim();
+      return trimmed.startsWith('http://') || trimmed.startsWith('https://')
+        ? trimmed
+        : `http://${trimmed}`;
+    }),
 
   // ── OCR ────────────────────────────────────────────────────────────────────
   OCR_PROVIDER: z.enum(['tesseract', 'cloud']).default('tesseract'),
@@ -77,7 +95,11 @@ const envSchema = z.object({
 
   // ── Logistics / Routing ───────────────────────────────────────────────────
   OPENROUTESERVICE_API_KEY: z.string().optional().default(''),
-  OPENROUTESERVICE_BASE_URL: z.string().url('OPENROUTESERVICE_BASE_URL must be a valid URL').optional().default('https://api.heigit.org'),
+  OPENROUTESERVICE_BASE_URL: z
+    .string()
+    .optional()
+    .default('https://api.heigit.org')
+    .transform((val) => (val && val.trim().length > 0 ? val.trim() : 'https://api.heigit.org')),
 });
 
 export type Env = z.infer<typeof envSchema>;
