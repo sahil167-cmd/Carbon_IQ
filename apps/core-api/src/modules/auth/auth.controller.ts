@@ -40,6 +40,7 @@ export class AuthController {
         {
           user: result.user,
           accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
         },
         { requestId: req.requestId },
       ),
@@ -87,6 +88,7 @@ export class AuthController {
         {
           user: result.user,
           accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
         },
         { requestId: req.requestId },
       ),
@@ -116,7 +118,10 @@ export class AuthController {
 
     res.json(
       successResponse(
-        { accessToken: result.accessToken },
+        {
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        },
         { requestId: req.requestId },
       ),
     );

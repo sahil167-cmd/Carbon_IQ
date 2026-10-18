@@ -87,14 +87,18 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axios.post<ApiResponse<{ accessToken: string }>>(
+        const storedRefreshToken = localStorage.getItem('refresh_token');
+        const res = await axios.post<ApiResponse<{ accessToken: string; refreshToken?: string }>>(
           `${BASE_URL}/api/v1/auth/refresh`,
-          {},
+          storedRefreshToken ? { refreshToken: storedRefreshToken } : {},
           { withCredentials: true },
         );
 
         const newToken = res.data.data.accessToken;
         localStorage.setItem('access_token', newToken);
+        if (res.data.data.refreshToken) {
+          localStorage.setItem('refresh_token', res.data.data.refreshToken);
+        }
         processQueue(null, newToken);
 
         if (originalRequest.headers) {

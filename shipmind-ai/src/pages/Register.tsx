@@ -32,12 +32,15 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
     try {
       if (isLogin) {
         // Real Login Call to Core API
-        const data = await apiPost<{ accessToken: string; user: any }>("/api/v1/auth/login", {
+        const data = await apiPost<{ accessToken: string; refreshToken?: string; user: any }>("/api/v1/auth/login", {
           email: form.email,
           password: form.password,
         });
 
         localStorage.setItem("access_token", data.accessToken);
+        if (data.refreshToken) {
+          localStorage.setItem("refresh_token", data.refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify(data.user));
         setDone(true);
         setTimeout(() => {
@@ -45,7 +48,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
         }, 1000);
       } else {
         // Real Signup Call to Core API
-        const data = await apiPost<{ accessToken: string; user: any }>("/api/v1/auth/signup", {
+        const data = await apiPost<{ accessToken: string; refreshToken?: string; user: any }>("/api/v1/auth/signup", {
           email: form.email,
           password: form.password,
           fullName: form.name,
@@ -53,6 +56,9 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
         });
 
         localStorage.setItem("access_token", data.accessToken);
+        if (data.refreshToken) {
+          localStorage.setItem("refresh_token", data.refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify(data.user));
         setDone(true);
         setTimeout(() => {
