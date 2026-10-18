@@ -389,7 +389,7 @@ export class BRSRService {
 
     const freshCarbonMetrics = await this.aggregationService.aggregateForPeriod(
       organizationId,
-      report.reportingPeriodId,
+      report.reportingPeriodId || undefined,
       report.financialYear,
     );
 

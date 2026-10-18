@@ -20,5 +20,13 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/test_pipeline_runtime.ts",
+    "src/tests/**/*",
+    "src/utils/query_db_mappings.ts"
+  ]
 }

@@ -83,7 +83,7 @@ export class RoutingService {
         organizationId: this.organizationId,
       },
       include: {
-        stops: {
+        shipmentStops: {
           orderBy: { stopSequence: 'asc' },
         },
       },
@@ -95,16 +95,16 @@ export class RoutingService {
     }
 
     // 2. Validate shipment stops
-    if (!shipment.stops || shipment.stops.length < 2) {
+    if (!shipment.shipmentStops || shipment.shipmentStops.length < 2) {
       throw new RoutingError(
-        `Shipment ${shipment.shipmentNumber} must contain at least 2 stops (origin and destination) for route calculation. Found: ${shipment.stops?.length ?? 0}`,
+        `Shipment ${shipment.shipmentNumber} must contain at least 2 stops (origin and destination) for route calculation. Found: ${shipment.shipmentStops?.length ?? 0}`,
         'INVALID_ROUTE_REQUEST',
         400,
       );
     }
 
     // 3. Extract and validate coordinates for each stop in sequence
-    const coordinates: Coordinate[] = shipment.stops.map((stop) => {
+    const coordinates: Coordinate[] = shipment.shipmentStops.map((stop) => {
       if (stop.latitude === null || stop.latitude === undefined) {
         throw new RoutingError(
           `Shipment stop sequence ${stop.stopSequence} is missing latitude coordinate`,

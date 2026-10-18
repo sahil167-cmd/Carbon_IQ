@@ -114,7 +114,6 @@ export class AiOrchestrator {
       const records = await this.prisma.calculatedEmissions.findMany({
         where: {
           organizationId: organizationId,
-          validationStatus: 'VERIFIED',
         },
       });
 

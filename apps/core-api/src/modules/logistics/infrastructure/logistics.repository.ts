@@ -19,6 +19,7 @@ import { NotFoundError } from '../../../core/errors/app.error';
 
 export type ShipmentWithCargoAndStops = Shipment & {
   cargoItems: CargoItem[];
+  shipmentStops: ShipmentStop[];
   stops: ShipmentStop[];
 };
 
@@ -260,7 +261,7 @@ export class LogisticsRepository extends TenantScopedRepository {
       where: this.scopedWhere({ id }),
       include: {
         cargoItems: true,
-        stops: {
+        shipmentStops: {
           orderBy: { stopSequence: 'asc' },
         },
       },
@@ -270,7 +271,10 @@ export class LogisticsRepository extends TenantScopedRepository {
       throw new NotFoundError('Shipment');
     }
 
-    return shipment;
+    return {
+      ...shipment,
+      stops: shipment.shipmentStops,
+    };
   }
 
   /**

@@ -46,7 +46,6 @@ export class BRSRDataAggregationService {
       include: {
         document: true,
         emissionFactor: true,
-        activityRecord: true,
       },
     });
 

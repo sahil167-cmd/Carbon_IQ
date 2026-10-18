@@ -54,9 +54,9 @@ export class DuplicateService {
       return {
         isDuplicate: true,
         duplicateType: 'EXACT_SHA256',
-        existingDocumentId: exactMatch.documentId,
+        existingDocumentId: exactMatch.documentId || undefined,
         existingSha256: sha256,
-        reason: `Exact duplicate file content matching document ${exactMatch.document.fileName} (Uploaded: ${exactMatch.createdAt.toISOString()})`,
+        reason: `Exact duplicate file content matching document ${exactMatch.document?.fileName ?? 'Unknown'} (Uploaded: ${exactMatch.createdAt.toISOString()})`,
       };
     }
 
@@ -80,8 +80,8 @@ export class DuplicateService {
         return {
           isDuplicate: true,
           duplicateType: 'FUZZY_METADATA',
-          existingDocumentId: fuzzyMatch.documentId,
-          reason: `Duplicate invoice number "${input.invoiceNumber}" from supplier "${input.supplierName}" already recorded in document ${fuzzyMatch.document.fileName}`,
+          existingDocumentId: fuzzyMatch.documentId || undefined,
+          reason: `Duplicate invoice number "${input.invoiceNumber}" from supplier "${input.supplierName}" already recorded in document ${fuzzyMatch.document?.fileName ?? 'Unknown'}`,
         };
       }
     }

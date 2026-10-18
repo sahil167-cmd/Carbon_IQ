@@ -120,7 +120,7 @@ export class ShipmentService {
           plannedDeliveryDate: input.plannedDeliveryDate ? new Date(input.plannedDeliveryDate) : undefined,
           metadata: input.metadata,
           createdById: userId,
-          stops: input.stops && input.stops.length > 0
+          shipmentStops: input.stops && input.stops.length > 0
             ? {
                 create: input.stops.map((s) => ({
                   stopSequence: s.stopSequence,
@@ -143,7 +143,7 @@ export class ShipmentService {
             : undefined,
         },
         include: {
-          stops: { orderBy: { stopSequence: 'asc' } },
+          shipmentStops: { orderBy: { stopSequence: 'asc' } },
           cargoItems: true,
         },
       });
@@ -169,7 +169,7 @@ export class ShipmentService {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
-          stops: { orderBy: { stopSequence: 'asc' } },
+          shipmentStops: { orderBy: { stopSequence: 'asc' } },
           _count: { select: { cargoItems: true, optimizationRuns: true } },
         },
       }),
@@ -192,7 +192,7 @@ export class ShipmentService {
         organizationId: this.organizationId,
       },
       include: {
-        stops: { orderBy: { stopSequence: 'asc' } },
+        shipmentStops: { orderBy: { stopSequence: 'asc' } },
         cargoItems: { orderBy: { createdAt: 'asc' } },
         optimizationRuns: {
           orderBy: { createdAt: 'desc' },
@@ -231,7 +231,7 @@ export class ShipmentService {
         metadata: input.metadata,
       },
       include: {
-        stops: { orderBy: { stopSequence: 'asc' } },
+        shipmentStops: { orderBy: { stopSequence: 'asc' } },
         cargoItems: true,
       },
     });

@@ -23,22 +23,24 @@ model Organization {
   aiLogs               AiLog[]
   auditLogs            AuditLog[]
   calculatedEmissions  CalculatedEmissions[]
-  cargo_items          cargo_items[]
+  cargoItems           CargoItem[]
   documents            Document[]
   emissionsAggregates  EmissionsAggregate[]
   featureFlags         FeatureFlag[]
   invites              Invite[]
   notifications        Notification[]
-  optimization_runs    optimization_runs[]
+  optimizationRuns     OptimizationRun[]
   organizationSettings OrganizationSetting?
   industry             Industry?             @relation(fields: [industryId], references: [id])
   reportingPeriods     ReportingPeriod[]
   sessions             Session[]
-  shipments            shipments[]
+  shipments            Shipment[]
   sites                Site[]
   users                User[]
-  vehicle_types        vehicle_types[]
-  vehicles             vehicles[]
+  vehicleTypes         VehicleType[]
+  vehicles             Vehicle[]
+  mlModels             MlModel[]
+  brsrReports          BrsrReport[]
 
   @@map("organizations")
 }
@@ -61,9 +63,9 @@ model Site {
   calculatedEmissions CalculatedEmissions[]
   documents           Document[]
   emissionsAggregates EmissionsAggregate[]
-  shipment_stops      shipment_stops[]
+  shipmentStops       ShipmentStop[]
   organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  vehicles            vehicles[]
+  vehicles            Vehicle[]
 
   @@unique([organizationId, name])
   @@index([organizationId, status])
@@ -83,6 +85,7 @@ model ReportingPeriod {
   calculatedEmissions CalculatedEmissions[]
   documents           Document[]
   emissionsAggregates EmissionsAggregate[]
+  brsrReports         BrsrReport[]
   organization        Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -134,6 +137,7 @@ model Document {
   extractionJobs      ExtractionJob[]
   reviewActions       ReviewAction[]
   validationResults   ValidationResult[]
+  fingerprint         DocumentFingerprint?
 
   @@index([organizationId, siteId, reportingPeriodId])
   @@index([status])
@@ -296,7 +300,7 @@ model CalculatedEmissions {
   reportingPeriod   ReportingPeriod  @relation(fields: [reportingPeriodId], references: [id], onDelete: Cascade)
   site              Site             @relation(fields: [siteId], references: [id], onDelete: Cascade)
   calculationLogs   CalculationLog[]
-  route_plans       route_plans[]
+  routePlans        RoutePlan[]
 
   @@index([organizationId, siteId, reportingPeriodId])
   @@index([scope])
@@ -422,7 +426,7 @@ model User {
   notifications     Notification[]
   reviewActions     ReviewAction[]
   sessions          Session[]
-  shipments         shipments[]
+  shipments         Shipment[]
   organization      Organization?  @relation(fields: [organizationId], references: [id])
 
   @@index([email])
@@ -558,8 +562,8 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-model activity_type_mappings {
-  id                   String   @id
+model ActivityTypeMapping {
+  id                   String   @id @default(cuid())
   categoryCode         String   @unique
   emissionCategory     String
   subCategoryFieldName String?
@@ -567,10 +571,12 @@ model activity_type_mappings {
   strategyKey          String
   sourceCitation       String
   createdAt            DateTime @default(now())
+
+  @@map("activity_type_mappings")
 }
 
-model cargo_items {
-  id                                                       String          @id
+model CargoItem {
+  id                                                       String          @id @default(cuid())
   organizationId                                           String
   shipmentId                                               String
   sku                                                      String?
@@ -599,20 +605,21 @@ model cargo_items {
   pickupStopId                                             String?
   dropoffStopId                                            String?
   createdAt                                                DateTime        @default(now())
-  updatedAt                                                DateTime
-  shipment_stops_cargo_items_dropoffStopIdToshipment_stops shipment_stops? @relation("cargo_items_dropoffStopIdToshipment_stops", fields: [dropoffStopId], references: [id])
-  organizations                                            Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  shipment_stops_cargo_items_pickupStopIdToshipment_stops  shipment_stops? @relation("cargo_items_pickupStopIdToshipment_stops", fields: [pickupStopId], references: [id])
-  shipments                                                shipments       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  updatedAt                                                DateTime        @updatedAt
+  dropoffStop  ShipmentStop? @relation("cargo_items_dropoffStopIdToshipment_stops", fields: [dropoffStopId], references: [id])
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  pickupStop   ShipmentStop? @relation("cargo_items_pickupStopIdToshipment_stops", fields: [pickupStopId], references: [id])
+  shipment     Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
 
   @@index([dropoffStopId])
   @@index([organizationId])
   @@index([pickupStopId])
   @@index([shipmentId])
+  @@map("cargo_items")
 }
 
-model load_plans {
-  id                   String            @id
+model LoadPlan {
+  id                   String            @id @default(cuid())
   optimizationRunId    String
   vehicleSequence      Int               @default(1)
   vehicleTypeId        String?
@@ -628,18 +635,19 @@ model load_plans {
   axleLoadRearKg       Decimal?          @db.Decimal(10, 2)
   placementsJson       Json
   createdAt            DateTime          @default(now())
-  optimization_runs    optimization_runs @relation(fields: [optimizationRunId], references: [id], onDelete: Cascade)
-  vehicles             vehicles?         @relation(fields: [vehicleId], references: [id])
-  vehicle_types        vehicle_types?    @relation(fields: [vehicleTypeId], references: [id])
-  route_plans          route_plans?
+  optimizationRun OptimizationRun @relation(fields: [optimizationRunId], references: [id], onDelete: Cascade)
+  vehicle         Vehicle?        @relation(fields: [vehicleId], references: [id])
+  vehicleType     VehicleType?    @relation(fields: [vehicleTypeId], references: [id])
+  routePlan       RoutePlan?
 
   @@index([optimizationRunId])
   @@index([vehicleId])
   @@index([vehicleTypeId])
+  @@map("load_plans")
 }
 
-model optimization_runs {
-  id                          String             @id
+model OptimizationRun {
+  id                          String             @id @default(cuid())
   organizationId              String
   shipmentId                  String
   scenarioName                String             @default("Scenario 1")
@@ -663,17 +671,18 @@ model optimization_runs {
   executionTimeMs             Int?
   errorMessage                String?
   createdAt                   DateTime           @default(now())
-  updatedAt                   DateTime
-  load_plans                  load_plans[]
-  organizations               Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  shipments                   shipments          @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  updatedAt                   DateTime           @updatedAt
+  loadPlans    LoadPlan[]     
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shipment     Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
   @@index([shipmentId, status])
+  @@map("optimization_runs")
 }
 
-model route_plans {
-  id                    String               @id
+model RoutePlan {
+  id                    String               @id @default(cuid())
   loadPlanId            String               @unique
   routingProvider       String?
   distanceKm            Decimal              @db.Decimal(10, 2)
@@ -684,15 +693,16 @@ model route_plans {
   fuelEstimateLiters    Decimal?             @db.Decimal(10, 2)
   calculatedEmissionsId String?
   createdAt             DateTime             @default(now())
-  calculated_emissions  CalculatedEmissions? @relation(fields: [calculatedEmissionsId], references: [id])
-  load_plans            load_plans           @relation(fields: [loadPlanId], references: [id], onDelete: Cascade)
+  calculatedEmissions CalculatedEmissions? @relation(fields: [calculatedEmissionsId], references: [id])
+  loadPlan            LoadPlan             @relation(fields: [loadPlanId], references: [id], onDelete: Cascade)
 
   @@index([calculatedEmissionsId])
   @@index([loadPlanId])
+  @@map("route_plans")
 }
 
-model shipment_stops {
-  id                                                    String        @id
+model ShipmentStop {
+  id                                                    String        @id @default(cuid())
   shipmentId                                            String
   stopSequence                                          Int
   stopType                                              StopType      @default(PICKUP)
@@ -712,19 +722,20 @@ model shipment_stops {
   actualDeparture                                       DateTime?
   specialInstructions                                   String?
   createdAt                                             DateTime      @default(now())
-  updatedAt                                             DateTime
-  cargo_items_cargo_items_dropoffStopIdToshipment_stops cargo_items[] @relation("cargo_items_dropoffStopIdToshipment_stops")
-  cargo_items_cargo_items_pickupStopIdToshipment_stops  cargo_items[] @relation("cargo_items_pickupStopIdToshipment_stops")
-  shipments                                             shipments     @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  sites                                                 Site?         @relation(fields: [siteId], references: [id])
+  updatedAt                                             DateTime      @updatedAt
+  dropoffItems CargoItem[] @relation("cargo_items_dropoffStopIdToshipment_stops")
+  pickupItems  CargoItem[] @relation("cargo_items_pickupStopIdToshipment_stops")
+  shipment     Shipment    @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  site         Site?       @relation(fields: [siteId], references: [id])
 
   @@unique([shipmentId, stopSequence])
   @@index([shipmentId])
   @@index([siteId])
+  @@map("shipment_stops")
 }
 
-model shipments {
-  id                  String              @id
+model Shipment {
+  id                  String              @id @default(cuid())
   organizationId      String
   shipmentNumber      String
   status              ShipmentStatus      @default(DRAFT)
@@ -742,20 +753,21 @@ model shipments {
   metadata            Json?
   createdById         String?
   createdAt           DateTime            @default(now())
-  updatedAt           DateTime
-  cargo_items         cargo_items[]
-  optimization_runs   optimization_runs[]
-  shipment_stops      shipment_stops[]
-  users               User?               @relation(fields: [createdById], references: [id])
-  organizations       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  updatedAt           DateTime            @updatedAt
+  cargoItems        CargoItem[]
+  optimizationRuns  OptimizationRun[]
+  shipmentStops     ShipmentStop[]
+  createdBy         User?             @relation(fields: [createdById], references: [id])
+  organization      Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, shipmentNumber])
   @@index([organizationId, status])
   @@index([plannedPickupDate])
+  @@map("shipments")
 }
 
-model vehicle_types {
-  id                 String          @id
+model VehicleType {
+  id                 String          @id @default(cuid())
   organizationId     String?
   name               String
   category           String?
@@ -784,7 +796,7 @@ model vehicle_types {
   metadata           Json?
   isActive           Boolean         @default(true)
   createdAt          DateTime        @default(now())
-  updatedAt          DateTime
+  updatedAt          DateTime        @updatedAt
   externalHeight     Decimal?        @db.Decimal(10, 2)
   externalLength     Decimal?        @db.Decimal(10, 2)
   externalWidth      Decimal?        @db.Decimal(10, 2)
@@ -798,17 +810,18 @@ model vehicle_types {
   verifiedAt         DateTime?
   sourceType         String?
   verifiedBy         String?
-  load_plans         load_plans[]
-  organizations      Organization?   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  vehicles           vehicles[]
+  loadPlans    LoadPlan[]
+  organization Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicles     Vehicle[]
 
   @@index([bodyType])
   @@index([fuelType])
   @@index([organizationId])
+  @@map("vehicle_types")
 }
 
-model vehicles {
-  id                 String        @id
+model Vehicle {
+  id                 String        @id @default(cuid())
   organizationId     String
   vehicleTypeId      String
   registrationNumber String
@@ -820,15 +833,279 @@ model vehicles {
   notes              String?
   isActive           Boolean       @default(true)
   createdAt          DateTime      @default(now())
-  updatedAt          DateTime
-  load_plans         load_plans[]
-  sites              Site?         @relation(fields: [homeSiteId], references: [id])
-  organizations      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  vehicle_types      vehicle_types @relation(fields: [vehicleTypeId], references: [id])
+  updatedAt          DateTime      @updatedAt
+  loadPlans    LoadPlan[]
+  homeSite     Site?         @relation(fields: [homeSiteId], references: [id])
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  vehicleType  VehicleType   @relation(fields: [vehicleTypeId], references: [id])
 
   @@unique([organizationId, registrationNumber])
   @@index([organizationId, status])
   @@index([vehicleTypeId])
+  @@map("vehicles")
+}
+
+// ── ML / Forecasting Models ──────────────────────────────────────────────────
+
+model MlModel {
+  id                String          @id @default(cuid())
+  organizationId    String
+  name              String          @default("Forecast Model")
+  modelType         MlModelType     @default(BASELINE_TREND)
+  status            MlModelStatus   @default(TRAINING)
+  version           Int             @default(1)
+  mapeScore         Float?
+  rmseScore         Float?
+  featureImportance Json?
+  artifactPath      String?
+  metadata          Json?
+  trainedAt         DateTime?       @default(now())
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  organization      Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  predictions       MlPrediction[]
+  trainingRuns      MlTrainingRun[]
+
+  @@index([organizationId])
+  @@map("ml_models")
+}
+
+model MlPrediction {
+  id                String    @id @default(cuid())
+  organizationId    String
+  modelId           String
+  predictedMonth    DateTime
+  predictedCo2e     Float
+  confidenceScore   Float     @default(0)
+  confidenceLabel   String    @default("MEDIUM")
+  trendDirection    String    @default("FLAT")
+  featureImportance Json?
+  isSanityChecked   Boolean   @default(true)
+  inputData         Json?
+  outputData        Json?
+  confidence        Float?
+  createdAt         DateTime  @default(now())
+  model             MlModel   @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([modelId])
+  @@map("ml_predictions")
+}
+
+model MlTrainingRun {
+  id                String    @id @default(cuid())
+  modelId           String
+  organizationId    String
+  status            String    @default("RUNNING")
+  monthsUsed        Int       @default(0)
+  trainingSamples   Int       @default(0)
+  validationSamples Int       @default(0)
+  mapeScore         Float?
+  rmseScore         Float?
+  promoted          Boolean   @default(false)
+  durationMs        Int?
+  errorMessage      String?
+  metrics           Json?
+  startedAt         DateTime  @default(now())
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  model             MlModel   @relation(fields: [modelId], references: [id], onDelete: Cascade)
+
+  @@index([modelId])
+  @@index([organizationId])
+  @@map("ml_training_runs")
+}
+
+// ── Copilot / Knowledge Base ─────────────────────────────────────────────────
+
+model KbDocument {
+  id               String    @id @default(cuid())
+  organizationId   String?
+  uploadedById     String?
+  sourceDocumentId String?
+  filename         String
+  documentType     String    @default("GENERAL")
+  mimeType         String    @default("application/pdf")
+  checksum         String
+  status           String    @default("UPLOADED")
+  pageCount        Int?
+  tokenCount       Int?
+  errorMessage     String?
+  title            String?
+  content          String?
+  embedding        Json?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  chunks           KbChunk[]
+
+  @@index([organizationId])
+  @@index([checksum])
+  @@map("kb_documents")
+}
+
+model KbChunk {
+  id             String     @id @default(cuid())
+  documentId     String
+  organizationId String?
+  chunkIndex     Int
+  chunkText      String
+  tokenCount     Int        @default(0)
+  pageNumber     Int?
+  sectionTitle   String?
+  createdAt      DateTime   @default(now())
+  document       KbDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([organizationId])
+  @@map("kb_chunks")
+}
+
+model CopilotSession {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         String
+  title          String           @default("New Sustainability Session")
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  messages       CopilotMessage[]
+
+  @@index([organizationId, userId])
+  @@map("copilot_sessions")
+}
+
+model CopilotMessage {
+  id             String          @id @default(cuid())
+  organizationId String
+  userId         String?
+  sessionId      String
+  role           String
+  content        String
+  citations      Json?
+  metadata       Json?
+  createdAt      DateTime        @default(now())
+  session        CopilotSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, sessionId])
+  @@map("copilot_messages")
+}
+
+// ── Document Deduplication ───────────────────────────────────────────────────
+
+model DocumentFingerprint {
+  id             String    @id @default(cuid())
+  organizationId String
+  documentId     String?   @unique
+  sha256Hash     String    @unique
+  hash           String?
+  algorithm      String    @default("sha256")
+  invoiceNumber  String?
+  supplierName   String?
+  invoiceDate    DateTime?
+  totalAmount    Float?
+  quantity       Float?
+  unit           String?
+  createdAt      DateTime  @default(now())
+  document       Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([supplierName, invoiceNumber])
+  @@map("document_fingerprints")
+}
+
+// ── Activity Records ─────────────────────────────────────────────────────────
+
+model ActivityRecord {
+  id                 String    @id @default(cuid())
+  organizationId     String
+  documentId         String?
+  lineItemIndex      Int       @default(0)
+  activityType       String
+  scope              String    @default("SCOPE_2")
+  quantity           Float     @default(0)
+  unit               String    @default("UNITS")
+  normalizedQuantity Float?
+  normalizedUnit     String?
+  supplier           String?
+  confidence         Float     @default(1.0)
+  provenanceJson     Json?
+  rawData            Json?
+  processedData      Json?
+  status             String    @default("PENDING")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([documentId])
+  @@map("activity_records")
+}
+
+// ── BRSR Reporting ───────────────────────────────────────────────────────────
+
+model BrsrReport {
+  id                String           @id @default(cuid())
+  organizationId    String
+  reportingPeriodId String?
+  financialYear     String
+  boundary          String           @default("STANDALONE")
+  version           Int              @default(1)
+  status            String           @default("DRAFT")
+  completenessScore Float            @default(0)
+  sectionAData      Json?
+  sectionBData      Json?
+  sectionCData      Json?
+  environmentalData Json?
+  carbonMetricsJson Json?
+  isAssured          Boolean          @default(false)
+  assuranceProvider  String?
+  assuranceType      String?
+  assuranceReportUrl String?
+  createdById        String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  organization      Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  reportingPeriod   ReportingPeriod? @relation(fields: [reportingPeriodId], references: [id])
+  snapshots         BrsrSnapshot[]
+
+  @@unique([organizationId, financialYear, version])
+  @@index([organizationId])
+  @@map("brsr_reports")
+}
+
+model BrsrSnapshot {
+  id             String      @id @default(cuid())
+  brsrReportId   String
+  organizationId String
+  version        Int         @default(1)
+  financialYear  String
+  snapshotData   Json
+  pdfUrl         String?
+  generatedById  String?
+  generatedAt    DateTime    @default(now())
+  createdAt      DateTime    @default(now())
+  brsrReport     BrsrReport  @relation(fields: [brsrReportId], references: [id], onDelete: Cascade)
+
+  @@index([brsrReportId])
+  @@index([organizationId])
+  @@map("brsr_snapshots")
+}
+
+enum MlModelStatus {
+  TRAINING
+  EVALUATING
+  DEPLOYED
+  RETIRED
+  READY
+  FAILED
+  DEPRECATED
+}
+
+enum MlModelType {
+  BASELINE_TREND
+  XGBOOST
+  EMISSION_FORECAST
+  ANOMALY_DETECTION
+  BENCHMARK
 }
 
 enum UserRole {

@@ -279,7 +279,7 @@ export class LogisticsCarbonImpactService {
       },
       include: {
         cargoItems: true,
-        stops: {
+        shipmentStops: {
           orderBy: { stopSequence: 'asc' },
         },
         optimizationRuns: {
@@ -310,13 +310,13 @@ export class LogisticsCarbonImpactService {
 
     // Compute fallback road distance using stop coordinates (Haversine * 1.25 road curvature)
     let fallbackStopsDist = 50;
-    if (shipment.stops && shipment.stops.length >= 2) {
+    if (shipment.shipmentStops && shipment.shipmentStops.length >= 2) {
       let totalDist = 0;
-      for (let i = 0; i < shipment.stops.length - 1; i++) {
-        const lat1 = Number(shipment.stops[i].latitude);
-        const lon1 = Number(shipment.stops[i].longitude);
-        const lat2 = Number(shipment.stops[i + 1].latitude);
-        const lon2 = Number(shipment.stops[i + 1].longitude);
+      for (let i = 0; i < shipment.shipmentStops.length - 1; i++) {
+        const lat1 = Number(shipment.shipmentStops[i].latitude);
+        const lon1 = Number(shipment.shipmentStops[i].longitude);
+        const lat2 = Number(shipment.shipmentStops[i + 1].latitude);
+        const lon2 = Number(shipment.shipmentStops[i + 1].longitude);
         if (!isNaN(lat1) && !isNaN(lon1) && !isNaN(lat2) && !isNaN(lon2)) {
           const R = 6371; // Earth radius km
           const dLat = ((lat2 - lat1) * Math.PI) / 180;

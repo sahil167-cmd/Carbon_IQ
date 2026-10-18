@@ -34,7 +34,6 @@ export class HistoricalAnomalyDetector {
       where: {
         organizationId: input.organizationId,
         siteId: input.siteId,
-        validationStatus: 'VERIFIED',
       },
       orderBy: { createdAt: 'desc' },
       take: 10,

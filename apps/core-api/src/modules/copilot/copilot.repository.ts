@@ -798,7 +798,7 @@ export class CopilotRepository extends TenantScopedRepository {
         take: topK,
       });
 
-      return fallbackRows.map((f) => ({
+      return fallbackRows.map((f: any) => ({
         chunkId: f.id,
         documentId: f.documentId,
         filename: f.document.filename,
