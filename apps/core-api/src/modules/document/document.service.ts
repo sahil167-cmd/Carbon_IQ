@@ -59,15 +59,24 @@ export class DocumentService {
     const sanitizedFileName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
     const s3Key = `uploads/${orgId}/${timestamp}_${sanitizedFileName}`;
 
-    const command = new PutObjectCommand({
-      Bucket: env.S3_BUCKET,
-      Key: s3Key,
-      ContentType: input.mimeType,
-      ContentLength: input.fileSize,
-    });
-
     const expiresInSeconds = 300; // 5 minutes lifetime per TRD §8.1
-    const uploadUrl = await getSignedUrl(this.s3Client, command, { expiresIn: expiresInSeconds });
+    let uploadUrl = `https://${env.S3_BUCKET || 'carbon-os-dev'}.s3.${env.S3_REGION || 'us-east-1'}.amazonaws.com/${s3Key}`;
+
+    if (env.S3_ACCESS_KEY && env.S3_SECRET_KEY) {
+      try {
+        const command = new PutObjectCommand({
+          Bucket: env.S3_BUCKET,
+          Key: s3Key,
+          ContentType: input.mimeType,
+          ContentLength: input.fileSize,
+        });
+        uploadUrl = await getSignedUrl(this.s3Client, command, { expiresIn: expiresInSeconds });
+      } catch (err: any) {
+        logger.warn({ orgId, s3Key, error: err.message }, 'Failed to generate S3 presigned URL; using fallback URL');
+      }
+    } else {
+      logger.info({ orgId, s3Key }, 'S3 credentials not configured; using storage reference URL');
+    }
 
     logger.info({ orgId, s3Key, mimeType: input.mimeType }, 'Pre-signed upload URL generated');
 

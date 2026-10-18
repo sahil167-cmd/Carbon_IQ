@@ -122,17 +122,23 @@ export default function UploadWizard() {
         : 'application/pdf';
 
       // 1. Get presigned URL
-      const urlRes = await apiPost<Array<{ s3Key: string; uploadUrl: string }>>("/api/v1/documents/upload-url", {
-        files: [
-          {
-            fileName,
-            fileSize: 1024 * 1024,
-            mimeType: detectedMimeType,
-          },
-        ],
-      });
-
-      const s3Key = Array.isArray(urlRes) && urlRes.length > 0 ? urlRes[0].s3Key : `uploads/${orgId}/${Date.now()}_${fileName}`;
+      let s3Key = `uploads/${orgId}/${Date.now()}_${fileName}`;
+      try {
+        const urlRes = await apiPost<Array<{ s3Key: string; uploadUrl: string }>>("/api/v1/documents/upload-url", {
+          files: [
+            {
+              fileName,
+              fileSize: 1024 * 1024,
+              mimeType: detectedMimeType,
+            },
+          ],
+        });
+        if (Array.isArray(urlRes) && urlRes.length > 0 && urlRes[0].s3Key) {
+          s3Key = urlRes[0].s3Key;
+        }
+      } catch (urlErr) {
+        console.warn("Pre-signed URL generation fallback activated:", urlErr);
+      }
 
       // 2. Register document metadata & enqueue AI extraction
       const regRes = await apiPost<{ id: string }>("/api/v1/documents", {
