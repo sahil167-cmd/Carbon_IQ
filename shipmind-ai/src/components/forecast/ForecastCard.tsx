@@ -182,8 +182,36 @@ export default function ForecastCard() {
     );
   }
 
-  if (!data || data.status === 'DISABLED' || data.status === 'UNAVAILABLE') {
+  if (!data || data.status === 'DISABLED') {
     return null;
+  }
+
+  if (data.status === 'UNAVAILABLE') {
+    return (
+      <div className="bg-gradient-to-br from-slate-900/95 via-slate-900/80 to-slate-950/95 border border-slate-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-emerald-400">
+              <span className="material-symbols-outlined text-2xl">auto_graph</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-100">ML Carbon Emission Forecast Engine</h2>
+              <p className="text-xs text-slate-400">Predictive Machine Learning Time-Series Model (Holt-Winters & ARIMA)</p>
+            </div>
+          </div>
+          <button
+            onClick={loadForecast}
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-sm">refresh</span>
+            <span>Initialize Forecast</span>
+          </button>
+        </div>
+        <p className="text-xs text-slate-300 leading-relaxed">
+          {data.message || 'Connecting to predictive ML inference model... Click Initialize to generate forward-looking carbon trajectory.'}
+        </p>
+      </div>
+    );
   }
 
   // ── MODE 0: NO DATA ────────────────────────────────────────────────────────

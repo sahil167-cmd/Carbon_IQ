@@ -29,10 +29,14 @@ export default function AppHeader({ title = "Dashboard", subtitle = "Shipment In
 
   return (
     <header className="fixed top-0 right-0 left-64 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 z-40 px-6 h-16 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-4">
-        <h2 className="text-2xl font-bold tracking-tight text-primary">{title}</h2>
-        <span className="text-outline-variant">/</span>
-        <span className="text-[15px] text-on-surface-variant">{subtitle}</span>
+      <div className="flex items-center gap-3 min-w-0 max-w-[50vw]">
+        <h2 className="text-xl font-bold tracking-tight text-primary truncate shrink-0">{title}</h2>
+        {subtitle && (
+          <>
+            <span className="text-outline-variant shrink-0">/</span>
+            <span className="text-[13px] text-on-surface-variant truncate">{subtitle}</span>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-6">
         {/* Backend Connectivity Status Pill */}

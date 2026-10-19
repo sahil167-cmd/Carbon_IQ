@@ -206,8 +206,8 @@ export default function OptimizationResultPage() {
 
   return (
     <AppLayout
-      title={`Optimization Result — ${run.scenarioName || 'Fleet Allocation'}`}
-      subtitle={`Run ID: ${run.id} • Algorithm: ${run.algorithmVersion}`}
+      title="Optimization Result"
+      subtitle={run.scenarioName || 'Fleet Allocation Solution'}
     >
       <div className="max-w-6xl mx-auto px-6 py-6 space-y-6">
         {/* Navigation Breadcrumb & Quick Jumps */}
@@ -280,11 +280,15 @@ export default function OptimizationResultPage() {
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-[12px] font-bold ${
                   run.status === 'COMPLETED' || run.status === 'OPTIMAL' || run.status === 'FEASIBLE'
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    ? unallocatedCargoList.length > 0
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                    : activeLoadPlan
+                    ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                    : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                 }`}
               >
-                {run.status}
+                {run.status === 'FAILED' && activeLoadPlan ? 'PARTIAL ALLOCATION' : run.status}
               </span>
             </div>
           </div>
