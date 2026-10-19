@@ -77,19 +77,70 @@ export class CarbonEngineService {
     }
 
     const categoryCode = doc.category.code;
-    const mapping = await this.repo.findActivityTypeMapping(categoryCode);
+    let mapping = await this.repo.findActivityTypeMapping(categoryCode);
 
+    // ── Runtime Fallback Mappings ─────────────────────────────────────────
+    // If the activity_type_mappings table is empty (e.g. seed not run),
+    // derive a sensible default mapping based on the category code so the
+    // calculation pipeline can still proceed.
     if (!mapping) {
-      const errorMsg = `No activity mapping configured for category code ${categoryCode}`;
-      logger.warn({ documentId, categoryCode }, errorMsg);
-      await this.docRepo.updateDocumentStatus(
-        documentId,
-        DocumentStatus.NEEDS_REVIEW,
-        errorMsg,
-        'calcWorker',
-      );
-      return null;
+      const RUNTIME_FALLBACK_MAPPINGS: Record<string, { emissionCategory: string; strategyKey: string; fallbackSubCategory: string }> = {
+        'STATIONARY_COMBUSTION': { emissionCategory: 'STATIONARY_COMBUSTION', strategyKey: 'QUANTITY_FACTOR', fallbackSubCategory: 'DIESEL' },
+        'MOBILE_COMBUSTION': { emissionCategory: 'MOBILE_COMBUSTION', strategyKey: 'QUANTITY_FACTOR', fallbackSubCategory: 'DIESEL' },
+        'FUGITIVE_EMISSIONS': { emissionCategory: 'FUGITIVE_EMISSIONS', strategyKey: 'FUGITIVE_GWP', fallbackSubCategory: 'R410A' },
+        'ELECTRICITY': { emissionCategory: 'ELECTRICITY', strategyKey: 'ELEC_LOCATION', fallbackSubCategory: 'GLOBAL_AVG' },
+        'RENEWABLE_ENERGY': { emissionCategory: 'ELECTRICITY', strategyKey: 'ELEC_MARKET', fallbackSubCategory: 'GLOBAL_AVG' },
+        'UPSTREAM_TRANSPORT': { emissionCategory: 'UPSTREAM_TRANSPORT', strategyKey: 'WEIGHT_DISTANCE_FACTOR', fallbackSubCategory: 'ROAD_HEAVY_TRUCK' },
+        'DOWNSTREAM_TRANSPORT': { emissionCategory: 'DOWNSTREAM_TRANSPORT', strategyKey: 'WEIGHT_DISTANCE_FACTOR', fallbackSubCategory: 'ROAD_HEAVY_TRUCK' },
+        'PURCHASED_GOODS': { emissionCategory: 'PURCHASED_GOODS', strategyKey: 'QUANTITY_FACTOR', fallbackSubCategory: 'STEEL_PRIMARY' },
+        'WASTE_MANAGEMENT': { emissionCategory: 'WASTE_MANAGEMENT', strategyKey: 'QUANTITY_FACTOR', fallbackSubCategory: 'LANDFILL' },
+        'BUSINESS_TRAVEL': { emissionCategory: 'BUSINESS_TRAVEL', strategyKey: 'DISTANCE_FACTOR', fallbackSubCategory: 'ECONOMY_FLIGHT' },
+      };
+
+      const fallback = RUNTIME_FALLBACK_MAPPINGS[categoryCode];
+      if (fallback) {
+        logger.warn({ documentId, categoryCode }, `No activity_type_mapping row found — using runtime fallback: ${fallback.strategyKey}`);
+        mapping = {
+          id: 'runtime-fallback',
+          categoryCode,
+          emissionCategory: fallback.emissionCategory,
+          subCategoryFieldName: null,
+          fallbackSubCategory: fallback.fallbackSubCategory,
+          strategyKey: fallback.strategyKey,
+          sourceCitation: 'Runtime fallback (seed missing)',
+          createdAt: new Date(),
+        } as any;
+
+        // Persist the mapping so future calculations don't need the fallback
+        try {
+          await this.repo.saveActivityTypeMapping({
+            categoryCode,
+            emissionCategory: fallback.emissionCategory,
+            subCategoryFieldName: null,
+            fallbackSubCategory: fallback.fallbackSubCategory,
+            strategyKey: fallback.strategyKey,
+            sourceCitation: 'Auto-created by runtime fallback',
+          });
+          logger.info({ categoryCode }, 'Auto-created activity type mapping in database');
+        } catch (e: any) {
+          logger.warn({ categoryCode, error: e.message }, 'Failed to auto-persist activity type mapping (continuing)');
+        }
+      } else {
+        const errorMsg = `No activity mapping configured for category code ${categoryCode}`;
+        logger.warn({ documentId, categoryCode }, errorMsg);
+        await this.docRepo.updateDocumentStatus(
+          documentId,
+          DocumentStatus.NEEDS_REVIEW,
+          errorMsg,
+          'calcWorker',
+        );
+        return null;
+      }
     }
+
+    // After the fallback block, mapping is guaranteed non-null
+    // (the else branch returns null from the function)
+    const resolvedMapping = mapping as NonNullable<typeof mapping>;
 
     let extracted = await this.aiRepo.findLatestExtractedData(documentId);
     if (!extracted || !extracted.fieldsJson || Object.keys(extracted.fieldsJson as object).length === 0) {
@@ -170,7 +221,7 @@ export class CarbonEngineService {
 
     const rawWeightNum = extractNumericField(fields, ['weightKg', 'weight', 'weightTons', 'weightTonnes', 'cargoWeight', 'totalWeight']);
     const rawDistanceNum = extractNumericField(fields, ['distanceKm', 'distance', 'distanceMiles', 'miles', 'km', 'totalDistance']);
-    const isWeightDistanceMode = (mapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR') || (rawWeightNum > 0 && rawDistanceNum > 0);
+    const isWeightDistanceMode = (resolvedMapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR') || (rawWeightNum > 0 && rawDistanceNum > 0);
 
     // ── INTEGRATION-LAYER DIMENSIONAL COMPATIBILITY GUARD ────────────────────
     // Enforce physical dimension integrity between extracted activity and resolved factor:
@@ -224,7 +275,7 @@ export class CarbonEngineService {
     // ── ZERO-QUANTITY GUARD ──────────────────────────────────────────────────
     // If AI extraction failed to extract any numeric value, do NOT produce a
     // false 0 kgCO₂e calculation that would corrupt aggregates and forecasts.
-    if (rawQty === 0 && !isWeightDistanceMode && mapping.strategyKey !== 'EMPLOYEE_COMMUTE') {
+    if (rawQty === 0 && !isWeightDistanceMode && resolvedMapping.strategyKey !== 'EMPLOYEE_COMMUTE') {
       const isManualEntry = doc.source === 'MANUAL';
       if (!isManualEntry) {
         const errorMsg = `Zero activity quantity detected — AI extraction likely failed to extract numeric values from document fields. Raw fields: ${JSON.stringify(Object.keys(fields))}`;
@@ -282,7 +333,7 @@ export class CarbonEngineService {
           co2eValue = convertedQty.mul(new Decimal(factor.factorValue || 0.0921));
         } else {
           convertedQty = await this.unitConverter.convert(new Decimal(rawQty), rawUnit, factor.unit);
-          const basicStrategy = StrategyRegistry.get(mapping.strategyKey);
+          const basicStrategy = StrategyRegistry.get(resolvedMapping.strategyKey);
           co2eValue = basicStrategy.calculate(
             { value: convertedQty, unit: factor.unit, fields },
             new Decimal(factor.factorValue),
@@ -306,13 +357,13 @@ export class CarbonEngineService {
     const co2eLocNum = co2eLocation ? Number(co2eLocation.toFixed(4)) : null;
     const co2eMktNum = co2eMarket ? Number(co2eMarket.toFixed(4)) : null;
 
-    const calculationMethod = mapping.strategyKey;
+    const calculationMethod = resolvedMapping.strategyKey;
     const tonneVal = (co2e / 1000).toFixed(4);
 
     let formulaUsed = '';
     if (categoryCode.includes('ELECTRICITY')) {
       formulaUsed = `${rawQty.toLocaleString()} ${rawUnit} × ${factor.factorValue} kgCO₂e/${factor.unit} = ${co2e.toLocaleString()} kg CO₂e (${tonneVal} t CO₂e)`;
-    } else if (mapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR') {
+    } else if (resolvedMapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR') {
       const rawWeightNum = extractNumericField(fields, ['weightKg', 'weight', 'weightTons', 'weightTonnes', 'cargoWeight', 'totalWeight', 'quantity']);
       const rawDistanceNum = extractNumericField(fields, ['distanceKm', 'distance', 'distanceMiles', 'miles', 'km', 'totalDistance']);
       let weightTonnes = rawWeightNum >= 1000 ? rawWeightNum / 1000 : rawWeightNum;
