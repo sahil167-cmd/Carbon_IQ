@@ -2,8 +2,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutGrid,
   Truck,
-  Car,
-  TrendingUp,
   FileText,
   FileCheck2,
   Settings,
@@ -20,8 +18,6 @@ interface SideNavItem {
 const mainNavItems: SideNavItem[] = [
   { label: "Dashboard", icon: LayoutGrid, href: "/app/dashboard" },
   { label: "Shipments", icon: Truck, href: "/app/shipments" },
-  { label: "Fleet", icon: Car, href: "/app/fleet" },
-  { label: "Intelligence", icon: TrendingUp, href: "/app/analytics" },
   { label: "Documents", icon: FileText, href: "/app/documents" },
   { label: "BRSR Reports", icon: FileCheck2, href: "/app/reports/brsr" },
 ];

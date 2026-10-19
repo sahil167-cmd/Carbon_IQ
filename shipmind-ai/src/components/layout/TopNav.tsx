@@ -35,7 +35,7 @@ export default function TopNav() {
         </div>
         <div className="flex items-center gap-4">
           <Link
-            to="/register"
+            to="/login"
             className="px-5 py-2.5 text-[15px] font-medium text-primary hover:opacity-80 transition-all duration-200 active:scale-95"
           >
             Login

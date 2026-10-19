@@ -146,7 +146,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
                     <input
                       id="name"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="e.g. Sahil Borhade"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       className="w-full px-4 py-3 bg-white border border-outline-variant rounded-xl text-[15px] focus:outline-none focus:border-primary transition-all"
@@ -158,7 +158,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
                     <input
                       id="orgName"
                       type="text"
-                      placeholder="Acme Logistics Inc."
+                      placeholder="e.g. CarbonIQ Enterprise"
                       value={form.orgName}
                       onChange={(e) => setForm({ ...form, orgName: e.target.value })}
                       className="w-full px-4 py-3 bg-white border border-outline-variant rounded-xl text-[15px] focus:outline-none focus:border-primary transition-all"
@@ -171,7 +171,7 @@ export default function Register({ isLoginInitial = false }: RegisterProps) {
                 <input
                   id="email"
                   type="email"
-                  placeholder="john@company.com"
+                  placeholder="name@company.com"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="w-full px-4 py-3 bg-white border border-outline-variant rounded-xl text-[15px] focus:outline-none focus:border-primary transition-all"
