@@ -101,10 +101,13 @@ export class CanonicalActivityNormalizer {
     fields: RawExtractedFields;
     siteCountry?: string;
     rawText?: string;
+    fileName?: string;
   }): CanonicalActivity {
-    const { categoryCode, fields, siteCountry = 'US', rawText = '' } = params;
+    const { categoryCode, fields, siteCountry = 'US', rawText = '', fileName = '' } = params;
     const country = (siteCountry || 'US').toUpperCase();
     const upperText = (rawText || '').toUpperCase();
+    const upperFileName = (fileName || '').toUpperCase();
+    const combinedEvidence = `${upperText} ${upperFileName}`;
 
     // 1. Extract raw numerical activity indicators
     const rawUnit = String(
@@ -148,22 +151,22 @@ export class CanonicalActivityNormalizer {
     // 2. EVIDENCE-DRIVEN CATEGORY & SCOPE INFERENCE
     let effectiveCategory = (categoryCode || 'GENERAL').toUpperCase();
 
-    // Level 1: Explicit Document Headers & Protocol Declarations
-    if (upperText.includes('STATIONARY_COMBUSTION') || upperText.includes('STATIONARY COMBUSTION') || upperText.includes('STATIONARY FUEL') || upperText.includes('COMMERCIAL GENERATOR') || upperText.includes('BACKUP GENERATOR')) {
-      effectiveCategory = 'STATIONARY_COMBUSTION';
-    } else if (upperText.includes('MOBILE_COMBUSTION') || upperText.includes('MOBILE COMBUSTION') || upperText.includes('FLEET FUEL') || upperText.includes('FLEET VEHICLE') || upperText.includes('FLEET REFUELING')) {
-      effectiveCategory = 'MOBILE_COMBUSTION';
-    } else if (upperText.includes('PURCHASED ELECTRICITY') || upperText.includes('GRID ELECTRICITY') || upperText.includes('ELECTRICITY BILL') || upperText.includes('POWER UTILITY')) {
+    // Level 1: Explicit Document Headers, File Names & Protocol Declarations
+    if (combinedEvidence.includes('ELECTRICITY') || combinedEvidence.includes('POWER UTILITY') || combinedEvidence.includes('ELECTRICITY BILL') || combinedEvidence.includes('GRID ELECTRICITY') || combinedEvidence.includes('SCOPE2_ELECTRICITY') || combinedEvidence.includes('ELECTRIC_BILL') || combinedEvidence.includes('POWER_BILL')) {
       effectiveCategory = 'ELECTRICITY';
-    } else if (upperText.includes('BILL OF LADING') || upperText.includes('WAYBILL') || upperText.includes('FREIGHT WAYBILL') || upperText.includes('INTERMODAL') || upperText.includes('UPSTREAM_TRANSPORT') || upperText.includes('CARRIER')) {
+    } else if (combinedEvidence.includes('STATIONARY_COMBUSTION') || combinedEvidence.includes('STATIONARY COMBUSTION') || combinedEvidence.includes('STATIONARY FUEL') || combinedEvidence.includes('COMMERCIAL GENERATOR') || combinedEvidence.includes('BACKUP GENERATOR')) {
+      effectiveCategory = 'STATIONARY_COMBUSTION';
+    } else if (combinedEvidence.includes('MOBILE_COMBUSTION') || combinedEvidence.includes('MOBILE COMBUSTION') || combinedEvidence.includes('FLEET FUEL') || combinedEvidence.includes('FLEET VEHICLE') || combinedEvidence.includes('FLEET REFUELING')) {
+      effectiveCategory = 'MOBILE_COMBUSTION';
+    } else if (combinedEvidence.includes('BILL OF LADING') || combinedEvidence.includes('WAYBILL') || combinedEvidence.includes('FREIGHT WAYBILL') || combinedEvidence.includes('INTERMODAL') || combinedEvidence.includes('UPSTREAM_TRANSPORT') || combinedEvidence.includes('CARRIER')) {
       effectiveCategory = 'UPSTREAM_TRANSPORT';
-    } else if (upperText.includes('PURCHASED GOODS') || upperText.includes('RAW MATERIAL') || upperText.includes('PURCHASE ORDER') || upperText.includes('MATERIAL INVOICE')) {
+    } else if (combinedEvidence.includes('PURCHASED GOODS') || combinedEvidence.includes('RAW MATERIAL') || combinedEvidence.includes('PURCHASE ORDER') || combinedEvidence.includes('MATERIAL INVOICE')) {
       effectiveCategory = 'PURCHASED_GOODS';
-    } else if (upperText.includes('BUSINESS TRAVEL') || upperText.includes('AIR TRAVEL') || upperText.includes('HOTEL STAY')) {
+    } else if (combinedEvidence.includes('BUSINESS TRAVEL') || combinedEvidence.includes('AIR TRAVEL') || combinedEvidence.includes('HOTEL STAY')) {
       effectiveCategory = 'BUSINESS_TRAVEL';
-    } else if (upperText.includes('COMMUTE') || upperText.includes('EMPLOYEE COMMUTING')) {
+    } else if (combinedEvidence.includes('COMMUTE') || combinedEvidence.includes('EMPLOYEE COMMUTING')) {
       effectiveCategory = 'EMPLOYEE_COMMUTE';
-    } else if (upperText.includes('WASTE GENERATED') || upperText.includes('LANDFILL') || upperText.includes('WASTEWATER')) {
+    } else if (combinedEvidence.includes('WASTE GENERATED') || combinedEvidence.includes('LANDFILL') || combinedEvidence.includes('WASTEWATER')) {
       effectiveCategory = 'WASTE_MANAGEMENT';
     }
 
@@ -233,6 +236,12 @@ export class CanonicalActivityNormalizer {
       if (rawDistance > 0 && rawWeight > 0) {
         tonneKm = (rawWeight / 1000) * rawDistance;
         finalUnit = 'TONNE_KM';
+      } else if (rawWeight > 0 && (!rawDistance || rawDistance <= 0)) {
+        // Fallback standard domestic road freight haul (350 km) when transit distance is omitted on invoice
+        const estimatedDistanceKm = 350;
+        tonneKm = (rawWeight / 1000) * estimatedDistanceKm;
+        finalUnit = 'TONNE_KM';
+        logger.info({ rawWeight, estimatedDistanceKm, tonneKm }, 'Applied baseline regional freight distance (350 km) for calculation');
       }
 
       let subCat = 'ROAD_HEAVY_TRUCK';

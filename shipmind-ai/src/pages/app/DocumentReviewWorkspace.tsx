@@ -27,6 +27,7 @@ export default function DocumentReviewWorkspace() {
   const [materialType, setMaterialType] = useState<string>("STEEL");
   const [fuelType, setFuelType] = useState<string>("DIESEL");
   const [quantity, setQuantity] = useState<string>("");
+  const [distanceKm, setDistanceKm] = useState<string>("");
   const [unit, setUnit] = useState<string>("");
   const [justification, setJustification] = useState<string>("");
 
@@ -57,6 +58,9 @@ export default function DocumentReviewWorkspace() {
             const qVal = extData.quantity?.value ?? extData.quantity ?? extData.weightKg?.value ?? extData.weightKg ?? extData.kwhConsumed?.value ?? extData.kwhConsumed;
             if (qVal && qVal !== 'Missing') setQuantity(String(qVal));
 
+            const distVal = extData.distanceKm?.value ?? extData.distanceKm ?? extData.distance?.value ?? extData.distance;
+            if (distVal && distVal !== 'Missing') setDistanceKm(String(distVal));
+
             const uVal = extData.unit?.value ?? extData.unit;
             if (uVal && uVal !== 'Missing') setUnit(String(uVal));
           } else if (docData.manualData && Object.keys(docData.manualData).length > 0) {
@@ -64,6 +68,7 @@ export default function DocumentReviewWorkspace() {
             if (docData.manualData.materialType) setMaterialType(docData.manualData.materialType);
             if (docData.manualData.fuelType) setFuelType(docData.manualData.fuelType);
             if (docData.manualData.quantity) setQuantity(String(docData.manualData.quantity));
+            if (docData.manualData.distanceKm) setDistanceKm(String(docData.manualData.distanceKm));
             if (docData.manualData.unit) setUnit(String(docData.manualData.unit));
             if (docData.manualData.justification) setJustification(String(docData.manualData.justification));
           } else {
@@ -144,10 +149,14 @@ export default function DocumentReviewWorkspace() {
         corrections.justification = justification.trim();
       }
 
-      // Preserve freight transit distance and weight if present in extracted data
-      const extractedDist = fields.distanceKm?.value ?? fields.distanceKm ?? fields.distance?.value ?? fields.distance;
-      if (extractedDist && !isNaN(Number(extractedDist))) {
-        corrections.distanceKm = Number(extractedDist);
+      // Preserve or override freight transit distance and weight
+      if (distanceKm && distanceKm.trim().length > 0 && !isNaN(Number(distanceKm))) {
+        corrections.distanceKm = Number(distanceKm);
+      } else {
+        const extractedDist = fields.distanceKm?.value ?? fields.distanceKm ?? fields.distance?.value ?? fields.distance;
+        if (extractedDist && !isNaN(Number(extractedDist))) {
+          corrections.distanceKm = Number(extractedDist);
+        }
       }
       const extractedWeight = fields.weightKg?.value ?? fields.weightKg ?? fields.cargoWeight?.value ?? fields.cargoWeight;
       if (extractedWeight && !isNaN(Number(extractedWeight))) {
@@ -401,6 +410,25 @@ export default function DocumentReviewWorkspace() {
                   </select>
                 </div>
               </div>
+
+              {/* Transit Distance (km) for Transport & Freight */}
+              {(doc?.category?.code?.includes("TRANSPORT") || unit === "TONNE_KM" || fields.weightKg || fields.distanceKm) && (
+                <div className="p-4 bg-cyan-50/50 border border-cyan-200 rounded-xl space-y-1">
+                  <label className="text-[11px] font-bold text-cyan-900 uppercase tracking-wider block">
+                    Transit Haul Distance (km) *
+                  </label>
+                  <input
+                    type="number"
+                    value={distanceKm}
+                    onChange={(e) => setDistanceKm(e.target.value)}
+                    placeholder="e.g. 350, 820"
+                    className="w-full p-2.5 bg-white border border-cyan-300 rounded-lg text-sm font-bold text-primary focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  />
+                  <span className="text-[10px] text-cyan-700 block">
+                    Multiplied by cargo weight to calculate GLEC Tonne-Kilometers (tkm)
+                  </span>
+                </div>
+              )}
 
               {/* Hard Block Error Notice */}
               {isHardBlocked && (

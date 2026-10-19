@@ -212,18 +212,35 @@ export default function UploadWizard() {
                         </span>
                         <span className="text-xs text-emerald-400 font-semibold">• GLEC & DEFRA 2023</span>
                       </div>
-                      <h2 className="text-4xl font-black text-white mt-2">
-                        {calcResult?.co2e !== undefined ? `${calcResult.co2e.toLocaleString()} kg CO₂e` : "Emissions Processed"}
-                      </h2>
+                      {calcResult?.co2e !== undefined ? (
+                        <h2 className="text-4xl font-black text-white mt-2">
+                          {calcResult.co2e.toLocaleString()} kg CO₂e
+                        </h2>
+                      ) : (
+                        <div className="mt-2 space-y-1">
+                          <h2 className="text-3xl font-black text-amber-300">
+                            Verification Required
+                          </h2>
+                          <p className="text-xs text-amber-100/80">
+                            Fields extracted. Open Review Workspace to approve metrics and finalize emissions.
+                          </p>
+                        </div>
+                      )}
                       <p className="text-xs text-emerald-200/70 mt-1">
                         Document: <span className="font-semibold text-white">{fileName}</span> • Method: <span className="font-mono text-emerald-300">{calcResult?.calculationMethod || "GHG_PROTOCOL"}</span>
                       </p>
                     </div>
 
                     <div className="text-right">
-                      <span className="px-4 py-2 bg-emerald-500 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider block">
-                        ✓ PROCESSED & CALCULATED
-                      </span>
+                      {calcResult?.co2e !== undefined ? (
+                        <span className="px-4 py-2 bg-emerald-500 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider block">
+                          ✓ PROCESSED & CALCULATED
+                        </span>
+                      ) : (
+                        <span className="px-4 py-2 bg-amber-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider block">
+                          ⚠️ NEEDS HUMAN REVIEW
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -287,7 +304,7 @@ export default function UploadWizard() {
               </div>
 
               {/* Navigation Actions */}
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <button
                   onClick={() => {
                     setDone(false);
@@ -300,10 +317,17 @@ export default function UploadWizard() {
                   Upload Another File
                 </button>
                 <button
+                  onClick={() => navigate(`/app/documents/${createdDocId}/review`)}
+                  className="flex-1 py-3.5 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-500 transition-all flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-sm">fact_check</span>
+                  <span>Review & Approve Metrics</span>
+                </button>
+                <button
                   onClick={() => navigate(`/app/documents/${createdDocId}`)}
                   className="flex-1 py-3.5 bg-surface-container text-primary font-bold text-xs rounded-xl hover:bg-surface-container-high transition-all"
                 >
-                  View Document Audit Details
+                  View Audit Details
                 </button>
               </div>
             </div>
@@ -393,6 +417,20 @@ export default function UploadWizard() {
                       const file = e.target.files?.[0];
                       if (file) {
                         setFileName(file.name);
+                        const lower = file.name.toLowerCase();
+                        let targetCategory: Category | undefined;
+                        if (lower.includes('electric') || lower.includes('utility') || lower.includes('power') || lower.includes('kwh') || lower.includes('scope2')) {
+                          targetCategory = categories.find((c) => c.code === 'ELECTRICITY' || c.code.includes('ELECTRIC'));
+                        } else if (lower.includes('fuel') || lower.includes('diesel') || lower.includes('petrol') || lower.includes('gas') || lower.includes('generator') || lower.includes('combustion') || lower.includes('scope1')) {
+                          targetCategory = categories.find((c) => c.code === 'STATIONARY_COMBUSTION' || c.code === 'MOBILE_COMBUSTION');
+                        } else if (lower.includes('freight') || lower.includes('bol') || lower.includes('transport') || lower.includes('shipping') || lower.includes('cargo') || lower.includes('scope3_freight') || lower.includes('waybill')) {
+                          targetCategory = categories.find((c) => c.code === 'UPSTREAM_TRANSPORT' || c.code.includes('TRANSPORT'));
+                        } else if (lower.includes('goods') || lower.includes('material') || lower.includes('steel') || lower.includes('plastic') || lower.includes('paper') || lower.includes('cement')) {
+                          targetCategory = categories.find((c) => c.code === 'PURCHASED_GOODS');
+                        }
+                        if (targetCategory) {
+                          setSelectedCategoryId(targetCategory.id);
+                        }
                       }
                     }}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"

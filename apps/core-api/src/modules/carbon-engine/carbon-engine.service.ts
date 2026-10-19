@@ -114,6 +114,7 @@ export class CarbonEngineService {
       fields,
       siteCountry: doc.site?.country,
       rawText: (extracted as any)?.rawText,
+      fileName: doc.fileName,
     });
 
     if (canonical.needsReview) {

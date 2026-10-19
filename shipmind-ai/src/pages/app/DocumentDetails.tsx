@@ -89,11 +89,14 @@ export default function DocumentDetails() {
     setCalculating(true);
     setCalcError("");
     try {
-      await apiPost(`/api/v1/internal/calc/run`, {
+      const res: any = await apiPost(`/api/v1/internal/calc/run`, {
         documentId: doc.id,
         organizationId: doc.organizationId,
       });
       await loadAllDetails();
+      if (!res || res.co2e === undefined) {
+        setCalcError("This document has incomplete fields or requires reviewer approval. Click 'Review Workspace' above to verify values.");
+      }
     } catch (err: any) {
       setCalcError(`Calculation failed: ${err.message}`);
     } finally {
@@ -228,20 +231,29 @@ export default function DocumentDetails() {
                   onClick={() => setIsVisualizationOpen(true)}
                 />
               ) : (
-                <button
-                  onClick={handleTriggerCalculation}
-                  disabled={calculating}
-                  className="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-2"
-                >
-                  {calculating ? (
-                    <span>Executing Engine...</span>
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-base">bolt</span>
-                      <span>Calculate Emissions Now</span>
-                    </>
-                  )}
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={handleTriggerCalculation}
+                    disabled={calculating}
+                    className="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-2"
+                  >
+                    {calculating ? (
+                      <span>Executing Engine...</span>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-base">bolt</span>
+                        <span>Calculate Emissions Now</span>
+                      </>
+                    )}
+                  </button>
+                  <Link
+                    to={`/app/documents/${doc.id}/review`}
+                    className="px-5 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5"
+                  >
+                    <span className="material-symbols-outlined text-base">fact_check</span>
+                    <span>Review & Edit Fields</span>
+                  </Link>
+                </div>
               )}
             </div>
 
