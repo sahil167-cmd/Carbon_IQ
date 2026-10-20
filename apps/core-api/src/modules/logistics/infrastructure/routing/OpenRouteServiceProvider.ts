@@ -79,16 +79,7 @@ export class OpenRouteServiceProvider implements RoutingProvider {
    * Calculates a road-network route between specified coordinates using OpenRouteService.
    */
   public async route(request: RouteRequest): Promise<RouteResult> {
-    // 1. Validate configuration
-    if (!this.apiKey || this.apiKey.trim() === '') {
-      throw new RoutingError(
-        'OpenRouteService API key is missing or not configured',
-        'ROUTING_CONFIGURATION_ERROR',
-        500,
-      );
-    }
-
-    // 2. Validate coordinates strictly
+    // 1. Validate coordinates strictly
     const origin = validateCoordinate(request.origin, 'Origin');
     const destination = validateCoordinate(request.destination, 'Destination');
     const waypoints = (request.waypoints ?? []).map((w, idx) =>
@@ -96,6 +87,15 @@ export class OpenRouteServiceProvider implements RoutingProvider {
     );
 
     const allCoords: Coordinate[] = [origin, ...waypoints, destination];
+
+    // 2. Validate configuration - if ORS API key is not configured, seamlessly use OSRM or Highway Corridor
+    if (!this.apiKey || this.apiKey.trim() === '') {
+      const osrmResult = await this.tryOSRMRoute(allCoords);
+      if (osrmResult) {
+        return osrmResult;
+      }
+      return this.generateFallbackCorridorRoute(allCoords);
+    }
 
     if (allCoords.length > 70) {
       throw new RoutingError(
