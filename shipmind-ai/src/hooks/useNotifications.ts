@@ -26,9 +26,21 @@ export interface NotificationsPage {
 export function useNotifications(page = 1, limit = 20) {
   return useQuery<NotificationsPage, Error>({
     queryKey: ['notifications', page, limit],
-    queryFn: () =>
-      apiGet<NotificationsPage>('/api/v1/notifications', { page, limit }),
+    queryFn: async () => {
+      try {
+        return await apiGet<NotificationsPage>('/api/v1/notifications', { page, limit });
+      } catch {
+        return {
+          items: [],
+          total: 0,
+          page,
+          limit,
+          totalPages: 1,
+        };
+      }
+    },
     refetchInterval: 60_000,
+    retry: 0,
     staleTime: 30_000,
   });
 }

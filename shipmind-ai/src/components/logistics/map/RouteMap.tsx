@@ -52,12 +52,17 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       attributionControl: true,
     });
 
-    // Standard OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Fast CartoDB Voyager tiles with fallback and silent error handling
+    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
+      subdomains: 'abcd',
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors | CarbonIQ Logistics',
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | CarbonIQ',
     }).addTo(map);
+
+    tileLayer.on('tileerror', () => {
+      // Silently ignore tile load errors if offline or blocked by college firewall
+    });
 
     // Add top-right zoom controls
     L.control.zoom({ position: 'topright' }).addTo(map);
