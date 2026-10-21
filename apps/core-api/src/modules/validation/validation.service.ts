@@ -218,6 +218,21 @@ export class ValidationService {
       logger.error({ documentId: doc.id, error: err.message }, 'Failed to enqueue calculation job');
     }
 
+    // Direct synchronous calculation fallback (Render / standalone deployments without background workers)
+    try {
+      const { CarbonEngineService } = await import('../carbon-engine/carbon-engine.service');
+      const { CarbonEngineRepository } = await import('../carbon-engine/carbon-engine.repository');
+      const { NotificationService } = await import('../../services/notification.service');
+      const prisma = this.repo['prisma'];
+      const calcRepo = new CarbonEngineRepository(prisma, doc.organizationId);
+      const notifService = new NotificationService(prisma);
+      const engineService = new CarbonEngineService(calcRepo, this.docRepo, this.aiRepo, this.orgRepo, notifService);
+      await engineService.calculateApprovedRecord(doc.id, doc.organizationId);
+      logger.info({ documentId: doc.id }, 'Synchronous calculation completed post-approval');
+    } catch (calcErr: any) {
+      logger.warn({ documentId: doc.id, error: calcErr.message }, 'Direct synchronous calculation attempt post-approval finished');
+    }
+
     await this.orgRepo.logAuditAction({
       userId,
       organizationId: doc.organizationId,
