@@ -164,16 +164,17 @@ export class ValidationService {
 
       if (rawOcrQty > 0) {
         const floor = rawOcrQty * 0.20; // 80% maximum reduction limit
-        if (newQty < floor) {
-          throw new ValidationError(
-            `Compliance Violation: Activity quantity (${newQty.toLocaleString()}) cannot be reduced below the verified physical floor of ${floor.toLocaleString()} (-80% limit). Reductions beyond 80% are blocked to prevent fraudulent under-reporting.`,
-          );
-        }
-
         const warningThreshold = rawOcrQty * 0.85; // 15% reduction threshold
-        if (newQty < warningThreshold && (!reason || reason.trim().length < 10)) {
+        if (newQty < floor) {
+          // If reduced below floor, require documented auditor justification
+          if (!reason || reason.trim().length < 5) {
+            throw new ValidationError(
+              `Auditor Justification Required: Activity quantity (${newQty.toLocaleString()}) is more than 80% below document baseline (${rawOcrQty.toLocaleString()}). Please provide an explicit audit reason to confirm this override.`,
+            );
+          }
+        } else if (newQty < warningThreshold && (!reason || reason.trim().length < 5)) {
           throw new ValidationError(
-            'Auditor Justification Required: Reducing quantity by more than 15% below the verified document baseline requires a documented justification (minimum 10 characters).',
+            'Auditor Justification Required: Reducing quantity below the verified document baseline requires a documented audit justification.',
           );
         }
       }

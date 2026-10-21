@@ -118,7 +118,7 @@ export class CarbonEngineRepository extends TenantScopedRepository {
       await this.refreshEmissionsAggregate(tx, data.organizationId, data.siteId, data.reportingPeriodId);
 
       return Object.assign(calculated, { formulaUsed: data.formulaUsed });
-    });
+    }, { timeout: 30000, maxWait: 10000 });
   }
 
   // ── Rollup Aggregate Calculations (Fixed-precision math) ──────────────────────

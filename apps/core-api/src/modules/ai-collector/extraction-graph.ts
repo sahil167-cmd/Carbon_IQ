@@ -288,17 +288,23 @@ export class ExtractionGraph {
       lineItems.push({ lineIndex: idx + 1, massKg: kg });
     });
 
+    const isTransportOrFreight = cat === 'UPSTREAM_TRANSPORT' || cat === 'DOWNSTREAM_TRANSPORT' || cat === 'ROAD_FREIGHT' || text.includes('BILL OF LADING') || text.includes('WAYBILL') || text.includes('FREIGHT');
+
     if (!totalWeightVal && lineSum > 0) {
       totalWeightVal = lineSum;
-    } else if (!totalWeightVal) {
-      const singleWeightMatch = findMatch([/([0-9,]+)\s*kg/i]);
+    } else if (!totalWeightVal && (isTransportOrFreight || cat === 'PURCHASED_GOODS')) {
+      // Exclude emission factors like kgCO2e or kg/m3 from being parsed as cargo weight
+      const singleWeightMatch = findMatch([
+        /(?:total weight|cargo weight|weightKg|net weight|gross weight)\s*:?\s*([0-9,]+(?:\.[0-9]+)?)\s*kg/i,
+        /([0-9,]+(?:\.[0-9]+)?)\s*kg(?!\s*(?:co2|co2e|\/))/i,
+      ]);
       if (singleWeightMatch) totalWeightVal = parseFloat(singleWeightMatch.replace(/,/g, ''));
     }
 
-    if (distVal) {
+    if (distVal && isTransportOrFreight) {
       fields.distanceKm = { value: distVal, confidence: 0.98, needsReview: false };
     }
-    if (totalWeightVal) {
+    if (totalWeightVal && (isTransportOrFreight || cat === 'PURCHASED_GOODS')) {
       fields.weightKg = { value: totalWeightVal, confidence: 0.98, needsReview: false };
     }
 

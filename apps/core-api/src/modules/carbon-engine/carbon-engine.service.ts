@@ -219,9 +219,25 @@ export class CarbonEngineService {
     const rawQty: number = canonical.quantity;
     const rawUnit: string = canonical.unit || factor.unit;
 
-    const rawWeightNum = extractNumericField(fields, ['weightKg', 'weight', 'weightTons', 'weightTonnes', 'cargoWeight', 'totalWeight']);
-    const rawDistanceNum = extractNumericField(fields, ['distanceKm', 'distance', 'distanceMiles', 'miles', 'km', 'totalDistance']);
-    const isWeightDistanceMode = (resolvedMapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR') || (rawWeightNum > 0 && rawDistanceNum > 0);
+    // STRICT: Only read weight/distance fields if this document is confirmed transport/freight
+    // This prevents stationary combustion / utility / purchased goods bills from accidentally
+    // activating the tonne-km calculation path due to incidentally-extracted weight/distance values.
+    const isTransportCategory =
+      canonical.category === 'UPSTREAM_TRANSPORT' ||
+      canonical.category === 'DOWNSTREAM_TRANSPORT' ||
+      canonical.category === 'FREIGHT' ||
+      resolvedMapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR';
+
+    // Weight and distance are ONLY extracted when this is a confirmed transport document
+    const rawWeightNum = isTransportCategory
+      ? extractNumericField(fields, ['weightKg', 'weight', 'weightTons', 'weightTonnes', 'cargoWeight', 'totalWeight'])
+      : 0;
+    const rawDistanceNum = isTransportCategory
+      ? extractNumericField(fields, ['distanceKm', 'distance', 'distanceMiles', 'miles', 'totalDistance'])
+      : 0;
+
+    // Weight-Distance mode is ONLY triggered by the explicit strategy key — never by incidental field presence
+    const isWeightDistanceMode = resolvedMapping.strategyKey === 'WEIGHT_DISTANCE_FACTOR' && isTransportCategory;
 
     // ── INTEGRATION-LAYER DIMENSIONAL COMPATIBILITY GUARD ────────────────────
     // Enforce physical dimension integrity between extracted activity and resolved factor:

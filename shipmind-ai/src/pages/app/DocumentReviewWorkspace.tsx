@@ -55,11 +55,19 @@ export default function DocumentReviewWorkspace() {
               const fval = typeof extData.fuelType === "object" ? extData.fuelType.value : extData.fuelType;
               if (fval && fval !== 'Missing') setFuelType(fval || "DIESEL");
             }
-            const qVal = extData.quantity?.value ?? extData.quantity ?? extData.weightKg?.value ?? extData.weightKg ?? extData.kwhConsumed?.value ?? extData.kwhConsumed;
+            // NOTE: quantity is populated ONLY from explicit quantity/consumption fields.
+            // weightKg is intentionally excluded here — it is a freight field and must NOT
+            // be used as the activity quantity for stationary combustion / utility documents.
+            const qVal = extData.quantity?.value ?? extData.quantity ?? extData.kwhConsumed?.value ?? extData.kwhConsumed ?? extData.volume?.value ?? extData.volume ?? extData.liters?.value ?? extData.liters ?? extData.m3?.value ?? extData.m3 ?? extData.therms?.value ?? extData.therms ?? extData.mmbtu?.value ?? extData.mmbtu;
             if (qVal && qVal !== 'Missing') setQuantity(String(qVal));
 
-            const distVal = extData.distanceKm?.value ?? extData.distanceKm ?? extData.distance?.value ?? extData.distance;
-            if (distVal && distVal !== 'Missing') setDistanceKm(String(distVal));
+            // Distance pre-fill is ONLY applied for transport/freight documents
+            const catCodeForDist = docData.category?.code || '';
+            const isTransportDoc = catCodeForDist.includes('TRANSPORT') || catCodeForDist.includes('FREIGHT') || catCodeForDist.includes('LOGISTICS');
+            if (isTransportDoc) {
+              const distVal = extData.distanceKm?.value ?? extData.distanceKm ?? extData.distance?.value ?? extData.distance;
+              if (distVal && distVal !== 'Missing') setDistanceKm(String(distVal));
+            }
 
             const uVal = extData.unit?.value ?? extData.unit;
             if (uVal && uVal !== 'Missing') setUnit(String(uVal));
@@ -75,23 +83,23 @@ export default function DocumentReviewWorkspace() {
             setFields({});
           }
 
-          // Category-based baseline pre-fills if unextracted
+          // Category-based unit/type hints — never pre-fill quantity with made-up numbers.
+          // The reviewer must enter the actual value from the document.
           const catCode = docData.category?.code || '';
           const fName = (docData.fileName || '').toUpperCase();
           if (!extData || !extData.quantity) {
             if (catCode.includes('TRANSPORT') || fName.includes('FREIGHT') || fName.includes('BOL') || fName.includes('LOGISTICS')) {
-              setQuantity('30000');
-              setDistanceKm('1500');
+              // Leave quantity blank — reviewer must enter actual cargo weight + distance
               setUnit('TONNE_KM');
             } else if (catCode.includes('ELECTRICITY') || fName.includes('ELECTRIC') || fName.includes('POWER') || fName.includes('UTILITY')) {
-              setQuantity(fName.includes('COMPLEX') ? '85000' : '12450');
+              // Leave quantity blank — reviewer must enter actual kWh reading from bill
               setUnit('KWH');
             } else if (catCode.includes('COMBUSTION') || fName.includes('DIESEL') || fName.includes('FLEET') || fName.includes('FUEL')) {
-              setQuantity('2500');
+              // Leave quantity blank — reviewer must enter actual fuel consumed
               setUnit('LITERS');
               setFuelType('DIESEL');
             } else if (catCode.includes('PURCHASED_GOODS') || fName.includes('STEEL')) {
-              setQuantity('50000');
+              // Leave quantity blank — reviewer must enter actual purchase weight
               setUnit('KG');
               setMaterialType('STEEL_PRIMARY');
             }
@@ -128,19 +136,16 @@ export default function DocumentReviewWorkspace() {
     : 0;
 
   // Logical Anti-Greenwashing Boundaries
-  const minPermissibleFloor = hasOcrBaseline ? Math.round(ocrBaselineQty * 0.20 * 100) / 100 : 0; // Hard -80% anti-fraud floor
-  const isHardBlocked = hasOcrBaseline && parsedQty > 0 && parsedQty < minPermissibleFloor;
-  const isUnderReportingWarning = hasOcrBaseline && parsedQty > 0 && deviationPct < -15 && !isHardBlocked;
+  const minPermissibleFloor = hasOcrBaseline ? Math.round(ocrBaselineQty * 0.20 * 100) / 100 : 0; // -80% threshold
+  const isBelowFloor = hasOcrBaseline && parsedQty > 0 && parsedQty < minPermissibleFloor;
+  const isUnderReportingWarning = hasOcrBaseline && parsedQty > 0 && (deviationPct < -15 || isBelowFloor);
+  const isHardBlocked = false; // We allow explicit auditor justification rather than permanently deadlocking the UI
   const isZeroOrNegative = parsedQty <= 0 && quantity.trim().length > 0;
 
   const handleApproveAndCalculate = async () => {
     if (!doc) return;
-    if (isHardBlocked) {
-      setMsg(`Compliance Violation: Quantity cannot be reduced below the verified physical floor of ${minPermissibleFloor.toLocaleString()} ${unit}.`);
-      return;
-    }
-    if (isUnderReportingWarning && (!justification || justification.trim().length < 10)) {
-      setMsg("Mandatory Auditor Justification required: Please provide at least 10 characters explaining why the verified OCR quantity was reduced.");
+    if (isUnderReportingWarning && (!justification || justification.trim().length < 5)) {
+      setMsg("Mandatory Auditor Justification required: Please provide an explanation before approving an activity quantity below the verified OCR document baseline.");
       return;
     }
 
@@ -159,8 +164,32 @@ export default function DocumentReviewWorkspace() {
       if (quantity && quantity.trim().length > 0) {
         if (!isNaN(parsedQty) && parsedQty > 0) {
           corrections.quantity = parsedQty;
-          if (cat === "PURCHASED_GOODS" || fields.weightKg) {
+
+          // Map quantity to the correct domain-specific field based on unit
+          // IMPORTANT: weightKg is ONLY set for PURCHASED_GOODS and TRANSPORT
+          // categories — never for combustion/utility documents, to prevent
+          // the weight-distance freight calculation path from activating.
+          if (unit === "M3") {
+            corrections.m3 = parsedQty;
+            corrections.volume = parsedQty;
+          } else if (unit === "LITERS") {
+            corrections.volume = parsedQty;
+            corrections.liters = parsedQty;
+          } else if (unit === "GALLONS") {
+            corrections.volume = parsedQty;
+            corrections.gallons = parsedQty;
+          } else if (unit === "KWH") {
+            corrections.kwh = parsedQty;
+            corrections.kwhConsumed = parsedQty;
+          } else if (unit === "MMBTU") {
+            corrections.mmbtu = parsedQty;
+          } else if (unit === "THERMS") {
+            corrections.therms = parsedQty;
+          } else if (unit === "KG" && cat === "PURCHASED_GOODS") {
+            // Only set weightKg for purchased goods — mass-based material quantities
             corrections.weightKg = parsedQty;
+          } else if (unit === "TONNES" && cat === "PURCHASED_GOODS") {
+            corrections.weightKg = parsedQty * 1000; // convert tonnes -> kg
           }
         }
       }
@@ -171,18 +200,21 @@ export default function DocumentReviewWorkspace() {
         corrections.justification = justification.trim();
       }
 
-      // Preserve or override freight transit distance and weight
-      if (distanceKm && distanceKm.trim().length > 0 && !isNaN(Number(distanceKm))) {
-        corrections.distanceKm = Number(distanceKm);
-      } else {
-        const extractedDist = fields.distanceKm?.value ?? fields.distanceKm ?? fields.distance?.value ?? fields.distance;
-        if (extractedDist && !isNaN(Number(extractedDist))) {
-          corrections.distanceKm = Number(extractedDist);
+      // Preserve or override freight transit distance and weight ONLY for transport / freight
+      const isTransport = cat.includes("TRANSPORT") || cat.includes("FREIGHT") || cat.includes("LOGISTICS") || unit === "TONNE_KM";
+      if (isTransport) {
+        if (distanceKm && distanceKm.trim().length > 0 && !isNaN(Number(distanceKm))) {
+          corrections.distanceKm = Number(distanceKm);
+        } else {
+          const extractedDist = fields.distanceKm?.value ?? fields.distanceKm ?? fields.distance?.value ?? fields.distance;
+          if (extractedDist && !isNaN(Number(extractedDist))) {
+            corrections.distanceKm = Number(extractedDist);
+          }
         }
-      }
-      const extractedWeight = fields.weightKg?.value ?? fields.weightKg ?? fields.cargoWeight?.value ?? fields.cargoWeight;
-      if (extractedWeight && !isNaN(Number(extractedWeight))) {
-        corrections.weightKg = Number(extractedWeight);
+        const extractedWeight = fields.weightKg?.value ?? fields.weightKg ?? fields.cargoWeight?.value ?? fields.cargoWeight;
+        if (extractedWeight && !isNaN(Number(extractedWeight))) {
+          corrections.weightKg = Number(extractedWeight);
+        }
       }
 
       const approvalReason = justification && justification.trim().length > 0
@@ -433,8 +465,8 @@ export default function DocumentReviewWorkspace() {
                 </div>
               </div>
 
-              {/* Transit Distance (km) for Transport & Freight */}
-              {(doc?.category?.code?.includes("TRANSPORT") || unit === "TONNE_KM" || fields.weightKg || fields.distanceKm) && (
+              {/* Transit Distance (km) for Transport & Freight ONLY */}
+              {(doc?.category?.code?.includes("TRANSPORT") || doc?.category?.code?.includes("FREIGHT") || doc?.category?.code?.includes("LOGISTICS") || unit === "TONNE_KM") && (
                 <div className="p-4 bg-cyan-50/50 border border-cyan-200 rounded-xl space-y-1">
                   <label className="text-[11px] font-bold text-cyan-900 uppercase tracking-wider block">
                     Transit Haul Distance (km) *
@@ -480,9 +512,9 @@ export default function DocumentReviewWorkspace() {
                     placeholder="Enter audit reason (e.g., invoice covers multiple facility sites, non-emission charges deducted, partial shipment cancellation)..."
                     className="w-full p-2.5 bg-white border border-amber-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
-                  {justification.trim().length < 10 && (
+                  {justification.trim().length < 5 && (
                     <span className="text-[10px] text-amber-700 font-bold block">
-                      * Minimum 10 characters required ({justification.trim().length}/10)
+                      * Brief audit explanation required ({justification.trim().length}/5 characters)
                     </span>
                   )}
                 </div>
@@ -550,9 +582,9 @@ export default function DocumentReviewWorkspace() {
 
               <button
                 onClick={handleApproveAndCalculate}
-                disabled={submitting || isHardBlocked || (isUnderReportingWarning && justification.trim().length < 10) || isZeroOrNegative}
+                disabled={submitting || (isUnderReportingWarning && justification.trim().length < 5) || isZeroOrNegative}
                 className={`w-full py-4 font-bold text-xs rounded-xl shadow-md transition-all flex justify-center items-center gap-2 ${
-                  isHardBlocked || (isUnderReportingWarning && justification.trim().length < 10) || isZeroOrNegative
+                  (isUnderReportingWarning && justification.trim().length < 5) || isZeroOrNegative
                     ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95'
                 }`}
@@ -562,12 +594,7 @@ export default function DocumentReviewWorkspace() {
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Executing GHG Engine...</span>
                   </>
-                ) : isHardBlocked ? (
-                  <>
-                    <span className="material-symbols-outlined text-base">block</span>
-                    <span>Blocked: Exceeds Anti-Greenwashing Floor</span>
-                  </>
-                ) : isUnderReportingWarning && justification.trim().length < 10 ? (
+                ) : isUnderReportingWarning && justification.trim().length < 5 ? (
                   <>
                     <span className="material-symbols-outlined text-base">edit_note</span>
                     <span>Enter Justification to Enable Approval</span>

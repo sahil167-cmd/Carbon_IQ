@@ -121,19 +121,36 @@ export class CanonicalActivityNormalizer {
 
     let rawQty: number | null = null;
     const qtyCandidates = [
+      // 1. Explicit quantity / activity fields (most specific first)
       fields.quantity,
       fields.tonneKm,
       fields.kwhConsumed,
       fields.kwh,
-      fields.amount,
-      fields.weightKg,
+      // 2. Domain-specific physical measurement fields
+      //    These MUST come before 'amount' which is often billing cost, not consumption
       fields.volume,
       fields.liters,
       fields.gallons,
       fields.m3,
       fields.therms,
       fields.mmbtu,
+      fields.gasVolume,
+      fields.fuelVolume,
+      fields.consumption,
+      fields.totalConsumption,
+      fields.usageM3,
+      fields.naturalGasConsumed,
+      fields.gasConsumed,
+      // 3. 'amount' is intentionally LAST — it's ambiguous (could be invoice cost in ₹/$ not consumption units)
+      // Only use it as a final fallback when all physical measurement fields are missing/zero
+      fields.amount,
+      // NOTE: weightKg is intentionally EXCLUDED from this candidate list.
+      // It is a freight/transport dimension and is consumed via the rawWeight path in the
+      // TRANSPORT branch below. Including it here causes utility/combustion docs that
+      // happen to have a weight field extracted (e.g. from "kgCO2e" or "kg/m³" strings)
+      // to produce astronomically inflated emission results.
     ];
+
     for (const cand of qtyCandidates) {
       const val = getFieldValue(cand);
       if (val !== null && val !== undefined && val !== '' && val !== 'Missing') {
@@ -171,8 +188,12 @@ export class CanonicalActivityNormalizer {
     }
 
     // Level 2: Structured Activity Evidence Override
-    if (effectiveCategory === 'GENERAL' || effectiveCategory === 'BUSINESS_TRAVEL' || effectiveCategory === 'PURCHASED_GOODS') {
-      if (getFieldValue(fields.tonneKm) > 0 || (rawDistance > 0 && rawWeight > 0) || rawUnit === 'TONNE_KM') {
+    // ONLY applies when the category is ambiguous (GENERAL or BUSINESS_TRAVEL).
+    // PURCHASED_GOODS and already-identified categories must NOT be overridden by
+    // incidental presence of weight/distance fields in the extracted data.
+    if (effectiveCategory === 'GENERAL' || effectiveCategory === 'BUSINESS_TRAVEL') {
+      if (getFieldValue(fields.tonneKm) > 0 || rawUnit === 'TONNE_KM') {
+        // Explicit tonne-km unit or tonne-km field \u2014 confirmed freight
         effectiveCategory = 'UPSTREAM_TRANSPORT';
       } else if (getFieldValue(fields.kwhConsumed) > 0 || rawUnit === 'KWH' || rawUnit === 'MWH') {
         effectiveCategory = 'ELECTRICITY';
@@ -196,23 +217,9 @@ export class CanonicalActivityNormalizer {
 
       const unit = rawUnit || 'KWH';
       if (!rawQty || rawQty <= 0) {
-        if (combinedEvidence.includes('ELECTRIC') || combinedEvidence.includes('POWER') || combinedEvidence.includes('UTILITY') || combinedEvidence.includes('ENERGY') || combinedEvidence.includes('GRID')) {
-          const fallbackKwh = combinedEvidence.includes('COMPLEX') ? 85000 : 12450;
-          logger.info({ fileName, fallbackKwh }, 'Applied authoritative electricity baseline from document evidence');
-          return {
-            scope: ScopeType.SCOPE_2,
-            category: 'ELECTRICITY',
-            subCategory: gridSubCat,
-            activityType: 'GRID_ELECTRICITY',
-            quantity: fallbackKwh,
-            unit: 'KWH',
-            rawUnit: 'KWH',
-            region: country,
-            needsReview: false,
-            sourceEvidence: { ...fields, autoBaseline: true, quantity: fallbackKwh, unit: 'KWH' },
-          };
-        }
-
+        // Do NOT apply an auto-baseline for electricity.
+        // Using a fabricated KWH figure (e.g. 12450 KWH) produces wrong emission values.
+        // Route to human review so the reviewer can enter the actual meter reading.
         return {
           scope: ScopeType.SCOPE_2,
           category: 'ELECTRICITY',
@@ -223,7 +230,7 @@ export class CanonicalActivityNormalizer {
           rawUnit,
           region: country,
           needsReview: true,
-          blockReason: 'Missing electricity consumption quantity (KWH) — routing to Human Review',
+          blockReason: 'Missing electricity consumption quantity (KWH) — please enter the actual kWh reading in the Review Workspace',
           sourceEvidence: fields,
         };
       }
@@ -273,28 +280,9 @@ export class CanonicalActivityNormalizer {
       }
 
       if (!tonneKm || tonneKm <= 0) {
-        // Intelligent document evidence fallback (e.g. complex_scope3_freight_bol.pdf, freight invoices)
-        if (combinedEvidence.includes('FREIGHT') || combinedEvidence.includes('BOL') || combinedEvidence.includes('CARGO') || combinedEvidence.includes('LOGISTICS') || combinedEvidence.includes('APEX') || combinedEvidence.includes('TRANSPORT')) {
-          const fallbackWeightKg = 20000;
-          const fallbackDistKm = 1500;
-          const fallbackTkm = (fallbackWeightKg / 1000) * fallbackDistKm; // 30,000 tonne-km
-          logger.info({ fileName, fallbackTkm }, 'Applied authoritative freight baseline from document evidence');
-          return {
-            scope: ScopeType.SCOPE_3,
-            category: 'UPSTREAM_TRANSPORT',
-            subCategory: subCat,
-            activityType: 'FREIGHT_TRANSPORT',
-            quantity: fallbackTkm,
-            unit: 'TONNE_KM',
-            rawUnit: 'TONNE_KM',
-            distanceKm: fallbackDistKm,
-            weightKg: fallbackWeightKg,
-            region: 'GLOBAL',
-            needsReview: false,
-            sourceEvidence: { ...fields, autoBaseline: true, distanceKm: fallbackDistKm, weightKg: fallbackWeightKg },
-          };
-        }
-
+        // Do NOT apply an auto-baseline for freight transport.
+        // Using a fabricated tonne-km figure (e.g. 30,000 tkm) produces wrong emission values.
+        // Route to human review so the reviewer can enter the actual cargo weight and distance.
         return {
           scope: ScopeType.SCOPE_3,
           category: 'UPSTREAM_TRANSPORT',
@@ -307,10 +295,12 @@ export class CanonicalActivityNormalizer {
           weightKg: rawWeight > 0 ? rawWeight : null,
           region: 'GLOBAL',
           needsReview: true,
-          blockReason: 'Missing cargo weight (KG) or transit distance (KM) for freight calculation',
+          blockReason: 'Missing cargo weight (KG) or transit distance (KM) for freight calculation — please enter both fields in the Review Workspace',
           sourceEvidence: fields,
         };
       }
+
+
 
       return {
         scope: ScopeType.SCOPE_3,
@@ -375,24 +365,9 @@ export class CanonicalActivityNormalizer {
       }
 
       if (!rawQty || rawQty <= 0) {
-        if (combinedEvidence.includes('STEEL') || combinedEvidence.includes('GOODS') || combinedEvidence.includes('MATERIAL')) {
-          const fallbackMatQty = 50000;
-          logger.info({ fileName, fallbackMatQty }, 'Applied authoritative purchased goods baseline from document evidence');
-          return {
-            scope: ScopeType.SCOPE_3,
-            category: 'PURCHASED_GOODS',
-            subCategory: resolvedMat,
-            activityType: 'PURCHASED_MATERIAL',
-            materialType: resolvedMat,
-            quantity: fallbackMatQty,
-            unit: 'KG',
-            rawUnit: 'KG',
-            region: country,
-            needsReview: false,
-            sourceEvidence: { ...fields, autoBaseline: true, quantity: fallbackMatQty, unit: 'KG' },
-          };
-        }
-
+        // Do NOT apply an auto-baseline for purchased goods.
+        // Using a fabricated weight (e.g. 50,000 KG) produces unrealistic emission values.
+        // Route to human review so the reviewer can enter the actual purchase weight.
         return {
           scope: ScopeType.SCOPE_3,
           category: 'PURCHASED_GOODS',
@@ -404,7 +379,7 @@ export class CanonicalActivityNormalizer {
           rawUnit,
           region: country,
           needsReview: true,
-          blockReason: 'Missing purchase material weight or quantity — routing to Human Review',
+          blockReason: 'Missing purchase material weight or quantity — please enter the actual purchase quantity in the Review Workspace',
           sourceEvidence: fields,
         };
       }
@@ -496,20 +471,22 @@ export class CanonicalActivityNormalizer {
     const subCategory = FUEL_MAP[resolvedFuelKey]?.subCategory || resolvedFuelKey;
 
     if (!rawQty || rawQty <= 0) {
-      const fallbackFuelQty = unit === 'MMBTU' ? 1500 : 2500;
-      logger.info({ fileName, fallbackFuelQty, subCategory }, 'Applied authoritative combustion baseline from document evidence');
+      // Do NOT apply an auto-baseline for combustion/fuel documents.
+      // Fabricated quantities (e.g. 2500 L / 1500 MMBTU) produce unrealistic emission values.
+      // Route to human review so the reviewer can enter the correct consumption figure.
       return {
         scope: ScopeType.SCOPE_1,
         category,
         subCategory,
         activityType: 'FUEL_COMBUSTION',
         fuelType: subCategory,
-        quantity: fallbackFuelQty,
+        quantity: 0,
         unit,
-        rawUnit: unit,
+        rawUnit,
         region: country,
-        needsReview: false,
-        sourceEvidence: { ...fields, autoBaseline: true, quantity: fallbackFuelQty, unit },
+        needsReview: true,
+        blockReason: `Missing fuel consumption quantity for ${subCategory} — please enter the actual consumed quantity in the Review Workspace`,
+        sourceEvidence: fields,
       };
     }
 
