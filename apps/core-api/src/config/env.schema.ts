@@ -78,13 +78,13 @@ const envSchema = z.object({
   ML_SERVICE_URL: z
     .string()
     .optional()
-    .default('http://localhost:8000')
+    .default('')
     .transform((val) => {
-      if (!val || !val.trim()) return 'http://localhost:8000';
+      if (!val || !val.trim()) return '';
       const trimmed = val.trim();
       return trimmed.startsWith('http://') || trimmed.startsWith('https://')
         ? trimmed
-        : `http://${trimmed}`;
+        : `https://${trimmed}`;
     }),
 
   // ── OCR ────────────────────────────────────────────────────────────────────

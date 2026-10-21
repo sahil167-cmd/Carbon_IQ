@@ -80,40 +80,60 @@ export class CopilotService {
         }))
       : [];
 
-    // C. Delegate to Python LangGraph Multi-Agent RAG Service
+    // C. Delegate to Python LangGraph Multi-Agent RAG Service (only when explicitly configured)
     let answer = '';
     let validCitations: Citation[] = [];
     let queryType = 'ORGANIZATION_EMISSIONS:CURRENT_TOTAL';
     let plan: any = null;
     let evidencePack: any = { structured: [], documents: [] };
 
-    try {
-      const mlServiceUrl = env.ML_SERVICE_URL || 'http://localhost:8000';
-      const response = await fetch(`${mlServiceUrl}/rag/query`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          organization_id: organizationId,
-          user_id: userId,
-          database_url: env.DATABASE_URL,
-          llm_api_key: env.LLM_API_KEY,
-          conversation_history: conversationHistory,
-        }),
-      });
+    // Only call external ML service if ML_SERVICE_URL is explicitly set to a non-localhost URL.
+    // On Render/production, localhost:8000 does not exist — attempting it causes the entire
+    // request to hang until Node's TCP connection timeout fires (often 2+ minutes).
+    const mlServiceUrl = env.ML_SERVICE_URL || '';
+    const isExternalMlService =
+      mlServiceUrl.length > 0 &&
+      !mlServiceUrl.includes('localhost') &&
+      !mlServiceUrl.includes('127.0.0.1') &&
+      !mlServiceUrl.includes('0.0.0.0');
 
-      if (response.ok) {
-        const result: any = await response.json();
-        if (result.success && result.answer) {
-          answer = result.answer;
-          validCitations = this.validateCitations(result.citations || []);
-          queryType = result.query_type || 'ORGANIZATION_EMISSIONS:LANGGRAPH';
-          plan = result.intent || {};
-          logger.info({ queryType, citationsCount: validCitations.length }, 'Executed via Python LangGraph RAG Agent');
+    if (isExternalMlService) {
+      try {
+        // Hard 10-second timeout so a slow/unreachable service never blocks a user request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10_000);
+
+        const response = await fetch(`${mlServiceUrl}/rag/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            message,
+            organization_id: organizationId,
+            user_id: userId,
+            database_url: env.DATABASE_URL,
+            llm_api_key: env.LLM_API_KEY,
+            conversation_history: conversationHistory,
+          }),
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          const result: any = await response.json();
+          if (result.success && result.answer) {
+            answer = result.answer;
+            validCitations = this.validateCitations(result.citations || []);
+            queryType = result.query_type || 'ORGANIZATION_EMISSIONS:LANGGRAPH';
+            plan = result.intent || {};
+            logger.info({ queryType, citationsCount: validCitations.length }, 'Executed via Python LangGraph RAG Agent');
+          }
         }
+      } catch (err: any) {
+        const reason = err.name === 'AbortError' ? 'timeout after 10s' : err.message;
+        logger.warn({ error: reason }, 'Python LangGraph call failed, using local TypeScript pipeline');
       }
-    } catch (err: any) {
-      logger.warn({ error: err.message }, 'Python LangGraph call failed, using local TypeScript pipeline');
+    } else {
+      logger.info({ mlServiceUrl }, 'ML_SERVICE_URL not set or is localhost — skipping Python agent, using local TypeScript RAG pipeline');
     }
 
     // Fallback to local TypeScript pipeline if Python LangGraph didn't produce an answer

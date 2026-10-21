@@ -60,10 +60,9 @@ function normalizeToTargetDimensions(vec: number[]): number[] {
  * Generate embedding for a single text string.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const client = getClient();
-  const model = getEmbeddingModel();
-
   try {
+    const client = getClient();
+    const model = getEmbeddingModel();
     const payload: any = {
       model,
       input: text.substring(0, 4000),
@@ -76,7 +75,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     const rawVec = response.data[0].embedding;
     return normalizeToTargetDimensions(rawVec);
   } catch (err: any) {
-    logger.error({ error: err.message, model }, 'Error generating embedding, using deterministic hash fallback');
+    logger.warn({ error: err.message }, 'Embedding generation unavailable, using deterministic hash fallback');
     // Fallback: create pseudo-embedding from text hash to avoid crashing retrieval
     const fallback = new Array(TARGET_DIMENSIONS).fill(0);
     for (let i = 0; i < text.length; i++) {
@@ -85,6 +84,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     return fallback;
   }
 }
+
 
 /**
  * Generate embeddings for multiple text strings in batches.
