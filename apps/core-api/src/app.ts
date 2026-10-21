@@ -67,6 +67,14 @@ export function createApp(): Application {
     ? env.WEB_ORIGIN.split(',').map((o: string) => o.trim()).filter(Boolean)
     : [];
 
+  // Always-allowed origin patterns (regardless of WEB_ORIGIN env var)
+  const ALWAYS_ALLOWED_PATTERNS = [
+    /^https?:\/\/localhost(:\d+)?$/,
+    /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+    /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
+    /^https:\/\/carbon-iq[a-z0-9-]*\.vercel\.app$/,
+  ];
+
   const frameAncestors: string[] = [
     "'self'",
     'http://localhost:5174',
@@ -93,18 +101,31 @@ export function createApp(): Application {
 
   app.use(
     cors({
-      origin:
-        env.NODE_ENV === 'production'
-          ? corsOrigins.length > 0
-            ? corsOrigins
-            : true // If WEB_ORIGIN not set, allow all (safe for initial deploy)
-          : true, // Allow all origins in dev
+      origin: (origin, callback) => {
+        // Allow requests with no origin (curl, mobile apps, server-to-server)
+        if (!origin) return callback(null, true);
+
+        // Always allow localhost and vercel.app patterns
+        for (const pattern of ALWAYS_ALLOWED_PATTERNS) {
+          if (pattern.test(origin)) return callback(null, true);
+        }
+
+        // Allow any explicitly configured WEB_ORIGIN values
+        if (corsOrigins.includes(origin)) return callback(null, true);
+
+        // In development: allow everything
+        if (env.NODE_ENV !== 'production') return callback(null, true);
+
+        // In production: block unknown origins
+        callback(new Error(`CORS: Origin ${origin} not allowed`));
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],
       exposedHeaders: ['X-Request-Id'],
     }),
   );
+
 
   // ── Parsing ──────────────────────────────────────────────────────────────────
   app.use(express.json({ limit: '5mb' }));
