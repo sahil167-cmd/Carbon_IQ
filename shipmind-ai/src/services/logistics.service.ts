@@ -27,6 +27,31 @@ export interface ListShipmentsParams {
   [key: string]: unknown;
 }
 
+function normalizeShipment(s: any): Shipment {
+  if (!s) return s;
+  return {
+    ...s,
+    stops: s.stops || s.shipmentStops || [],
+    totalWeightKg:
+      s.totalWeightKg != null
+        ? Number(s.totalWeightKg)
+        : s.totalWeight != null
+        ? Number(s.totalWeight)
+        : 0,
+    totalVolumeM3:
+      s.totalVolumeM3 != null
+        ? Number(s.totalVolumeM3)
+        : s.totalVolume != null
+        ? Number(s.totalVolume)
+        : 0,
+    cargoItemsCount:
+      s.cargoItemsCount ??
+      s.totalItemsCount ??
+      s._count?.cargoItems ??
+      (s.cargoItems ? s.cargoItems.length : 0),
+  };
+}
+
 /**
  * Logistics API Service
  * Interacts with CarbonIQ backend endpoints mounted at /api/v1/logistics
@@ -36,28 +61,38 @@ export const LogisticsService = {
    * List shipments with pagination and optional status filter
    */
   async listShipments(params?: ListShipmentsParams): Promise<PaginatedList<Shipment>> {
-    return apiGet<PaginatedList<Shipment>>('/api/v1/logistics/shipments', params as Record<string, unknown>);
+    const res = await apiGet<PaginatedList<Shipment>>('/api/v1/logistics/shipments', params as Record<string, unknown>);
+    if (res && res.items) {
+      return {
+        ...res,
+        items: res.items.map(normalizeShipment),
+      };
+    }
+    return res;
   },
 
   /**
    * Retrieve a single shipment with stops, cargo items, and optimization runs
    */
   async getShipment(id: string): Promise<Shipment> {
-    return apiGet<Shipment>(`/api/v1/logistics/shipments/${id}`);
+    const res = await apiGet<Shipment>(`/api/v1/logistics/shipments/${id}`);
+    return normalizeShipment(res);
   },
 
   /**
    * Create a new shipment with optional stops
    */
   async createShipment(data: CreateShipmentInput): Promise<Shipment> {
-    return apiPost<Shipment>('/api/v1/logistics/shipments', data);
+    const res = await apiPost<Shipment>('/api/v1/logistics/shipments', data);
+    return normalizeShipment(res);
   },
 
   /**
    * Update shipment metadata or status
    */
   async updateShipment(id: string, data: UpdateShipmentInput): Promise<Shipment> {
-    return apiPatch<Shipment>(`/api/v1/logistics/shipments/${id}`, data);
+    const res = await apiPatch<Shipment>(`/api/v1/logistics/shipments/${id}`, data);
+    return normalizeShipment(res);
   },
 
   /**

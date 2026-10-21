@@ -54,16 +54,20 @@ export default function ShipmentListPage() {
   const totalPages = Math.max(1, Math.ceil(total / limit));
 
   const getRouteSummary = (shipment: Shipment) => {
-    if (!shipment.stops || shipment.stops.length === 0) {
+    const stops = (shipment.stops && shipment.stops.length > 0)
+      ? shipment.stops
+      : ((shipment as any).shipmentStops || []);
+
+    if (!stops || stops.length === 0) {
       return <span className="text-slate-400 italic">No stops defined</span>;
     }
-    const origin = shipment.stops[0];
-    const destination = shipment.stops[shipment.stops.length - 1];
+    const origin = stops[0];
+    const destination = stops[stops.length - 1];
 
-    const originText = origin.city || origin.locationName || origin.country || 'Origin';
-    const destText = destination.city || destination.locationName || destination.country || 'Destination';
+    const originText = origin.city || origin.facilityName || origin.locationName || origin.country || 'Origin';
+    const destText = destination.city || destination.facilityName || destination.locationName || destination.country || 'Destination';
 
-    if (shipment.stops.length === 1) {
+    if (stops.length === 1) {
       return <span className="font-medium text-slate-800">{originText}</span>;
     }
 
@@ -72,9 +76,9 @@ export default function ShipmentListPage() {
         <span>{originText}</span>
         <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         <span>{destText}</span>
-        {shipment.stops.length > 2 && (
+        {stops.length > 2 && (
           <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded ml-1">
-            +{shipment.stops.length - 2} via
+            +{stops.length - 2} via
           </span>
         )}
       </div>
@@ -253,17 +257,17 @@ export default function ShipmentListPage() {
 
                       {/* Cargo Items Count */}
                       <td className="py-4 px-4 text-center font-bold text-slate-800">
-                        {s.cargoItemsCount ?? (s.cargoItems ? s.cargoItems.length : 0)}
+                        {s.cargoItemsCount ?? (s as any).totalItemsCount ?? (s as any)._count?.cargoItems ?? (s.cargoItems ? s.cargoItems.length : 0)}
                       </td>
 
                       {/* Total Weight */}
                       <td className="py-4 px-4 font-semibold text-slate-800 whitespace-nowrap">
-                        {formatWeight(s.totalWeightKg, false, '-')}
+                        {formatWeight(s.totalWeightKg ?? (s as any).totalWeight, false, '-')}
                       </td>
 
                       {/* Total Volume */}
                       <td className="py-4 px-4 font-semibold text-slate-800 whitespace-nowrap">
-                        {formatVolume(s.totalVolumeM3, 2, '-')}
+                        {formatVolume(s.totalVolumeM3 ?? (s as any).totalVolume, 2, '-')}
                       </td>
 
                       {/* Created Date */}

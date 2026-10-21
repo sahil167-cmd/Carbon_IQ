@@ -103,6 +103,36 @@ export class ShipmentService {
     private readonly organizationId: string,
   ) {}
 
+  private mapShipmentResponse(s: any): any {
+    if (!s) return s;
+    const stops = s.shipmentStops || s.stops || [];
+    const totalWeightKg =
+      s.totalWeightKg != null
+        ? Number(s.totalWeightKg)
+        : s.totalWeight != null
+        ? Number(s.totalWeight)
+        : 0;
+    const totalVolumeM3 =
+      s.totalVolumeM3 != null
+        ? Number(s.totalVolumeM3)
+        : s.totalVolume != null
+        ? Number(s.totalVolume)
+        : 0;
+    const cargoItemsCount =
+      s.cargoItemsCount ??
+      s.totalItemsCount ??
+      s._count?.cargoItems ??
+      (s.cargoItems ? s.cargoItems.length : 0);
+
+    return {
+      ...s,
+      stops,
+      totalWeightKg,
+      totalVolumeM3,
+      cargoItemsCount,
+    };
+  }
+
   // ── Shipment Operations ───────────────────────────────────────────────────
 
   public async createShipment(userId: string, input: CreateShipmentInput): Promise<Shipment> {
@@ -148,7 +178,7 @@ export class ShipmentService {
         },
       });
 
-      return shipment;
+      return this.mapShipmentResponse(shipment);
     });
   }
 
@@ -177,7 +207,7 @@ export class ShipmentService {
     ]);
 
     return {
-      items,
+      items: items.map((s) => this.mapShipmentResponse(s)),
       total,
       page,
       limit,
@@ -214,13 +244,13 @@ export class ShipmentService {
       throw new NotFoundError('Shipment');
     }
 
-    return shipment;
+    return this.mapShipmentResponse(shipment);
   }
 
   public async updateShipment(id: string, input: UpdateShipmentInput): Promise<Shipment> {
     await this.getShipmentById(id); // Asserts existence and tenant boundary
 
-    return this.prisma.shipment.update({
+    const updated = await this.prisma.shipment.update({
       where: { id },
       data: {
         status: input.status,
@@ -235,6 +265,8 @@ export class ShipmentService {
         cargoItems: true,
       },
     });
+
+    return this.mapShipmentResponse(updated);
   }
 
   // ── Cargo Operations ──────────────────────────────────────────────────────
