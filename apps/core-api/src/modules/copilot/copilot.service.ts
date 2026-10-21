@@ -696,8 +696,13 @@ STRICT OPERATIONAL RULES:
 
     const recentHistory = history.slice(-4).map((h) => ({ role: h.role as any, content: h.content }));
 
+    let targetModel = env.LLM_MODEL || 'gpt-4o';
+    if (targetModel.includes('gemini-1.') || targetModel.includes('gemini-2.') || targetModel === 'gemini-1.5-flash') {
+      targetModel = 'gemini-3.8-flash';
+    }
+
     const res = await client.chat.completions.create({
-      model: env.LLM_MODEL || 'gpt-4o',
+      model: targetModel,
       messages: [
         { role: 'system', content: systemPrompt },
         ...recentHistory,

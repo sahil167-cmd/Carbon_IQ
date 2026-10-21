@@ -45,7 +45,7 @@ const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true, // Needed to send HttpOnly refresh token cookie
-  timeout: 30_000,
+  timeout: 60_000,
 });
 
 // ── Request Interceptor: Attach JWT Access Token ──────────────────────────────
@@ -119,6 +119,11 @@ apiClient.interceptors.response.use(
 
     // Standard error formatting
     if (!error.response) {
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        return Promise.reject(
+          new Error('Request timed out after 60s. The Render service may be cold-starting or processing a large query. Please try again.'),
+        );
+      }
       return Promise.reject(
         new Error('Cannot reach CarbonIQ API backend. Ensure apps/core-api is running.'),
       );

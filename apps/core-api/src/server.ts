@@ -73,13 +73,11 @@ async function start(): Promise<void> {
   process.on('SIGINT', () => void shutdown('SIGINT'));
 
   process.on('uncaughtException', (err: any) => {
-    rootLogger.error({ err: err.message, stack: err.stack }, 'Uncaught exception — shutting down');
-    void shutdown('uncaughtException');
+    rootLogger.error({ err: err?.message, stack: err?.stack }, 'Uncaught exception recorded');
   });
 
-  process.on('unhandledRejection', (reason) => {
-    rootLogger.error({ reason }, 'Unhandled promise rejection — shutting down');
-    void shutdown('unhandledRejection');
+  process.on('unhandledRejection', (reason: any) => {
+    rootLogger.error({ reason: reason?.message || reason }, 'Unhandled promise rejection recorded');
   });
 }
 

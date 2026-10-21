@@ -73,6 +73,9 @@ export function createApp(): Application {
     /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
     /^https:\/\/[a-z0-9-]+\.vercel\.app$/,
     /^https:\/\/carbon-iq[a-z0-9-]*\.vercel\.app$/,
+    /^https:\/\/[a-z0-9-]+\.onrender\.com$/,
+    /^https:\/\/[a-z0-9-]+\.pages\.dev$/,
+    /^https:\/\/[a-z0-9-]+\.netlify\.app$/,
   ];
 
   const frameAncestors: string[] = [
@@ -82,6 +85,9 @@ export function createApp(): Application {
     'http://localhost:5173',
     'https://*.vercel.app',
     'https://vercel.app',
+    'https://*.onrender.com',
+    'https://*.pages.dev',
+    'https://*.netlify.app',
     ...corsOrigins,
   ];
 
@@ -105,7 +111,7 @@ export function createApp(): Application {
         // Allow requests with no origin (curl, mobile apps, server-to-server)
         if (!origin) return callback(null, true);
 
-        // Always allow localhost and vercel.app patterns
+        // Always allow localhost, vercel.app, onrender.com, and other deployment patterns
         for (const pattern of ALWAYS_ALLOWED_PATTERNS) {
           if (pattern.test(origin)) return callback(null, true);
         }
@@ -116,8 +122,9 @@ export function createApp(): Application {
         // In development: allow everything
         if (env.NODE_ENV !== 'production') return callback(null, true);
 
-        // In production: block unknown origins
-        callback(new Error(`CORS: Origin ${origin} not allowed`));
+        // In production: reject unknown origin gracefully without throwing uncaught server error
+        rootLogger.warn({ origin }, 'CORS request rejected from unrecognized origin');
+        callback(null, false);
       },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

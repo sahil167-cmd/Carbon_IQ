@@ -41,9 +41,10 @@ function isGemini(): boolean {
 }
 
 export function getEmbeddingModel(): string {
-  if (process.env.EMBEDDING_MODEL) return process.env.EMBEDDING_MODEL;
+  const model = process.env.EMBEDDING_MODEL || '';
+  if (model && model !== 'text-embedding-004') return model;
   if (isMistral()) return 'mistral-embed';
-  if (isGemini()) return 'text-embedding-004';
+  if (isGemini()) return 'gemini-embedding-001';
   return 'text-embedding-3-small';
 }
 

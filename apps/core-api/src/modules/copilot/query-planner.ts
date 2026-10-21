@@ -134,8 +134,13 @@ OUTPUT STRICT JSON matching:
     const recentHistory = history.slice(-4).map((h) => `${h.role}: ${h.content}`).join('\n');
     const userPrompt = `HISTORY:\n${recentHistory || 'No previous history'}\n\nUSER QUESTION: "${message}"\n\nReturn JSON QueryPlan:`;
 
+    let targetModel = env.LLM_MODEL || 'gpt-4o';
+    if (targetModel.includes('gemini-1.') || targetModel.includes('gemini-2.') || targetModel === 'gemini-1.5-flash') {
+      targetModel = 'gemini-3.8-flash';
+    }
+
     const res = await client.chat.completions.create({
-      model: env.LLM_MODEL || 'gpt-4o',
+      model: targetModel,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
