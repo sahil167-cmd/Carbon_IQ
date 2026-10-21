@@ -13,10 +13,16 @@ export class QueryPlanner {
   private openai: OpenAI | null = null;
 
   private getOpenAI(): OpenAI | null {
-    if (!this.openai && env.LLM_API_KEY && env.LLM_API_KEY !== 'REPLACE_WITH_OPENAI_API_KEY') {
+    if (!this.openai) {
+      const key = env.LLM_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+      if (!key || key.includes('REPLACE_') || key.includes('YOUR_') || key.length < 15) {
+        return null;
+      }
       this.openai = new OpenAI({
-        apiKey: env.LLM_API_KEY,
+        apiKey: key,
         baseURL: env.LLM_BASE_URL || 'https://api.openai.com/v1',
+        timeout: 3500,
+        maxRetries: 0,
       });
     }
     return this.openai;

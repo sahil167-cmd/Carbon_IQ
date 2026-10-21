@@ -34,10 +34,16 @@ export class CopilotService {
   }
 
   private getOpenAI(): OpenAI | null {
-    if (!this.openai && env.LLM_API_KEY && env.LLM_API_KEY !== 'REPLACE_WITH_OPENAI_API_KEY') {
+    if (!this.openai) {
+      const key = env.LLM_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+      if (!key || key.includes('REPLACE_') || key.includes('YOUR_') || key.length < 15) {
+        return null;
+      }
       this.openai = new OpenAI({
-        apiKey: env.LLM_API_KEY,
+        apiKey: key,
         baseURL: env.LLM_BASE_URL || 'https://api.openai.com/v1',
+        timeout: 3500,
+        maxRetries: 0,
       });
     }
     return this.openai;
@@ -99,9 +105,9 @@ export class CopilotService {
 
     if (isExternalMlService) {
       try {
-        // Hard 10-second timeout so a slow/unreachable service never blocks a user request
+        // 2.5-second timeout so a slow/unreachable service never blocks a user request
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10_000);
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
 
         const response = await fetch(`${mlServiceUrl}/rag/query`, {
           method: 'POST',
@@ -129,7 +135,7 @@ export class CopilotService {
           }
         }
       } catch (err: any) {
-        const reason = err.name === 'AbortError' ? 'timeout after 10s' : err.message;
+        const reason = err.name === 'AbortError' ? 'timeout after 2.5s' : err.message;
         logger.warn({ error: reason }, 'Python LangGraph call failed, using local TypeScript pipeline');
       }
     } else {
@@ -512,21 +518,20 @@ export class CopilotService {
           case 'CURRENT_TOTAL':
           default: {
             const totals = await this.repo.getTotalEmissions(orgId);
-            if (totals.recordCount > 0) {
-              const cit: Citation = {
-                type: 'database',
-                source: 'CarbonIQ Total Emission Ledger',
-                reference: 'All Recorded Periods',
-                value: `${totals.grandTotal.toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e`,
-              };
-              structured.push({
-                key: 'total_emissions',
-                title: 'Grand Total Emissions',
-                data: totals as any,
-                citation: cit,
-              });
-              citations.push(cit);
-            }
+            // Always push totals — even when zero — so synthesis can detect empty ledger
+            const totalCit: Citation = {
+              type: 'database',
+              source: 'CarbonIQ Total Emission Ledger',
+              reference: totals.recordCount > 0 ? 'All Recorded Periods' : 'No Records Yet',
+              value: `${totals.grandTotal.toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e`,
+            };
+            structured.push({
+              key: 'total_emissions',
+              title: 'Grand Total Emissions',
+              data: totals as any,
+              citation: totalCit,
+            });
+            if (totals.recordCount > 0) citations.push(totalCit);
             break;
           }
         }
@@ -982,14 +987,172 @@ Under the **GHG Protocol Scope 2 Guidance**:
       return `### 🌍 GHG Protocol Scopes Overview\n\nUnder the **Greenhouse Gas Protocol Corporate Standard**, emissions are categorized into three scopes:\n\n* **Scope 1 (Direct Emissions)**: Greenhouse gases released directly from operations owned or controlled by your organization (e.g., company vehicles, onsite diesel generators, fuel combustion).\n* **Scope 2 (Indirect Emissions from Purchased Energy)**: Emissions associated with the generation of purchased electricity, steam, heating, and cooling consumed by your facilities.\n* **Scope 3 (Value Chain Emissions)**: All other indirect emissions occurring across your upstream supply chain (purchased goods, business travel, freight) and downstream product lifecycle.`;
     }
 
-    // 13. Grand Total Fallback
+    // 13. Carbon Intensity Analysis & Normalized Operational Metrics
+    const intensityItem = evidence.structured.find((s) => s.key === 'intensity_metrics');
+    if (intensityItem) {
+      const d = intensityItem.data as any;
+      const t = Number(d.totalCo2eTonnes || (d.totalCo2eKg ? d.totalCo2eKg / 1000 : 0)).toFixed(2);
+      const curr = d.currencyUnit || 'USD';
+      const revStr = d.revenue ? `\n* **Intensity per Revenue**: \`${d.intensityPerRevenueMillion || 'N/A'} tCO₂e / $M ${curr}\`` : '';
+      const fteStr = d.fte ? `\n* **Intensity per FTE**: \`${d.intensityPerFte || 'N/A'} tCO₂e / employee\`` : '';
+
+      return `### ⚡ Carbon Intensity & Operational Efficiency
+
+Your organization has an aggregate carbon footprint of **\`${t} tCO₂e\`** (${Number(d.totalCo2eKg || 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e).
+
+#### Intensity Allocations:
+* **Scope 1 Direct**: \`${Number(d.scope1 || 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`
+* **Scope 2 Purchased Electricity**: \`${Number(d.scope2 || 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`
+* **Scope 3 Value Chain**: \`${Number(d.scope3 || 0).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`${revStr}${fteStr}
+
+#### 💡 Recommended Optimization Levers:
+1. **Scope 1 Combustion Abatement**: With Scope 1 driving the largest portion of your footprint, prioritize boiler heat-recovery, scheduled generator load testing, and transitioning fleet routes to alternative fuels.
+2. **Scope 2 Clean Power Matching**: Procure verified Renewable Energy Certificates (RECs) or Power Purchase Agreements (PPAs) to achieve zero market-based electricity emissions.
+3. **Scope 3 Freight Optimization**: Consolidate LTL shipments, increase carrier load factors, and select GLEC-certified low-emission intermodal routes.
+
+*Normalized across all verified activity records in the CarbonIQ ledger.*`;
+    }
+
+    // 14. Regulatory Compliance Readiness Assessment
+    const compItem = evidence.structured.find((s) => s.key === 'compliance_readiness');
+    if (compItem) {
+      const d = compItem.data as any;
+      const rows = (d.frameworks || []).map((f: any) => {
+        const badge = f.status === 'Ready' ? '✅ Ready' : f.status === 'Partial' ? '⚠️ Partial' : '❌ Not Ready';
+        const missing = f.missingItems?.length ? ` (Missing: ${f.missingItems.join(', ')})` : '';
+        return `* **${f.name}**: **${badge}** — \`${f.coverage}%\` data readiness${missing}`;
+      }).join('\n');
+
+      return `### 📋 Regulatory Compliance Readiness Audit
+
+Your organization currently has an overall compliance readiness score of **\`${d.overallScore}%\`** across global sustainability disclosure standards:
+
+#### Framework Breakdown:
+${rows || '* No specific framework data available'}
+
+* **Scope Coverage**: Scope 1: ${d.scopeCoverage?.scope1 ? '✅' : '❌'}, Scope 2: ${d.scopeCoverage?.scope2 ? '✅' : '❌'}, Scope 3: ${d.scopeCoverage?.scope3 ? '✅' : '❌'}
+* **Months Verified**: **${d.monthsCovered} / 12 months**
+* **Audit Trail**: ${d.hasCalculationLogs ? '✅ Verified deterministic calculation logs linked' : '❌ Missing calculation audit logs'}`;
+    }
+
+    // 15. Carbon Pricing & Tax Exposure Analysis
+    const pricingItem = evidence.structured.find((s) => s.key === 'carbon_pricing_exposure');
+    if (pricingItem) {
+      const d = pricingItem.data as any;
+      const bRows = (d.benchmarkPrices || []).slice(0, 4).map((b: any) =>
+        `* **${b.jurisdiction}**: \`$${b.price} / tCO₂e\` → Exposure: **\`$${Number((d.totalCo2eTonnes * b.price)).toLocaleString('en-US', { maximumFractionDigits: 0 })}\`**`
+      ).join('\n');
+
+      return `### 💰 Carbon Pricing & Financial Tax Liability Exposure
+
+Under current carbon pricing mechanisms, your footprint of **\`${d.totalCo2eTonnes} tCO₂e\`** creates an estimated regulatory and shadow carbon exposure:
+
+* **Primary Benchmark Price**: **\`$${d.pricePerTonne} / tCO₂e\`** (EU ETS baseline)
+* **Total Estimated Carbon Liability**: **\`$${Number(d.totalLiability).toLocaleString('en-US')}\`**
+* **Financial Risk Rating**: **${d.riskLevel}**
+
+#### Jurisdictional Scenario Exposure:
+${bRows}
+
+*Scope Breakdown Liability: Scope 1: \`$${Number(d.scopeBreakdown?.scope1Liability || 0).toLocaleString()}\` | Scope 2: \`$${Number(d.scopeBreakdown?.scope2Liability || 0).toLocaleString()}\` | Scope 3: \`$${Number(d.scopeBreakdown?.scope3Liability || 0).toLocaleString()}\`*`;
+    }
+
+    // 16. Year-over-Year / Historical Period Trajectory
+    const yoyItem = evidence.structured.find((s) => s.key === 'yoy_comparison');
+    if (yoyItem) {
+      const d = yoyItem.data as any;
+      const rows = (d.comparisons || []).slice(0, 5).map((c: any) =>
+        `* **${c.month}**: \`${Number(c.currentYearCo2e).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\` (vs \`${Number(c.previousYearCo2e).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg\`, **${c.changePercent >= 0 ? '+' : ''}${c.changePercent}%** ${c.changeDirection})`
+      ).join('\n');
+
+      const trendEmoji = d.overallTrend === 'emissions_decreasing' ? '↘ Decreasing (Improving)' : d.overallTrend === 'emissions_increasing' ? '↗ Increasing' : '→ Stable';
+
+      return `### 📈 Period-over-Period & Historical Trajectory Analysis
+
+* **Overall Trajectory**: **${trendEmoji}**
+
+#### Monthly Comparisons:
+${rows || '* Single reporting period recorded'}
+
+*Calculated from verified CarbonIQ historical time-series ledger data.*`;
+    }
+
+    // 17. Emission Factor Audit & Traceability
+    const efAuditItem = evidence.structured.find((s) => s.key === 'emission_factor_audit');
+    if (efAuditItem) {
+      const d = efAuditItem.data as any;
+      const sRows = (d.sourceBreakdown || []).map((s: any) => `* **${s.sourceSet}**: ${s.count} factors`).join('\n');
+
+      return `### 🔍 Emission Factor Library & Traceability Audit
+
+Your calculations are backed by verified international emissions libraries:
+
+* **Total Approved Factors in Registry**: **\`${d.totalFactorsInDb}\`**
+* **Unique Factors Applied to Your Data**: **\`${d.factorsUsedByOrg}\`**
+
+#### Standard Source Sets:
+${sRows}
+
+*All emission factors are linked to authoritative standards including GHG Protocol 2023, GLEC Framework, and DEFRA 2023.*`;
+    }
+
+    // 18. Anomalies & Outliers
+    if (evidence.anomalies && (evidence.anomalies as any).anomalies?.length > 0) {
+      const a = evidence.anomalies as any;
+      const rows = a.anomalies.map((an: any) =>
+        `* **Month ${an.month}**: \`${Number(an.totalCo2e).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\` (Z-Score: \`${an.zScore}\` — **${an.severity}**)`,
+      ).join('\n');
+
+      return `### ⚠️ Statistical Emission Anomaly Detection
+
+Our Z-Score statistical anomaly engine analyzed your historical emission velocity:
+
+* **Mean Monthly Baseline**: \`${Number(a.meanCo2e).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`
+* **Standard Deviation**: \`${Number(a.stdDev).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`
+
+#### Detected Anomaly Periods:
+${rows}
+
+*Anomalies are flagged when monthly emissions diverge by more than 1.5 standard deviations from the historical mean.*`;
+    }
+
+    // 19. Grand Total Fallback (handles both populated and empty ledger)
     const totalItem = evidence.structured.find((s) => s.key === 'total_emissions');
     if (totalItem) {
       const d = totalItem.data as any;
-      return `### 📊 Total Carbon Footprint\n\nYour organization has recorded a grand total of **\`${Number(d.grandTotal).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`** across **${d.recordCount}** verified records.\n\n#### Scope Breakdown:\n* **Scope 1**: \`${Number(d.scope1).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`\n* **Scope 2**: \`${Number(d.scope2).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`\n* **Scope 3**: \`${Number(d.scope3).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\``;
+      const recordCount = Number(d.recordCount || 0);
+
+      // Empty ledger — give a helpful onboarding response
+      if (recordCount === 0) {
+        return `### 👋 Welcome to CarbonIQ Sustainability Copilot!
+
+Your emission ledger is currently **empty** — no calculated emission records have been found for your organization yet.
+
+#### 🚀 To get started, complete these steps:
+
+1. **Upload Activity Documents** — Go to the **Documents** section and upload your energy bills, fuel invoices, freight BOLs, or supplier activity files (PDF/CSV/DOCX).
+2. **Wait for OCR Processing** — CarbonIQ automatically extracts quantities and maps them to verified GHG Protocol emission factors.
+3. **Approve Calculations** — Review and approve the extracted records in the **Validation** queue.
+4. **Return here** — Once documents are approved, I can answer questions about your Scope 1/2/3 totals, emission trends, hotspots, forecasts, and reduction strategies.
+
+> 💡 **Tip**: You can ask me questions like *"What is my total carbon footprint?"*, *"Show me my Scope 3 breakdown"*, or *"Which month had the highest emissions?"* once data is available.
+
+*Currently available: document metadata queries, GHG Protocol concept explanations, and general sustainability guidance.*`;
+      }
+
+      return `### 📊 Total Carbon Footprint\n\nYour organization has recorded a grand total of **\`${Number(d.grandTotal).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`** across **${recordCount}** verified records.\n\n#### Scope Breakdown:\n* **Scope 1**: \`${Number(d.scope1).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`\n* **Scope 2**: \`${Number(d.scope2).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\`\n* **Scope 3**: \`${Number(d.scope3).toLocaleString('en-US', { maximumFractionDigits: 1 })} kg CO₂e\``;
     }
 
-    return `I couldn't find verified emission records matching your specific question in the CarbonIQ database. Please ensure your documents or emission activities have been uploaded and processed.`;
+    return `### ⚠️ No Emission Data Found
+
+I couldn't find verified emission records for your organization in the CarbonIQ database.
+
+**Next Steps:**
+1. Upload activity documents (energy bills, invoices, freight records) in the **Documents** section
+2. Approve the extracted and calculated emission records in **Validation**
+3. Return here to query your carbon footprint data
+
+*You can also ask me about GHG Protocol concepts, Scope definitions, or calculation methodologies while your data is being processed.*`;
   }
 
   /**

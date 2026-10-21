@@ -16,13 +16,15 @@ let _openaiClient: OpenAI | null = null;
 
 function getClient(): OpenAI {
   if (!_openaiClient) {
-    const apiKey = env.LLM_API_KEY;
-    if (!apiKey || apiKey === 'REPLACE_WITH_OPENAI_API_KEY') {
-      throw new Error('LLM_API_KEY is not configured. Set a valid API key in .env');
+    const apiKey = env.LLM_API_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+    if (!apiKey || apiKey.includes('REPLACE_') || apiKey.includes('YOUR_') || apiKey.length < 15) {
+      throw new Error('LLM_API_KEY is not configured with a valid key');
     }
     _openaiClient = new OpenAI({
       apiKey,
       baseURL: env.LLM_BASE_URL || 'https://api.mistral.ai/v1',
+      timeout: 3500,
+      maxRetries: 0,
     });
   }
   return _openaiClient;

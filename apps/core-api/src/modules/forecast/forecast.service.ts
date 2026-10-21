@@ -167,6 +167,7 @@ export class ForecastService {
       const response = await fetch(`${mlUrl}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(2500),
         body: JSON.stringify({
           organization_id: organizationId,
           database_url: env.DATABASE_URL,
