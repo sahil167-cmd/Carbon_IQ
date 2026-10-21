@@ -93,16 +93,20 @@ export default function DocumentDetails() {
         documentId: doc.id,
         organizationId: doc.organizationId,
       });
+      // Reload the document + emissions data after calculation
       await loadAllDetails();
-      if (!res || res.co2e === undefined) {
-        setCalcError("This document has incomplete fields or requires reviewer approval. Click 'Review Workspace' above to verify values.");
+      // The backend wraps response in { data: {...} } via successResponse
+      const calcData = res?.data ?? res;
+      if (!calcData || calcData.co2e === undefined || calcData.co2e === null) {
+        setCalcError("Calculation result is pending. The document may need field corrections — open 'Review Workspace' to verify fuel type, quantity and unit, then approve.");
       }
     } catch (err: any) {
-      setCalcError(`Calculation failed: ${err.message}`);
+      setCalcError(`Calculation failed: ${err.message}. Try opening 'Review Workspace' to verify and correct the extracted fields.`);
     } finally {
       setCalculating(false);
     }
   };
+
 
   if (loading) {
     return (
