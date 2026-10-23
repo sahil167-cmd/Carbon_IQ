@@ -21,8 +21,8 @@ export class QueryPlanner {
       this.openai = new OpenAI({
         apiKey: key,
         baseURL: env.LLM_BASE_URL || 'https://api.openai.com/v1',
-        timeout: 3500,
-        maxRetries: 0,
+        timeout: 8000,
+        maxRetries: 1,
       });
     }
     return this.openai;
@@ -135,8 +135,8 @@ OUTPUT STRICT JSON matching:
     const userPrompt = `HISTORY:\n${recentHistory || 'No previous history'}\n\nUSER QUESTION: "${message}"\n\nReturn JSON QueryPlan:`;
 
     let targetModel = env.LLM_MODEL || 'gpt-4o';
-    if (targetModel.includes('gemini-1.') || targetModel.includes('gemini-2.') || targetModel === 'gemini-1.5-flash') {
-      targetModel = 'gemini-3.8-flash';
+    if (targetModel === 'gemini-3.8-flash') {
+      targetModel = 'gemini-2.0-flash';
     }
 
     const res = await client.chat.completions.create({

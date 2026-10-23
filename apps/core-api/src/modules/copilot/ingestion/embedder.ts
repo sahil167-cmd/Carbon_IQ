@@ -23,8 +23,8 @@ function getClient(): OpenAI {
     _openaiClient = new OpenAI({
       apiKey,
       baseURL: env.LLM_BASE_URL || 'https://api.mistral.ai/v1',
-      timeout: 3500,
-      maxRetries: 0,
+      timeout: 8000,
+      maxRetries: 1,
     });
   }
   return _openaiClient;

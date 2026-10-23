@@ -1037,7 +1037,22 @@ export class CopilotRepository extends TenantScopedRepository {
   } | null> {
     const targetOrgId = this.resolveOrgId(orgId);
     const history = await this.getMonthlyEmissionHistory(targetOrgId, 24);
-    if (!history || history.length < 2) return null;
+    if (!history || history.length === 0) return null;
+
+    if (history.length === 1) {
+      return {
+        comparisons: [
+          {
+            month: history[0].month,
+            currentYearCo2e: history[0].totalCo2e,
+            previousYearCo2e: 0,
+            changePercent: 0,
+            changeDirection: 'baseline_period',
+          },
+        ],
+        overallTrend: 'baseline_established',
+      };
+    }
 
     const comparisons: Array<{
       month: string;

@@ -52,16 +52,15 @@ export const RouteMap: React.FC<RouteMapProps> = ({
       attributionControl: true,
     });
 
-    // Fast CartoDB Voyager tiles with fallback and silent error handling
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // Clean OpenStreetMap tiles (100% free, no API key required, no watermarks)
+    const tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      subdomains: 'abcd',
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | CarbonIQ',
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors | CarbonIQ',
     }).addTo(map);
 
     tileLayer.on('tileerror', () => {
-      // Silently ignore tile load errors if offline or blocked by college firewall
+      // Silently ignore tile load errors if offline or network hiccup
     });
 
     // Add top-right zoom controls
