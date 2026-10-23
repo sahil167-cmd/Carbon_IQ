@@ -396,7 +396,7 @@ OUTPUT STRICT JSON matching:
         domain: 'ORGANIZATION_EMISSIONS',
         operation: 'COMPLIANCE_STATUS',
         requiresSql: true,
-        requiresVector: true,
+        requiresVector: false,  // SQL-backed: doc chunks must NOT hijack this answer
         requiresForecast: false,
         requiresAnomaly: false,
         rewrittenQuery: raw,
@@ -415,7 +415,7 @@ OUTPUT STRICT JSON matching:
         domain: 'FINANCIAL_CARBON_ANALYTICS',
         operation: 'CARBON_PRICING',
         requiresSql: true,
-        requiresVector: true,
+        requiresVector: false,  // SQL-backed: doc chunks must NOT hijack this answer
         requiresForecast: false,
         requiresAnomaly: false,
         rewrittenQuery: raw,
@@ -432,7 +432,7 @@ OUTPUT STRICT JSON matching:
         domain: 'ORGANIZATION_EMISSIONS',
         operation: 'EMISSION_FACTOR_AUDIT',
         requiresSql: true,
-        requiresVector: false,
+        requiresVector: false,  // SQL-backed: doc chunks must NOT hijack this answer
         requiresForecast: false,
         requiresAnomaly: false,
         rewrittenQuery: raw,
