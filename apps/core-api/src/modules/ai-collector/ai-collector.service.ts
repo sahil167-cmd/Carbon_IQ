@@ -117,6 +117,7 @@ export class AiCollectorService {
       categoryCode: doc.category.code,
       fileBuffer,
       mimeType: doc.mimeType,
+      fileName: doc.fileName,
     });
 
     // Update document category in DB if evidence-based classification detected a distinct category

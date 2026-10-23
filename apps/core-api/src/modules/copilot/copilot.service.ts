@@ -942,8 +942,17 @@ According to the **${f.modelUsed || 'XGBoost (v1)'}** predictive forecasting eng
       if (docs.length > 0) {
         const rows = docs.map((d: any) => {
           let extra = '';
-          if (d.extractedData) {
-            const pairs = Object.entries(d.extractedData).slice(0, 4).map(([k, v]) => `\`${k}: ${v}\``).join(', ');
+          if (d.extractedData && typeof d.extractedData === 'object') {
+            const pairs = Object.entries(d.extractedData)
+              .slice(0, 6)
+              .map(([k, v]) => {
+                let displayVal = v;
+                if (typeof v === 'object' && v !== null) {
+                  displayVal = (v as any).value !== undefined ? (v as any).value : JSON.stringify(v);
+                }
+                return `\`${k}: ${displayVal}\``;
+              })
+              .join(', ');
             extra = `\n  * **Extracted Data**: ${pairs}`;
           }
           return `* **Document**: \`${d.fileName}\` (${d.categoryName} — **${d.scope}**)\n  * **Status**: \`${d.status}\`${extra}\n  * **Audit Note**: ${d.calculationSummary}`;

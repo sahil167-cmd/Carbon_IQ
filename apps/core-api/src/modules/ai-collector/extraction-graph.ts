@@ -100,6 +100,7 @@ export interface GraphState {
   categoryCode: string;
   fileBuffer: Buffer;
   mimeType: string;
+  fileName?: string;
   rawText?: string;
   ocrConfidence?: number;
   boundingBoxes?: Array<{ text: string; boundingBox: BoundingBox }>;
@@ -178,29 +179,53 @@ export class ExtractionGraph {
   // Node 2: Classify Document & Detect Scope
   private async classifyNode(state: GraphState): Promise<GraphState> {
     const text = (state.rawText || '').toUpperCase();
+    const fileName = (state.fileName || '').toUpperCase();
+    const combined = `${text} ${fileName}`;
 
     let category = state.categoryCode || 'GENERAL';
     let scope: ScopeType = ScopeType.SCOPE_3;
 
-    if (text.includes('BILL OF LADING') || text.includes('BOL-') || text.includes('MAERSK') || text.includes('OCEAN') || text.includes('AIR WAYBILL') || text.includes('AWB-') || text.includes('LUFTHANSA') || text.includes('FREIGHT') || text.includes('CARGO') || text.includes('LOGISTICS') || text.includes('UPSTREAM_TRANSPORT')) {
-      category = 'UPSTREAM_TRANSPORT';
-      scope = ScopeType.SCOPE_3;
-    } else if (text.includes('NATURAL GAS') || text.includes('ATMOS') || text.includes('PIPELINE') || text.includes('MMBTU') || text.includes('THERMS')) {
-      category = 'STATIONARY_COMBUSTION';
-      scope = ScopeType.SCOPE_1;
-    } else if (text.includes('GENERATOR') || text.includes('TANK-GEN') || text.includes('CAT POWER') || text.includes('DIESEL FUEL') || text.includes('COMMERCIAL GENERATOR') || text.includes('STATIONARY_COMBUSTION')) {
-      category = 'STATIONARY_COMBUSTION';
-      scope = ScopeType.SCOPE_1;
-    } else if (text.includes('SHELL FLEET') || text.includes('PETROL') || text.includes('GASOLINE') || text.includes('MOBILE_COMBUSTION')) {
-      category = 'MOBILE_COMBUSTION';
-      scope = ScopeType.SCOPE_1;
-    } else if (text.includes('KWH') || text.includes('ELECTRICITY') || text.includes('ENERGY BILL') || text.includes('CONEDISON') || text.includes('TATA POWER') || text.includes('VATTENFALL')) {
+    // ── PRIORITY 1: Electricity ─────────────────────────────────────────────
+    if (combined.includes('KWH') || combined.includes('ELECTRICITY') || combined.includes('ENERGY BILL') ||
+        combined.includes('CONEDISON') || combined.includes('TATA POWER') || combined.includes('VATTENFALL') ||
+        combined.includes('GRID ELECTRICITY') || combined.includes('POWER UTILITY') || combined.includes('SCOPE2_ELECTRICITY')) {
       category = 'ELECTRICITY';
       scope = ScopeType.SCOPE_2;
-    } else if (text.includes('STEEL') || text.includes('PURCHASE ORDER') || text.includes('ARCELORMITTAL') || text.includes('PURCHASED GOODS') || text.includes('RAW MATERIAL')) {
+
+    // ── PRIORITY 2: Fleet / Mobile Combustion (check BEFORE logistics) ──────
+    } else if (combined.includes('FLEET') || combined.includes('MOBILE COMBUSTION') || combined.includes('MOBILE_COMBUSTION') ||
+               combined.includes('SHELL COMMERCIAL') || combined.includes('FLEET FUEL') || combined.includes('FLEET REFUELING') ||
+               combined.includes('FLEET_DIESEL') || combined.includes('COMMERCIAL FLEET') || combined.includes('DIRECT MOBILE') ||
+               combined.includes('SHELL FLEET') || combined.includes('PETROL') || combined.includes('GASOLINE') ||
+               (combined.includes('DIESEL') && (combined.includes('VEHICLE') || combined.includes('TRUCK') || combined.includes('FLEET') || combined.includes('MOBILE')))) {
+      category = 'MOBILE_COMBUSTION';
+      scope = ScopeType.SCOPE_1;
+
+    // ── PRIORITY 3: Natural Gas / Stationary Combustion ─────────────────────
+    } else if (combined.includes('NATURAL GAS') || combined.includes('ATMOS') || combined.includes('PIPELINE') ||
+               combined.includes('MMBTU') || combined.includes('THERMS') || combined.includes('STATIONARY_COMBUSTION') ||
+               combined.includes('STATIONARY COMBUSTION') || combined.includes('COMMERCIAL GENERATOR') ||
+               combined.includes('BACKUP GENERATOR') || combined.includes('TANK-GEN') || combined.includes('CAT POWER') ||
+               (combined.includes('DIESEL') && combined.includes('GENERATOR'))) {
+      category = 'STATIONARY_COMBUSTION';
+      scope = ScopeType.SCOPE_1;
+
+    // ── PRIORITY 4: Freight (strict markers only — NOT generic logistics) ────
+    } else if (combined.includes('BILL OF LADING') || combined.includes('BOL-') || combined.includes('AIR WAYBILL') ||
+               combined.includes('AWB-') || combined.includes('MAERSK') || combined.includes('OCEAN FREIGHT') ||
+               combined.includes('LUFTHANSA CARGO') || combined.includes('CARGO MANIFEST') || combined.includes('FREIGHT WAYBILL') ||
+               combined.includes('TONNE_KM') || combined.includes('UPSTREAM_TRANSPORT')) {
+      category = 'UPSTREAM_TRANSPORT';
+      scope = ScopeType.SCOPE_3;
+
+    // ── PRIORITY 5: Purchased Goods ──────────────────────────────────────────
+    } else if (combined.includes('STEEL') || combined.includes('PURCHASE ORDER') || combined.includes('ARCELORMITTAL') ||
+               combined.includes('PURCHASED GOODS') || combined.includes('RAW MATERIAL')) {
       category = 'PURCHASED_GOODS';
       scope = ScopeType.SCOPE_3;
-    } else if (text.includes('WASTE') || text.includes('LANDFILL') || text.includes('RECYCLING')) {
+
+    // ── PRIORITY 6: Waste ────────────────────────────────────────────────────
+    } else if (combined.includes('WASTE') || combined.includes('LANDFILL') || combined.includes('RECYCLING')) {
       category = 'WASTE_MANAGEMENT';
       scope = ScopeType.SCOPE_3;
     }
@@ -261,14 +286,37 @@ export class ExtractionGraph {
     // 3. Category Specific Numerical Extractions
     const cat = state.classifiedCategory || state.categoryCode;
 
-    // Freight & Logistics Multi-Line and Total Weight Extractions
+    // ── Always extract fuel metrics regardless of category ──────────────────
+    // This prevents UPSTREAM_TRANSPORT misclassification from skipping fuel extraction
+    const canonicalFuel = resolveCanonicalFuel(text);
+    if (canonicalFuel.fuelType) {
+      fields.fuelType = { value: canonicalFuel.fuelType, confidence: canonicalFuel.confidence, needsReview: false };
+    }
+
+    const fuelQtyStr = findMatch([
+      /(?:quantity|volume|consumed|fuel volume|liters delivered|gallons delivered)\s*:?\s*([0-9,]+(?:\.[0-9]+)?)/i,
+      /([0-9,]+(?:\.[0-9]+)?)\s*(?:liters|litres|gallons|m3|mmbtu|therms)/i,
+    ]);
+    const fuelUnitStr = findMatch([
+      /(LITERS|LITRES|GALLONS|M3|MMBTU|THERMS)/i,
+    ]);
+
+    // ── Electricity Extraction ──────────────────────────────────────────────
+    const kwhStr = findMatch([
+      /(?:kwhConsumed|consumed|energy consumption)\s*:?\s*([0-9,]+(?:\.[0-9]+)?)/i,
+      /([0-9,]+(?:\.[0-9]+)?)\s*kwh/i,
+    ]);
+    if (kwhStr) {
+      const kwh = parseFloat(kwhStr.replace(/,/g, ''));
+      fields.kwhConsumed = { value: kwh, confidence: 0.98, needsReview: false };
+    }
+
+    // ── Freight metrics ──────────────────────────────────────────────────────
     const distMatch = findMatch([
       /distanceKm\s*:?\s*([0-9,]+)/i,
       /(?:distance|transit route distance)\s*:?\s*([0-9,]+)\s*km/i,
       /([0-9,]+)\s*km/i,
     ]);
-    
-    // Total Weight or Multi-Line Weights
     const totalWeightMatch = findMatch([
       /(?:total cargo weight|total weight|weightKg)\s*:?\s*([0-9,]+)\s*kg/i,
       /total\s*:\s*([0-9,]+)\s*kg/i,
@@ -281,37 +329,24 @@ export class ExtractionGraph {
     const lineMatches = Array.from(text.matchAll(/Line\s*\d+[^0-9\n\r]*([0-9,]+)\s*KG/gi));
     let lineSum = 0;
     const lineItems: Array<{ lineIndex: number; massKg: number }> = [];
-
     lineMatches.forEach((m, idx) => {
       const kg = parseFloat(m[1].replace(/,/g, ''));
       lineSum += kg;
       lineItems.push({ lineIndex: idx + 1, massKg: kg });
     });
+    if (!totalWeightVal && lineSum > 0) totalWeightVal = lineSum;
 
-    const isTransportOrFreight = cat === 'UPSTREAM_TRANSPORT' || cat === 'DOWNSTREAM_TRANSPORT' || cat === 'ROAD_FREIGHT' || text.includes('BILL OF LADING') || text.includes('WAYBILL') || text.includes('FREIGHT');
+    const isStrictFreight = cat === 'UPSTREAM_TRANSPORT' || cat === 'DOWNSTREAM_TRANSPORT' || cat === 'ROAD_FREIGHT' ||
+      text.includes('BILL OF LADING') || text.includes('AIR WAYBILL') || text.includes('FREIGHT WAYBILL');
+    const hasFuelData = canonicalFuel.fuelType !== null || fuelQtyStr !== null;
 
-    if (!totalWeightVal && lineSum > 0) {
-      totalWeightVal = lineSum;
-    } else if (!totalWeightVal && (isTransportOrFreight || cat === 'PURCHASED_GOODS')) {
-      // Exclude emission factors like kgCO2e or kg/m3 from being parsed as cargo weight
-      const singleWeightMatch = findMatch([
-        /(?:total weight|cargo weight|weightKg|net weight|gross weight)\s*:?\s*([0-9,]+(?:\.[0-9]+)?)\s*kg/i,
-        /([0-9,]+(?:\.[0-9]+)?)\s*kg(?!\s*(?:co2|co2e|\/))/i,
-      ]);
-      if (singleWeightMatch) totalWeightVal = parseFloat(singleWeightMatch.replace(/,/g, ''));
-    }
+    // ── Branch: Freight / Transport ─────────────────────────────────────────
+    if (isStrictFreight && !hasFuelData) {
+      if (distVal) fields.distanceKm = { value: distVal, confidence: 0.98, needsReview: false };
+      if (totalWeightVal) fields.weightKg = { value: totalWeightVal, confidence: 0.98, needsReview: false };
 
-    if (distVal && isTransportOrFreight) {
-      fields.distanceKm = { value: distVal, confidence: 0.98, needsReview: false };
-    }
-    if (totalWeightVal && (isTransportOrFreight || cat === 'PURCHASED_GOODS')) {
-      fields.weightKg = { value: totalWeightVal, confidence: 0.98, needsReview: false };
-    }
-
-    if (cat === 'UPSTREAM_TRANSPORT' || cat === 'DOWNSTREAM_TRANSPORT' || cat === 'ROAD_FREIGHT' || text.includes('BILL OF LADING')) {
       if (distVal && totalWeightVal) {
-        const tonnes = totalWeightVal / 1000;
-        const tkm = tonnes * distVal;
+        const tkm = (totalWeightVal / 1000) * distVal;
         fields.tonneKm = { value: tkm, confidence: 0.99, needsReview: false };
         fields.quantity = { value: tkm, confidence: 0.99, needsReview: false };
         fields.unit = { value: 'TONNE_KM', confidence: 0.99, needsReview: false };
@@ -319,23 +354,19 @@ export class ExtractionGraph {
         if (!distVal) fields.distanceKm = { value: 'Missing', confidence: 0, needsReview: true };
         if (!totalWeightVal) fields.weightKg = { value: 'Missing', confidence: 0, needsReview: true };
       }
+
+    // ── Branch: Purchased Goods ─────────────────────────────────────────────
     } else if (cat === 'PURCHASED_GOODS' || text.includes('PURCHASE ORDER') || text.includes('STEEL BEAMS') || text.includes('RAW MATERIAL')) {
-      // Purchased Goods & Raw Materials
       const canonicalMat = resolveCanonicalMaterial(text);
-      if (canonicalMat.materialType) {
-        fields.materialType = { value: canonicalMat.materialType, confidence: canonicalMat.confidence, needsReview: false };
-      } else {
-        fields.materialType = { value: 'Missing', confidence: 0, needsReview: true };
-      }
+      fields.materialType = canonicalMat.materialType
+        ? { value: canonicalMat.materialType, confidence: canonicalMat.confidence, needsReview: false }
+        : { value: 'Missing', confidence: 0, needsReview: true };
 
       const qtyStr = findMatch([
         /(?:quantity|weightKg|weight|amount)\s*:?\s*([0-9,]+)/i,
         /([0-9,]+)\s*(?:kg|tonnes|tons|lbs)/i,
       ]);
-      const unitStr = findMatch([
-        /(KG|TONNES|TONS|LBS|METRIC_TONS)/i,
-      ]);
-
+      const unitStr = findMatch([/(KG|TONNES|TONS|LBS|METRIC_TONS)/i]);
       if (qtyStr) {
         const q = parseFloat(qtyStr.replace(/,/g, ''));
         fields.quantity = { value: q, confidence: 0.96, needsReview: false };
@@ -344,43 +375,28 @@ export class ExtractionGraph {
       } else {
         fields.quantity = { value: 'Missing', confidence: 0, needsReview: true };
       }
+
+    // ── Branch: Electricity ──────────────────────────────────────────────────
     } else if (cat === 'ELECTRICITY') {
-      const kwhStr = findMatch([
-        /(?:kwhConsumed|consumed|energy)\s*:?\s*([0-9,]+)/i,
-        /([0-9,]+)\s*kwh/i,
-      ]);
       if (kwhStr) {
         const kwh = parseFloat(kwhStr.replace(/,/g, ''));
-        fields.kwhConsumed = { value: kwh, confidence: 0.98, needsReview: false };
         fields.quantity = { value: kwh, confidence: 0.98, needsReview: false };
         fields.unit = { value: 'KWH', confidence: 0.99, needsReview: false };
       } else {
         fields.kwhConsumed = { value: 'Missing', confidence: 0, needsReview: true };
       }
-
       if (/recVerification:\s*true|Guarantee of Origin|Green Tariff/i.test(text)) {
         fields.recVerification = { value: true, confidence: 0.99, needsReview: false };
       }
+
+    // ── Branch: Mobile / Stationary Combustion (default for fuel docs) ───────
     } else {
-      // Fuel & Stationary/Mobile Combustion
-      const canonicalFuel = resolveCanonicalFuel(text);
-      if (canonicalFuel.fuelType) {
-        fields.fuelType = { value: canonicalFuel.fuelType, confidence: canonicalFuel.confidence, needsReview: false };
-      } else {
+      if (!canonicalFuel.fuelType) {
         fields.fuelType = { value: 'Missing', confidence: 0, needsReview: true };
       }
-
-      const qtyStr = findMatch([
-        /(?:quantity|volume|consumed)\s*:?\s*([0-9,]+)/i,
-        /([0-9,]+)\s*(?:liters|litres|gallons|m3|kg|mmbtu)/i,
-      ]);
-      const unitStr = findMatch([
-        /(LITERS|LITRES|GALLONS|M3|KG|TONNES|MMBTU|THERMS)/i,
-      ]);
-
-      if (qtyStr) {
-        fields.quantity = { value: parseFloat(qtyStr.replace(/,/g, '')), confidence: 0.96, needsReview: false };
-        fields.unit = { value: (unitStr || 'LITERS').toUpperCase(), confidence: 0.95, needsReview: false };
+      if (fuelQtyStr) {
+        fields.quantity = { value: parseFloat(fuelQtyStr.replace(/,/g, '')), confidence: 0.96, needsReview: false };
+        fields.unit = { value: (fuelUnitStr || 'LITERS').toUpperCase(), confidence: 0.95, needsReview: false };
       } else {
         fields.quantity = { value: 'Missing', confidence: 0, needsReview: true };
       }

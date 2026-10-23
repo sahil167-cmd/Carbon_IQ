@@ -173,9 +173,9 @@ export class CanonicalActivityNormalizer {
       effectiveCategory = 'ELECTRICITY';
     } else if (combinedEvidence.includes('STATIONARY_COMBUSTION') || combinedEvidence.includes('STATIONARY COMBUSTION') || combinedEvidence.includes('STATIONARY FUEL') || combinedEvidence.includes('COMMERCIAL GENERATOR') || combinedEvidence.includes('BACKUP GENERATOR')) {
       effectiveCategory = 'STATIONARY_COMBUSTION';
-    } else if (combinedEvidence.includes('MOBILE_COMBUSTION') || combinedEvidence.includes('MOBILE COMBUSTION') || combinedEvidence.includes('FLEET FUEL') || combinedEvidence.includes('FLEET VEHICLE') || combinedEvidence.includes('FLEET REFUELING')) {
+    } else if (combinedEvidence.includes('MOBILE_COMBUSTION') || combinedEvidence.includes('MOBILE COMBUSTION') || combinedEvidence.includes('FLEET FUEL') || combinedEvidence.includes('FLEET VEHICLE') || combinedEvidence.includes('FLEET REFUELING') || combinedEvidence.includes('FLEET_DIESEL') || combinedEvidence.includes('COMMERCIAL FLEET') || combinedEvidence.includes('DIRECT MOBILE') || combinedEvidence.includes('FLEET DEPOT') || combinedEvidence.includes('SHELL COMMERCIAL') || combinedEvidence.includes('BULK FUEL')) {
       effectiveCategory = 'MOBILE_COMBUSTION';
-    } else if (combinedEvidence.includes('BILL OF LADING') || combinedEvidence.includes('WAYBILL') || combinedEvidence.includes('FREIGHT WAYBILL') || combinedEvidence.includes('INTERMODAL') || combinedEvidence.includes('UPSTREAM_TRANSPORT') || combinedEvidence.includes('CARRIER')) {
+    } else if (combinedEvidence.includes('BILL OF LADING') || combinedEvidence.includes('AIR WAYBILL') || combinedEvidence.includes('FREIGHT WAYBILL') || combinedEvidence.includes('INTERMODAL') || combinedEvidence.includes('UPSTREAM_TRANSPORT') || combinedEvidence.includes('TONNE_KM') || combinedEvidence.includes('CARGO MANIFEST')) {
       effectiveCategory = 'UPSTREAM_TRANSPORT';
     } else if (combinedEvidence.includes('PURCHASED GOODS') || combinedEvidence.includes('RAW MATERIAL') || combinedEvidence.includes('PURCHASE ORDER') || combinedEvidence.includes('MATERIAL INVOICE')) {
       effectiveCategory = 'PURCHASED_GOODS';
@@ -188,17 +188,21 @@ export class CanonicalActivityNormalizer {
     }
 
     // Level 2: Structured Activity Evidence Override
-    // ONLY applies when the category is ambiguous (GENERAL or BUSINESS_TRAVEL).
-    // PURCHASED_GOODS and already-identified categories must NOT be overridden by
-    // incidental presence of weight/distance fields in the extracted data.
-    if (effectiveCategory === 'GENERAL' || effectiveCategory === 'BUSINESS_TRAVEL') {
-      if (getFieldValue(fields.tonneKm) > 0 || rawUnit === 'TONNE_KM') {
-        // Explicit tonne-km unit or tonne-km field \u2014 confirmed freight
+    // Applies when category is ambiguous (GENERAL, BUSINESS_TRAVEL) OR when classified as
+    // UPSTREAM_TRANSPORT but there is no distance/weight data and fuel data IS present
+    // (rescues misclassified fleet fuel bills with "Logistics" in their depot name).
+    const isAmbiguous = effectiveCategory === 'GENERAL' || effectiveCategory === 'BUSINESS_TRAVEL';
+    const isLikelyMisclassifiedTransport = effectiveCategory === 'UPSTREAM_TRANSPORT' && rawDistance <= 0 && rawWeight <= 0;
+
+    if (isAmbiguous || isLikelyMisclassifiedTransport) {
+      if (!isLikelyMisclassifiedTransport && (getFieldValue(fields.tonneKm) > 0 || rawUnit === 'TONNE_KM')) {
+        // Explicit tonne-km unit or tonne-km field — confirmed freight
         effectiveCategory = 'UPSTREAM_TRANSPORT';
       } else if (getFieldValue(fields.kwhConsumed) > 0 || rawUnit === 'KWH' || rawUnit === 'MWH') {
         effectiveCategory = 'ELECTRICITY';
       } else if (getFieldValue(fields.fuelType) || rawUnit === 'LITERS' || rawUnit === 'GALLONS' || rawUnit === 'M3' || rawUnit === 'THERMS' || rawUnit === 'MMBTU') {
-        if (upperText.includes('FLEET') || upperText.includes('MOBILE') || upperText.includes('VEHICLE')) {
+        if (upperText.includes('FLEET') || upperText.includes('MOBILE') || upperText.includes('VEHICLE') ||
+            upperText.includes('COMMERCIAL FLEET') || upperText.includes('SHELL COMMERCIAL') || upperFileName.includes('FLEET')) {
           effectiveCategory = 'MOBILE_COMBUSTION';
         } else {
           effectiveCategory = 'STATIONARY_COMBUSTION';
@@ -251,8 +255,9 @@ export class CanonicalActivityNormalizer {
 
     // ─────────────────────────────────────────────────────────────────────────
     // CATEGORY: FREIGHT & LOGISTICS (UPSTREAM_TRANSPORT / DOWNSTREAM_TRANSPORT)
+    // Only reaches here for confirmed freight docs with strict BoL/waybill markers
     // ─────────────────────────────────────────────────────────────────────────
-    if (effectiveCategory.includes('TRANSPORT') || effectiveCategory.includes('FREIGHT') || effectiveCategory.includes('LOGISTICS')) {
+    if (effectiveCategory.includes('TRANSPORT') || effectiveCategory.includes('FREIGHT')) {
       let tonneKm = rawQty;
       let finalUnit = rawUnit || 'TONNE_KM';
 
